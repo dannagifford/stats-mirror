@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BIOL33031/BIOL65161">
+
+<title>Summary statistics – BIOL33031/BIOL65161</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2216a8e0a9d9492edde58845aa8d0122.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../html.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">BIOL33031/BIOL65161</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">1 - Introduction to Data</a></li><li class="breadcrumb-item"><a href="../../lectures/05_data-summary/index.html">Summary statistics</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Intro session</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/00_why-statistics/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why we need statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/01_intro-to-R/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/02_intro-to-tidyverse/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to the tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/03_open-science/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Open Science movement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/intro-practical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Introduction</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">1 - Introduction to Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/04_data-wrangling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data wrangling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/05_data-summary/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Summary statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/06_visualisation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data representation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: R Data Wrangling and Visualisation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">2 - Classical statistical tests</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/07_hypothesis/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hypothesis testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/08_t-test/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><em>t</em>-tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/09_contingency/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chi² &amp; Fisher’s exact tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/10_correlation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploring correlations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Classical statistics in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">3 - Linear modelling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/11_linear-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Linear modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">4 - Mixed effects models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/12_mixed-effects-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed-effects modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical 4: Mixed effects modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">5 - Other models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/13_glm/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalised linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/14_random-forests/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Random forest models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Generalised linear models and Random Forests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Quarto</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/quarto/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Crash-course in Quarto</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-summarise-data" id="toc-why-summarise-data" class="nav-link active" data-scroll-target="#why-summarise-data">Why summarise data?</a></li>
+  <li><a href="#the-key-tools" id="toc-the-key-tools" class="nav-link" data-scroll-target="#the-key-tools">The key tools</a></li>
+  <li><a href="#calculating-means" id="toc-calculating-means" class="nav-link" data-scroll-target="#calculating-means">Calculating means</a></li>
+  <li><a href="#tallying-group-sizes" id="toc-tallying-group-sizes" class="nav-link" data-scroll-target="#tallying-group-sizes">Tallying group sizes</a></li>
+  <li><a href="#multiple-summaries-at-once" id="toc-multiple-summaries-at-once" class="nav-link" data-scroll-target="#multiple-summaries-at-once">Multiple summaries at once</a></li>
+  <li><a href="#measures-of-central-tendency" id="toc-measures-of-central-tendency" class="nav-link" data-scroll-target="#measures-of-central-tendency">Measures of central tendency</a></li>
+  <li><a href="#measures-of-spread" id="toc-measures-of-spread" class="nav-link" data-scroll-target="#measures-of-spread">Measures of spread</a></li>
+  <li><a href="#when-to-use-which" id="toc-when-to-use-which" class="nav-link" data-scroll-target="#when-to-use-which">When to use which?</a></li>
+  <li><a href="#standard-deviation-sd-vs-standard-error-se" id="toc-standard-deviation-sd-vs-standard-error-se" class="nav-link" data-scroll-target="#standard-deviation-sd-vs-standard-error-se">Standard deviation (SD) vs standard error (SE)</a></li>
+  <li><a href="#recap-next-steps" id="toc-recap-next-steps" class="nav-link" data-scroll-target="#recap-next-steps">Recap &amp; next steps</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓Check your understanding</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="slides.html"><i class="bi bi-postcard"></i>Slides</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">1 - Introduction to Data</a></li><li class="breadcrumb-item"><a href="../../lectures/05_data-summary/index.html">Summary statistics</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Summary statistics</h1>
+<p class="subtitle lead">Making sense of biological variation</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BIOL33031/BIOL65161 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-9c8b-5f46-0000-0199c4b28d60" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="">
+</iframe>
+<div class="notes">
+<p>Biological data are full of variation — no two cells, animals, or populations are exactly alike.<br>
+Summarising helps us describe this variation in a meaningful way.<br>
+Instead of listing every value, we use numbers that capture the <em>essence</em> of the data: where the centre lies, how spread out values are, and what shape the distribution takes.<br>
+These summaries help us communicate results clearly and spot patterns worth investigating further.</p>
+</div>
+<section id="why-summarise-data" class="level2">
+<h2 class="anchored" data-anchor-id="why-summarise-data">Why summarise data?</h2>
+<p>Biological data are often large and messy.</p>
+<p><strong>Summary statistics</strong> reduce many data points down to a few values that capture the overall picture. Consider our <code>penguins</code> from last time.</p>
+<div class="{columns}">
+<div class="column fragment">
+<p>This first plot contains the raw data of all recorded body masses for all 344 penguins.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="column fragment">
+<p>The second contains a summary commonly known as a box plot.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+
+</div>
+<p>What can you now infer? Male penguins tend to be larger than females within each species, and Gentoos tend to be larger than Adélies or Chinstraps. Body mass seems to be constant through time, although only three years were sampled.</p>
+<div class="notes">
+<p>Let’s return to our penguins to see the value of summarisation.</p>
+<p>The plot on the left you can see the raw data: every penguin’s body mass. It’s rich, but hard to make meaningful comparisons between different species.</p>
+<p>On the right is a box plot—a compact summary of the same data. The line in the box is the median, the box shows the middle 50%—the interquartile range—and the whiskers cover typical values. Points beyond that are potential outliers: interesting cases to check.</p>
+<p>Which one do you find easier for picking out meaningful differences? What can you infer from the plot on the right? Male penguins tend to be larger than females within each species, and Gentoos tend to be larger than Adélies or Chinstraps. Body mass seems to be constant through time, although only three years were sampled.</p>
+</div>
+<hr>
+</section>
+<section id="the-key-tools" class="level2">
+<h2 class="anchored" data-anchor-id="the-key-tools">The key tools</h2>
+<p>In the tidyverse, we use two main functions for summarisation:</p>
+<ul>
+<li><code>summarise()</code> – creates new summary values, like a mean or standard deviation.<br>
+</li>
+<li><code>group_by()</code> – tells R to calculate summaries separately for each group (e.g.&nbsp;for each species).</li>
+</ul>
+<p>There are also helper functions that make our life easier:</p>
+<ul>
+<li><code>mean()</code>, <code>median()</code>, <code>sd()</code> – common ways to summarise numbers used in biology<br>
+</li>
+<li><code>n()</code> – the number of rows in each group<br>
+</li>
+<li><code>count()</code> – a shortcut for counting rows in each group</li>
+</ul>
+<div class="notes">
+<p>The tidyverse provides some handy functions for summarising data.</p>
+<p>The first one is summarise(). This creates new summary values—things like the mean or the standard deviation. It’s how we collapse lots of individual measurements into one or two numbers that describe the group as a whole.</p>
+<p>The second is group_by(). This tells R to calculate those summaries separately for each category—say, for each penguin species or each island. Without group_by(), you just get one overall mean; with it, you get a mean for every group.</p>
+<p>Then there are a few handy helpers. mean(), median(), and sd() are the classic ways we summarise biological data. n() tells us how many rows—or individuals—are in each group. And count() is a shortcut when you just want to tally up how many cases you have per category.</p>
+<p>The code shows how these functions work together to calculate mean bill length of each species.</p>
+</div>
+<hr>
+</section>
+<section id="calculating-means" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-means">Calculating means</h2>
+<p>Let’s start simple. Suppose we want the overall mean bill length across all penguins.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_bill_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mean_bill_length
+             &lt;dbl&gt;
+1             43.9</code></pre>
+</div>
+</div>
+<p>The average bill length of all penguins that were sampled is 43.9 mm.</p>
+<p>Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length <strong>per species</strong>?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_bill_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  species   mean_bill_length
+  &lt;fct&gt;                &lt;dbl&gt;
+1 Adelie                38.8
+2 Chinstrap             48.8
+3 Gentoo                47.5</code></pre>
+</div>
+</div>
+<p>Here <code>group_by()</code> separates the data into groups by species, and <code>summarise()</code> calculates the mean within each of those groups.</p>
+<div class="notes">
+<p>Here’s a simple example showing how to calculate the mean bill length across all penguins. The average bill length of all penguins that were sampled is 43.9 mm.</p>
+<p>Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length <strong>per species</strong>?</p>
+<p>Here <code>group_by()</code> separates the data into groups by species, and <code>summarise()</code> calculates the mean within each of those groups.</p>
+</div>
+<hr>
+</section>
+<section id="tallying-group-sizes" class="level2">
+<h2 class="anchored" data-anchor-id="tallying-group-sizes">Tallying group sizes</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Another simple question is, how many penguins do we have of each species?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(species)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The function <code>count()</code> is shorthand for:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>How many of each were on each island?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(species, island)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  species   island        n
+  &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;
+1 Adelie    Biscoe       44
+2 Adelie    Dream        56
+3 Adelie    Torgersen    52
+4 Chinstrap Dream        68
+5 Gentoo    Biscoe      124</code></pre>
+</div>
+</div>
+</div>
+</div><div class="column fragment" style="width:50%;">
+<p>Only Adélie penguins were found on all three islands; Chinstrap and Gentoo were only recorded on Dream and Biscoe, respectively.</p>
+<p>Notice <code>count()</code> hasn’t given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using <code>complete()</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(species, island) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(species, island, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">n =</span> <span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+  species   island        n
+  &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;
+1 Adelie    Biscoe       44
+2 Adelie    Dream        56
+3 Adelie    Torgersen    52
+4 Chinstrap Biscoe        0
+5 Chinstrap Dream        68
+6 Chinstrap Torgersen     0
+7 Gentoo    Biscoe      124
+8 Gentoo    Dream         0
+9 Gentoo    Torgersen     0</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="notes">
+<p>Here’s an example of how we can use the special function count to tally the number of each species. By giving ‘species’ as the argument to count, we tell R to provide a count of the number of occurrences of each species.</p>
+<p>Count is simply shorthand for a combination of group_by, summarise, and n.</p>
+<p>We can also give count two variables, species and island, to get a count of how many of each species were on each island.</p>
+<p>Notice however that <code>count()</code> hasn’t given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using another function called complete()</p>
+</div>
+<hr>
+</section>
+<section id="multiple-summaries-at-once" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-summaries-at-once">Multiple summaries at once</h2>
+<p>We are not limited to one summary per group. For example, we might want the mean, the <strong>standard deviation</strong>, and the sample size all together.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species, sex) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_length =</span> <span class="fu">sd</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+# Groups:   species [3]
+  species   sex    mean_length sd_length     n
+  &lt;fct&gt;     &lt;fct&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
+1 Adelie    female        37.3      2.03    73
+2 Adelie    male          40.4      2.28    73
+3 Adelie    &lt;NA&gt;          37.8      2.80     6
+4 Chinstrap female        46.6      3.11    34
+5 Chinstrap male          51.1      1.56    34
+6 Gentoo    female        45.6      2.05    58
+7 Gentoo    male          49.5      2.72    61
+8 Gentoo    &lt;NA&gt;          45.6      1.37     5</code></pre>
+</div>
+</div>
+<p>The <strong>standard deviation</strong>, <code>sd()</code>, tells us something about the spread of the data around the mean, or how variable bill length is between different individual birds of the same species and sex. This provides a richer description of the variation in bill length than simply looking at the mean.</p>
+<div class="notes">
+<p>Often in biology, we want to summarise data in multiple ways at the same time. With summarise, we can compute multiple summaries at once. Here’s an example calculating the mean bill length, standard deviation, and number of penguins, separated by sex and species of bird.</p>
+</div>
+<!--
+
+## Dropping groups
+
+By default, once you run `summarise()`, R forgets the grouping. This is usually what we want: the result is a smaller tibble with one row per group.  
+
+But sometimes you might want to keep the grouping for later steps. In that case, you can use:  
+
+```r
+summarise(..., .groups = "keep")
+```
+-->
+</section>
+<section id="measures-of-central-tendency" class="level2">
+<h2 class="anchored" data-anchor-id="measures-of-central-tendency">Measures of central tendency</h2>
+<p>Different summaries describe the <em>centre</em> of the data in different ways.</p>
+<ul>
+<li><strong>Mean</strong>: arithmetic average; sensitive to extreme values.</li>
+<li><strong>Median</strong>: middle value; robust to outliers.</li>
+<li><strong>Mode</strong>: most common value; rarely used for continuous measures.</li>
+</ul>
+<p>Example (mean and median flipper length by species):</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  species   mean_flipper median_flipper
+  &lt;fct&gt;            &lt;dbl&gt;          &lt;dbl&gt;
+1 Adelie            190.            190
+2 Chinstrap         196.            196
+3 Gentoo            217.            216</code></pre>
+</div>
+</div>
+<div class="notes">
+<p>The mean we looked at on the last slide is probably the one you’re most familiar with. It’s the arithmetic average — we add everything up and divide by how many measurements we have. The mean works well when our data follow a roughly bell-shaped, or normal, distribution, where values are fairly evenly spread around the centre–more on that later.</p>
+<p>But not all biological data behave that nicely. Sometimes we have outliers — unusually large or small values — that can pull the mean away from where most of the data really sit. In those cases, the median can give a better sense of the centre. The median is simply the middle value when all measurements are ordered from smallest to largest. It’s robust to outliers, meaning it doesn’t get dragged around by extreme points.</p>
+<p>There’s also the mode, which is the most common value. It’s useful when you’re working with categories—like the most common species or colour—but it’s rarely helpful for continuous measurements like length or mass.</p>
+<p>So, different summaries tell slightly different stories about where the ‘centre’ lies.</p>
+</div>
+<hr>
+</section>
+<section id="measures-of-spread" class="level2">
+<h2 class="anchored" data-anchor-id="measures-of-spread">Measures of spread</h2>
+<p>Two groups can have the same average but very different variability.<br>
+Measures of spread help us compare how consistent or scattered values are.</p>
+<ul>
+<li><strong>Range</strong>: <code>max - min</code> (influenced by outliers).<br>
+</li>
+<li><strong>Interquartile range (IQR)</strong>: the middle 50% of the data.<br>
+</li>
+<li><strong>Standard deviation (SD)</strong>: average distance from the mean.</li>
+</ul>
+<p>Example (variation in flipper length by species):</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  species   min_flipper max_flipper iqr_flipper sd_flipper
+  &lt;fct&gt;           &lt;int&gt;       &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 Adelie            172         210           9       6.54
+2 Chinstrap         178         212          10       7.13
+3 Gentoo            203         231           9       6.48</code></pre>
+</div>
+</div>
+<div class="notes">
+<p>Two groups can have exactly the same average but look completely different once we consider how spread out the data are. Measures of spread tell us how consistent or variable our data are—whether all individuals are similar, or if some differ a lot from the rest.</p>
+<p>The simplest measure is the range, which is just the maximum minus the minimum value. It gives a quick sense of spread but can be distorted by a single outlier.</p>
+<p>The interquartile range, or IQR, focuses on the middle 50% of the data. It’s much more robust—less sensitive to extreme values—and is what the width of a box in a box plot represents.</p>
+<p>And then there’s the standard deviation, or SD. This tells us, on average, how far each value sits from the mean. A small SD means most individuals are close to the mean; a large SD means there’s a lot of variability.</p>
+<p>In this next example, we’re comparing variation in flipper length between penguin species. Even if their averages are similar, the spread gives us a sense of how consistent each species is.</p>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>How is standard deviation (SD) calculated?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The standard deviation tells us how spread out the data are around the mean. While R can calculate this for us using <code>sd()</code>, you may want to know where it comes from.</p>
+<p>We calculate it in four steps:</p>
+<ol type="1">
+<li>Find the mean <span class="math inline">\(\bar{x}\)</span> of the data.<br>
+</li>
+<li>Subtract the mean from each individual value <span class="math inline">\((x_i - \bar{x})\)</span></li>
+<li>Square these differences and add them up.<br>
+</li>
+<li>Divide by <span class="math inline">\((n-1)\)</span> (to correct for sampling) and take the square root.</li>
+</ol>
+<p>The basic formula for SD from a single population sample looks like this:</p>
+<p><span class="math display">\[
+SD = \sqrt{\frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2 }
+\]</span></p>
+<ul>
+<li><span class="math inline">\(x_i\)</span>: each observation<br>
+</li>
+<li><span class="math inline">\(\bar{x}\)</span>: sample mean<br>
+</li>
+<li><span class="math inline">\(n\)</span>: number of observations</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="when-to-use-which" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-which">When to use which?</h2>
+<p>Different measures of spread are useful for describing the data in different situations:</p>
+<ul>
+<li><strong>Mean + SD</strong>: Best when data are roughly symmetric (bell-shaped) and not affected by extreme values.<br>
+</li>
+<li><strong>Median + IQR</strong>: Best when data are skewed or contain outliers, because they are more robust.<br>
+</li>
+<li><strong>Range</strong>: Good for reporting extremes (minimum and maximum), but can be misleading if one unusual value dominates.</li>
+</ul>
+<p>Always think about the biological question: are you interested in the “typical” value, the variability, or the extremes?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="notes">
+<p>Different measures of spread are useful in different situations, and it’s worth matching the summary to the kind of data you have.</p>
+<p>When your data are roughly symmetric—think of that nice bell-shaped curve—and there aren’t any extreme values, you can report the mean and standard deviation. Together, they describe the typical value and the average variation around it.</p>
+<p>If the data are skewed or contain outliers, the median and interquartile range are better. They focus on the middle of the data and aren’t thrown off by a few extreme individuals.</p>
+<p>The range—the minimum and maximum—is useful when you want to emphasise the extremes, like the smallest and largest animals measured. But remember, a single unusual value can make the range look huge.</p>
+<p>So always come back to your biological question: are you trying to describe what’s typical, how variable individuals are, or what the limits of your data look like? That choice should guide which summary you report.</p>
+</div>
+<hr>
+</section>
+<section id="standard-deviation-sd-vs-standard-error-se" class="level2">
+<h2 class="anchored" data-anchor-id="standard-deviation-sd-vs-standard-error-se">Standard deviation (SD) vs standard error (SE)</h2>
+<p><strong>SD</strong> and <strong>SE</strong> are often confused, but they mean different things.</p>
+<ul>
+<li><p><strong>Standard deviation (SD)</strong>: Describes how <strong>spread out the data</strong> are around the mean.<br>
+Example: how variable are flipper lengths among individual Gentoo penguins?</p></li>
+<li><p><strong>Standard error (SE)</strong>: Describes how precisely the <strong>mean</strong> has been estimated. It depends on both the spread of the data and the sample size.<br>
+Example: how close is our sample mean flipper length to the true population mean?</p></li>
+</ul>
+<p>SE is related to SD through the following formula: <span class="math display">\[ SE = \frac{SD}{\sqrt{n}} \]</span> You may see means reported with either SD or SE (e.g.&nbsp;mean ± SD, mean ± SE). They are not interchangeable: use <strong>SD</strong> to show biological variation, and <strong>SE</strong> to show precision of the mean. We will revisit SE when we look at the <em>t</em>-test.</p>
+<div class="notes">
+<p>I want to end by briefly talking about two measures of spread that are often confused in biology, the standard deviation and the standard error.</p>
+<p>People often mix up standard deviation and standard error, but they answer very different questions.</p>
+<p>The standard deviation, or SD, describes how spread out the data themselves are. It tells us about biological variation—how much individuals differ from each other. For example, how variable are the flipper lengths among individual Gentoo penguins?</p>
+<p>The standard error, or SE, is about precision. It tells us how precisely we’ve estimated the mean. SE depends on both the variation in the data and the sample size—larger samples give smaller SEs because our estimate of the mean becomes more reliable.</p>
+<p>They’re connected mathematically: SE equals SD divided by the square root of n, the sample size. So as you collect more data, SE gets smaller, but SD stays the same because the biological variation hasn’t changed.</p>
+<p>You’ll often see results reported as mean ± SD or mean ± SE. They are not interchangeable. Use SD when you want to show biological variation, and SE when you want to show how precise your estimate of the mean is. We’ll return to SE later when we discuss the t-test and confidence intervals.</p>
+</div>
+<hr>
+</section>
+<section id="recap-next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="recap-next-steps">Recap &amp; next steps</h2>
+<ul>
+<li>Summarisation helps us see patterns in messy biological data.<br>
+</li>
+<li><code>summarise()</code> and <code>group_by()</code> are the core tidyverse tools.<br>
+</li>
+<li>Helper functions like <code>n()</code>, <code>mean()</code>, and <code>count()</code> make common tasks quick.<br>
+</li>
+<li>Always watch out for missing values!</li>
+</ul>
+<p>We’ll build on the <code>tidyverse</code> skills you’ve learned now to tackle one of the most important aspects of data analysis and scientific communication, data visualisation, in the next session.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="images/Penguin_in_Antarctica_jumping_out_of_the_water.jpg" class="img-fluid figure-img" alt="Penguin jumping out of hole in icy water, its wing waived as if to say good-bye."></p>
+<figcaption>See you next time… <a href="https://commons.wikimedia.org/wiki/File:Penguin_in_Antarctica_jumping_out_of_the_water.jpg">Image</a> by Christopher Michel CC <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/">BY-NC-SA 2.0</a></figcaption>
+</figure>
+</div>
+<div class="notes">
+<p>To wrap up—summarising data is how we turn messy biological variation into something we can actually interpret.</p>
+<p>We’ve seen how summarise() and group_by() work together to create tidy summaries, and how helper functions like n(), mean(), and count() make quick work of common calculations. And remember, missing values can quietly cause errors or distort your results, so always check for them.</p>
+<p>In the next session, we’ll take these summaries and bring them to life through data visualisation—one of the most powerful ways to explore patterns and communicate science clearly.</p>
+</div>
+<hr>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-understanding">❓Check your understanding</h2>
+<ol type="1">
+<li>Use <code>summarise()</code> to find the average flipper length across all penguins.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_flipper =</span> <span class="fu">mean</span>(flipper_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<hr>
+<ol start="2" type="1">
+<li>Use <code>group_by()</code> and <code>summarise()</code> to calculate the mean and median body mass for each island.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(island) <span class="sc">|&gt;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_mass =</span> <span class="fu">mean</span>(body_mass_g, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_mass =</span> <span class="fu">median</span>(body_mass_g, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<hr>
+<ol start="3" type="1">
+<li>How many penguins of each species are in the dataset? (use <code>count()</code>).</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(species)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<hr>
+<ol start="4" type="1">
+<li>For each species, calculate both the average and standard deviation of bill depth.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_depth =</span> <span class="fu">mean</span>(bill_depth_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_depth   =</span> <span class="fu">sd</span>(bill_depth_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<hr>
+<ol start="5" type="1">
+<li>Why might <code>na.rm = TRUE</code> be important when summarising?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If you don’t use <code>na.rm = TRUE</code>, any missing values (<code>NA</code>) will make the whole summary result <code>NA</code>. Setting <code>na.rm = TRUE</code> tells R to ignore missing data and calculate the summary from the values that are present.</p>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<style id="force-hide-notes">
+  /* Obliterate all .notes blocks everywhere */
+  .notes, div.notes, section .notes {
+    all: unset !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    z-index: -9999 !important;
+  }
+</style>
+  <script>
+  // As a backup, remove them entirely after load
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.notes').forEach(el => el.remove());
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BIOL33031/BIOL65161">
+
+<title>📝 Practical: Linear modelling – BIOL33031/BIOL65161</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2216a8e0a9d9492edde58845aa8d0122.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../html.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#part-1-loading-and-visualising-the-trees-data" id="toc-part-1-loading-and-visualising-the-trees-data" class="nav-link active" data-scroll-target="#part-1-loading-and-visualising-the-trees-data">Part 1: Loading and visualising the <code>trees</code> data</a>
+  <ul class="collapse">
+  <li><a href="#load-up-the-data" id="toc-load-up-the-data" class="nav-link" data-scroll-target="#load-up-the-data">1.1 Load up the data</a></li>
+  <li><a href="#visualise-the-data" id="toc-visualise-the-data" class="nav-link" data-scroll-target="#visualise-the-data">1.2 Visualise the data</a></li>
+  </ul></li>
+  <li><a href="#part-2-fitting-a-linear-model" id="toc-part-2-fitting-a-linear-model" class="nav-link" data-scroll-target="#part-2-fitting-a-linear-model">Part 2: Fitting a linear model</a>
+  <ul class="collapse">
+  <li><a href="#fit-a-linear-model-of-volume-as-a-function-of-girth" id="toc-fit-a-linear-model-of-volume-as-a-function-of-girth" class="nav-link" data-scroll-target="#fit-a-linear-model-of-volume-as-a-function-of-girth">2.1 fit a linear model of volume as a function of girth</a></li>
+  <li><a href="#visualise-the-fit" id="toc-visualise-the-fit" class="nav-link" data-scroll-target="#visualise-the-fit">2.2 Visualise the fit</a></li>
+  </ul></li>
+  <li><a href="#part-3-comparing-models" id="toc-part-3-comparing-models" class="nav-link" data-scroll-target="#part-3-comparing-models">Part 3: Comparing models</a>
+  <ul class="collapse">
+  <li><a href="#adding-another-main-effect-and-an-interaction-effect" id="toc-adding-another-main-effect-and-an-interaction-effect" class="nav-link" data-scroll-target="#adding-another-main-effect-and-an-interaction-effect">3.1 Adding another <em>main effect</em> and an <em>interaction effect</em></a></li>
+  <li><a href="#thinking-about-model-simplification" id="toc-thinking-about-model-simplification" class="nav-link" data-scroll-target="#thinking-about-model-simplification">3.2 Thinking about model simplification</a></li>
+  </ul></li>
+  <li><a href="#part-4-linear-modelling-with-a-categorical-explanatory-variable" id="toc-part-4-linear-modelling-with-a-categorical-explanatory-variable" class="nav-link" data-scroll-target="#part-4-linear-modelling-with-a-categorical-explanatory-variable">Part 4: Linear modelling with a categorical explanatory variable</a>
+  <ul class="collapse">
+  <li><a href="#take-a-first-look-at-the-data-and-wrangle-it" id="toc-take-a-first-look-at-the-data-and-wrangle-it" class="nav-link" data-scroll-target="#take-a-first-look-at-the-data-and-wrangle-it">4.1 take a first look at the data and wrangle it</a></li>
+  <li><a href="#fit-a-linear-model-with-both-explanatory-effects-and-their-interaction" id="toc-fit-a-linear-model-with-both-explanatory-effects-and-their-interaction" class="nav-link" data-scroll-target="#fit-a-linear-model-with-both-explanatory-effects-and-their-interaction">4.2 fit a linear model with both explanatory effects and their interaction</a></li>
+  </ul></li>
+  <li><a href="#part-5-fit-a-revised-linear-model-that-doesnt-assume-homoscedasticity" id="toc-part-5-fit-a-revised-linear-model-that-doesnt-assume-homoscedasticity" class="nav-link" data-scroll-target="#part-5-fit-a-revised-linear-model-that-doesnt-assume-homoscedasticity">Part 5: Fit a revised linear model that doesn’t assume homoscedasticity</a>
+  <ul class="collapse">
+  <li><a href="#fit-exactly-the-same-model-as-we-fitted-with-lm-but-with-gls" id="toc-fit-exactly-the-same-model-as-we-fitted-with-lm-but-with-gls" class="nav-link" data-scroll-target="#fit-exactly-the-same-model-as-we-fitted-with-lm-but-with-gls">5.1 Fit exactly the same model as we fitted with <code>lm()</code>, but with <code>gls()</code></a></li>
+  <li><a href="#fit-a-model-where-the-variance-can-change-with-the-fitted-value" id="toc-fit-a-model-where-the-variance-can-change-with-the-fitted-value" class="nav-link" data-scroll-target="#fit-a-model-where-the-variance-can-change-with-the-fitted-value">5.2 Fit a model where the variance can change with the fitted value</a></li>
+  </ul></li>
+  <li><a href="#part-6-reflection" id="toc-part-6-reflection" class="nav-link" data-scroll-target="#part-6-reflection">Part 6: Reflection</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">📝 Practical: Linear modelling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BIOL33031/BIOL65161 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This worksheet will help practice fitting and using <strong>linear models</strong>. It will use ideas previously introduced e.g.&nbsp;about <strong>hypothesis testing</strong> — including the null hypothesis, <em>p</em>-values and their interpretation. It will implement the approaches described in the videos using <strong>real data and R code</strong>.</p>
+<p>We’ll focus this time on plant data sets <code>trees</code> and <code>iris</code>both available in R</p>
+<hr>
+<section id="part-1-loading-and-visualising-the-trees-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-loading-and-visualising-the-trees-data">Part 1: Loading and visualising the <code>trees</code> data</h2>
+<p><code>trees</code> is a dataset within R</p>
+<section id="load-up-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="load-up-the-data">1.1 Load up the data</h3>
+<p>load and take a first look at some of the data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load the packages we're going to use today - work out how to install them if you don't have them</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'nlme'
+
+The following object is masked from 'package:dplyr':
+
+    collapse</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a look at the data</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 31 × 3
+   Girth Height Volume
+   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1   8.3     70   10.3
+ 2   8.6     65   10.3
+ 3   8.8     63   10.2
+ 4  10.5     72   16.4
+ 5  10.7     81   18.8
+ 6  10.8     83   19.7
+ 7  11       66   15.6
+ 8  11       75   18.2
+ 9  11.1     80   22.6
+10  11.2     75   19.9
+# ℹ 21 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#take a look at the help file to see what the columns each mean</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>?trees</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>All three variables come through as the same type</p>
+<section id="q1.1.1-what-is-the-columns-variable-type-and-is-it-appropriate" class="level4">
+<h4 class="anchored" data-anchor-id="q1.1.1-what-is-the-columns-variable-type-and-is-it-appropriate">Q1.1.1 What is the columns’ variable type and is it appropriate?</h4>
+<p>For reference here is a table of possible data types:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 30%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Category</strong></th>
+<th><strong>R Type/Class</strong></th>
+<th><strong>Description / Example Usage</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Numeric</strong></td>
+<td><code>numeric</code>, <code>integer</code>, <code>double</code></td>
+<td>Continuous or count data, e.g.&nbsp;measurements, ages, weights.</td>
+</tr>
+<tr class="even">
+<td><strong>Logical</strong></td>
+<td><code>logical</code></td>
+<td>TRUE/FALSE values for conditions or binary flags.</td>
+</tr>
+<tr class="odd">
+<td><strong>Categorical</strong></td>
+<td><code>factor</code>, <code>ordered</code></td>
+<td>Discrete categories or ordinal scales (e.g.&nbsp;sex, treatment).</td>
+</tr>
+<tr class="even">
+<td><strong>Text</strong></td>
+<td><code>character</code></td>
+<td>Plain text strings.</td>
+</tr>
+<tr class="odd">
+<td><strong>Date / Time</strong></td>
+<td><code>Date</code>, <code>POSIXct</code>, <code>POSIXlt</code></td>
+<td>Calendar dates and timestamps.</td>
+</tr>
+<tr class="even">
+<td><strong>Complex Numbers</strong></td>
+<td><code>complex</code></td>
+<td>Numbers with real and imaginary parts (rarely used).</td>
+</tr>
+<tr class="odd">
+<td><strong>Raw Data</strong></td>
+<td><code>raw</code></td>
+<td>Byte-level data, e.g.&nbsp;binary representations.</td>
+</tr>
+<tr class="even">
+<td><strong>Containers</strong></td>
+<td><code>list</code>, <code>data.frame</code>, <code>tibble</code>, <code>matrix</code></td>
+<td>Structures for grouping multiple variables or elements.</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The columns are labelled &lt;dbl&gt; which is short for ‘double’ which is a continuous numeric value. This seems appropriate for each of the three variables.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q1.1.2-what-simple-analysis-or-hypothesis-test-might-we-do-on-this-data-try-doing-that-analysis" class="level4">
+<h4 class="anchored" data-anchor-id="q1.1.2-what-simple-analysis-or-hypothesis-test-might-we-do-on-this-data-try-doing-that-analysis">Q1.1.2 What simple analysis or hypothesis test might we do on this data? – Try doing that analysis</h4>
+<p>Think back to options from the last session…don’t spend too much time on this!</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Might want to ask if there’s a significant correlation between the variables</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           Girth    Height    Volume
+Girth  1.0000000 0.5192801 0.9671194
+Height 0.5192801 1.0000000 0.5982497
+Volume 0.9671194 0.5982497 1.0000000</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(trees<span class="sc">$</span>Girth, trees<span class="sc">$</span>Height)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  trees$Girth and trees$Height
+t = 3.2722, df = 29, p-value = 0.002758
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.2021327 0.7378538
+sample estimates:
+      cor 
+0.5192801 </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="q1.1.3-what-might-we-think-of-as-response-and-explanatory-variables-here" class="level4">
+<h4 class="anchored" data-anchor-id="q1.1.3-what-might-we-think-of-as-response-and-explanatory-variables-here">Q1.1.3 What might we think of as response and explanatory variables here?</h4>
+<p>Think about why this data was collected and what they might have been able to control in collecting the data.</p>
+</section>
+</section>
+<section id="visualise-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="visualise-the-data">1.2 Visualise the data</h3>
+<section id="q1.2.1-make-a-plot-showing-all-three-variables-in-an-appropriate-way" class="level4">
+<h4 class="anchored" data-anchor-id="q1.2.1-make-a-plot-showing-all-three-variables-in-an-appropriate-way">Q1.2.1 Make a plot showing all three variables in an appropriate way</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Can map two continuous variables to axes and the third to colour:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Girth, <span class="at">y =</span> Volume, <span class="at">colour =</span> Height)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#or using the other variable</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a> trees <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Height, <span class="at">y =</span> Volume, <span class="at">colour =</span> Girth)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>#alternatively could do all pairwise plots at the same time (and get correlations) in one go:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="part-2-fitting-a-linear-model" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-fitting-a-linear-model">Part 2: Fitting a linear model</h2>
+<section id="fit-a-linear-model-of-volume-as-a-function-of-girth" class="level3">
+<h3 class="anchored" data-anchor-id="fit-a-linear-model-of-volume-as-a-function-of-girth">2.1 fit a linear model of volume as a function of girth</h3>
+<p>And then check its diagnostic plots</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model_vg <span class="ot">&lt;-</span> <span class="fu">lm</span>(Volume <span class="sc">~</span> Girth, <span class="at">data =</span> trees)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_vg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="q2.1.1-what-do-you-make-of-the-diagnostics-plots-and-what-might-you-do-about-it" class="level4">
+<h4 class="anchored" data-anchor-id="q2.1.1-what-do-you-make-of-the-diagnostics-plots-and-what-might-you-do-about-it">Q2.1.1 What do you make of the diagnostics plots and what might you do about it?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Looks a bit curvy (positive residuals at both low and high values) – could transform – logging both axes would be equivalent to fitting a power law instead of a straight line, which might make sense in terms of the biology, or just how you get from a linear measurement to a volume i.e.&nbsp;<span class="math inline">\(Volume = a \times Girth^b\)</span> where the linear model parameters are <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> and we might expect <span class="math inline">\(b\)</span> to be 2.</p>
+</div>
+</div>
+</div>
+<p>Now look at the summary of the model</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_vg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Volume ~ Girth, data = trees)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.065 -3.107  0.152  3.495  9.587 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -36.9435     3.3651  -10.98 7.62e-12 ***
+Girth         5.0659     0.2474   20.48  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.252 on 29 degrees of freedom
+Multiple R-squared:  0.9353,    Adjusted R-squared:  0.9331 
+F-statistic: 419.4 on 1 and 29 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Notice the R-squared value, i.e.&nbsp;the proportion of variance explained, is very high (0.93)</p>
+</section>
+<section id="q2.1.2-figure-out-the-best-estimate-error-and-units-for-how-much-volume-increases-with-girth" class="level4">
+<h4 class="anchored" data-anchor-id="q2.1.2-figure-out-the-best-estimate-error-and-units-for-how-much-volume-increases-with-girth">Q2.1.2 Figure out the best estimate, error and units for how much volume increases with girth</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>5.1 ± 0.25 (SE) (cubic feet/inch)</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="visualise-the-fit" class="level3">
+<h3 class="anchored" data-anchor-id="visualise-the-fit">2.2 Visualise the fit</h3>
+<p>Want to see what’s going on – by default the <code>predict</code> function gives the value predicted by the model at the same points as you have data, so you can create a new column of precitions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(model_vg)) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Girth, <span class="at">y =</span> Volume)) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred))<span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="q2.2.1-try-re-plotting-the-data-and-fit-with-two-logarithmic-axes-how-does-this-make-you-feel-about-doing-a-log-log-power-law-fit-instead" class="level4">
+<h4 class="anchored" data-anchor-id="q2.2.1-try-re-plotting-the-data-and-fit-with-two-logarithmic-axes-how-does-this-make-you-feel-about-doing-a-log-log-power-law-fit-instead">Q2.2.1 Try re-plotting the data and fit with two logarithmic axes – how does this make you feel about doing a log-log (power law) fit instead?</h4>
+<p>If in doubt how to do it, ask your favourite large language model!</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(model_vg)) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Girth, <span class="at">y =</span> Volume)) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred))<span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>()<span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Pretty good for most of the data, but very bad for the smallest trees – apart from them, there’s not going to be much to choose between the models in terms of fit – need to make the choice based on biology or reasoning. Press ahead with this one for now.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="part-3-comparing-models" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-comparing-models">Part 3: Comparing models</h2>
+<section id="adding-another-main-effect-and-an-interaction-effect" class="level3">
+<h3 class="anchored" data-anchor-id="adding-another-main-effect-and-an-interaction-effect">3.1 Adding another <em>main effect</em> and an <em>interaction effect</em></h3>
+<p>This regression model explains lots of the variance, but wouldn’t we expect tree height to tell us something useful about the volume too?</p>
+<p>Let’s fit a model containing both Girth, Height and their interaction:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model_vghi <span class="ot">&lt;-</span> <span class="fu">lm</span>(Volume <span class="sc">~</span> Girth <span class="sc">*</span> Height, <span class="at">data =</span> trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Decide if we need that interaction effect – can check using anova:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: Volume
+             Df Sum Sq Mean Sq  F value    Pr(&gt;F)    
+Girth         1 7581.8  7581.8 1033.469 &lt; 2.2e-16 ***
+Height        1  102.4   102.4   13.956 0.0008867 ***
+Girth:Height  1  223.8   223.8   30.512 7.484e-06 ***
+Residuals    27  198.1     7.3                       
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>That says that the interaction between girth and height is highly significant (<span class="math inline">\(p = 7.5 \times 10 ^{-6})\)</span>)</p>
+<section id="q3.1.1-can-you-test-the-significance-of-the-girthheight-interaction-term-in-a-different-way" class="level4">
+<h4 class="anchored" data-anchor-id="q3.1.1-can-you-test-the-significance-of-the-girthheight-interaction-term-in-a-different-way">Q3.1.1 Can you test the significance of the girth:height interaction term in a different way?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Could just look at the Wald test in the summary:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Volume ~ Girth * Height, data = trees)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.5821 -1.0673  0.3026  1.5641  4.6649 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  69.39632   23.83575   2.911  0.00713 ** 
+Girth        -5.85585    1.92134  -3.048  0.00511 ** 
+Height       -1.29708    0.30984  -4.186  0.00027 ***
+Girth:Height  0.13465    0.02438   5.524 7.48e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.709 on 27 degrees of freedom
+Multiple R-squared:  0.9756,    Adjusted R-squared:  0.9728 
+F-statistic: 359.3 on 3 and 27 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Or could create a reduced model and compare it with a full model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model_vgh <span class="ot">&lt;-</span> <span class="fu">lm</span>(Volume <span class="sc">~</span> Girth <span class="sc">+</span> Height, <span class="at">data =</span> trees)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_vgh, model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: Volume ~ Girth + Height
+Model 2: Volume ~ Girth * Height
+  Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+1     28 421.92                                  
+2     27 198.08  1    223.84 30.512 7.484e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3.1.2-what-proportion-of-the-variance-in-volume-is-explained-by-this-model" class="level4">
+<h4 class="anchored" data-anchor-id="q3.1.2-what-proportion-of-the-variance-in-volume-is-explained-by-this-model">Q3.1.2 What proportion of the variance in volume is explained by this model?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Check with a summary of the model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Volume ~ Girth * Height, data = trees)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-6.5821 -1.0673  0.3026  1.5641  4.6649 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  69.39632   23.83575   2.911  0.00713 ** 
+Girth        -5.85585    1.92134  -3.048  0.00511 ** 
+Height       -1.29708    0.30984  -4.186  0.00027 ***
+Girth:Height  0.13465    0.02438   5.524 7.48e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.709 on 27 degrees of freedom
+Multiple R-squared:  0.9756,    Adjusted R-squared:  0.9728 
+F-statistic: 359.3 on 3 and 27 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>98% Notice that there are two R-squared values - the ‘Multiple R-squared’ is the straightforward proportion of variance explained, the ‘Adjusted R-squared’ takes into account the number of parameters, so may be better for comparing models with different numbers of parameters.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q3.1.3-check-the-diagnostic-plots-for-the-model-and-plot-the-predicted-values-with-the-data---what-do-you-conclude" class="level4">
+<h4 class="anchored" data-anchor-id="q3.1.3-check-the-diagnostic-plots-for-the-model-and-plot-the-predicted-values-with-the-data---what-do-you-conclude">Q3.1.3 Check the diagnostic plots for the model and plot the predicted values with the data - what do you conclude?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The residuals versus fitted plot looks better than the single-explanatory variable model, the normality looks slightly less good</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-14-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And plot:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">|&gt;</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred2 =</span> <span class="fu">predict</span>(model_vghi)) <span class="sc">|&gt;</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Girth, <span class="at">y =</span> Volume, <span class="at">colour =</span> Height)) <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred2))<span class="sc">+</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Because of the two explanatory variables, there isn’t a nice clear line, but it is clear that accounting for height substantially improves the fit for volume, including capturing the upward curve seen on this plot and fitting those three smallest trees much better.</p>
+<p>Might be better to plot different lines for expected values from different levels of height - slightly beyond what we want to do here, but is certainly possible by giving a new tibble with particular values in the height column to the <code>newdata</code> argument of the <code>predict()</code> function, and also possibly using functions in other packages.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="thinking-about-model-simplification" class="level3">
+<h3 class="anchored" data-anchor-id="thinking-about-model-simplification">3.2 Thinking about model simplification</h3>
+<p>If losing the interaction effect hadn’t made the model significantly worse, we could have removed it and then, tried removing one of the main effects (height or girth) too, picking the one where the effect was least significantly different from zero.</p>
+<p>This kind of sequential simplification can help make complex models much more interpretable, but needs to be done carefully – effects shouldn’t be removed if they are required by (higher order) interactions. And it’s always the least significant effect that should be removed first, comparing models with and without the effect after every removal. Such stepwise simplification and comparison can be done by AIC - checking the AIC of each model with one effect that can be removed, removed. The better model – the one with the lower AIC – is chosen and the process is repeated.</p>
+<p>The <code>step()</code> function does this in an automated way:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step</span>(model_vghi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=65.49
+Volume ~ Girth * Height
+
+               Df Sum of Sq    RSS    AIC
+&lt;none&gt;                      198.08 65.495
+- Girth:Height  1    223.84 421.92 86.936</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Volume ~ Girth * Height, data = trees)
+
+Coefficients:
+ (Intercept)         Girth        Height  Girth:Height  
+     69.3963       -5.8558       -1.2971        0.1347  </code></pre>
+</div>
+</div>
+<p>Here we see that the starting model (in the row &lt;none&gt; because none of the effects was removed) has a lower AIC (65) than a model with the Girth:Height interaction removed (AIC = 87), showing that the Girth:Height interaction should be kept. <code>step</code> doesn’t try removing the main effects of either Girth or Height, because they’re each involved in the Girth:Height interaction, so that interaction would need to be removed first. The output lines below this, starting with “Call” show the final, reduced model that is returned – here it’s the same model that we started with.</p>
+</section>
+</section>
+<section id="part-4-linear-modelling-with-a-categorical-explanatory-variable" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-linear-modelling-with-a-categorical-explanatory-variable">Part 4: Linear modelling with a categorical explanatory variable</h2>
+<p>Using <code>iris</code> a classic dataset of measurements from three species of iris.</p>
+<section id="take-a-first-look-at-the-data-and-wrangle-it" class="level3">
+<h3 class="anchored" data-anchor-id="take-a-first-look-at-the-data-and-wrangle-it">4.1 take a first look at the data and wrangle it</h3>
+<p>Take a first look at some of the data, which contains five variables. Also check the help file.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(iris)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>?iris</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Could think about this in different ways, but here we’re going to think about how different species have different measurements - species is the explanatory variable, measurement is the response. This means that, to get long-format data, all the different measurements of different structures can be stacked up in a single column:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#As it happens all the measurement columns have a dot in the middle - lets use that to identify them and stack them up:</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>iris_stacked <span class="ot">&lt;-</span> iris <span class="sc">|&gt;</span> </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">contains</span>(<span class="st">"."</span>), <span class="at">names_to =</span> <span class="st">"structure_measured"</span>, <span class="at">values_to =</span> <span class="st">"measurement"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>iris_stacked</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 600 × 3
+   Species structure_measured measurement
+   &lt;fct&gt;   &lt;chr&gt;                    &lt;dbl&gt;
+ 1 setosa  Sepal.Length               5.1
+ 2 setosa  Sepal.Width                3.5
+ 3 setosa  Petal.Length               1.4
+ 4 setosa  Petal.Width                0.2
+ 5 setosa  Sepal.Length               4.9
+ 6 setosa  Sepal.Width                3  
+ 7 setosa  Petal.Length               1.4
+ 8 setosa  Petal.Width                0.2
+ 9 setosa  Sepal.Length               4.7
+10 setosa  Sepal.Width                3.2
+# ℹ 590 more rows</code></pre>
+</div>
+</div>
+<section id="q4.1.1-look-at-the-data-types-for-the-different-columns-what-are-they-why-are-they-all-different-do-they-need-to-be" class="level4">
+<h4 class="anchored" data-anchor-id="q4.1.1-look-at-the-data-types-for-the-different-columns-what-are-they-why-are-they-all-different-do-they-need-to-be">Q4.1.1 Look at the data types for the different columns – what are they? Why are they all different? Do they need to be?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>While both categorical, the Species and structure_measured columns are different - Spcies is a factor, because that is what it was in the original <code>iris</code> dataframe, whereas structure measured was created in stacking up the data, so is just a character. They don’t need to be different, but it (probably) doesn’t matter for the modelling.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q4.1.2-plot-out-the-full-dataset-and-comment-on-what-it-looks-like" class="level4">
+<h4 class="anchored" data-anchor-id="q4.1.2-plot-out-the-full-dataset-and-comment-on-what-it-looks-like">Q4.1.2 Plot out the full dataset and comment on what it looks like</h4>
+<p>Start by plotting however you can. Then try to do a version involving the measured structure on the x axis and separate facets for each species using facet_wrap(). Ask a large language model how to angle your axis text so that it doesn’t overlap</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#first attempt</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>iris_stacked <span class="sc">|&gt;</span> </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Species, <span class="at">y =</span> measurement, <span class="at">colour =</span> structure_measured))<span class="sc">+</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#slightly better attempt using facet_wrap</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>iris_stacked <span class="sc">|&gt;</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> structure_measured, <span class="at">y =</span> measurement, <span class="at">fill =</span> structure_measured))<span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>)<span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Species)<span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">"none"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-19-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The species clearly line up from small (<em>setosa</em>) to big (<em>virginica</em>), but sepal width and petal length swap over - sepals are wider than petals in <em>setosa</em> but vice versa in versicolor and more distinctly so in <em>virginica</em>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="fit-a-linear-model-with-both-explanatory-effects-and-their-interaction" class="level3">
+<h3 class="anchored" data-anchor-id="fit-a-linear-model-with-both-explanatory-effects-and-their-interaction">4.2 fit a linear model with both explanatory effects and their interaction</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>model_ssi <span class="ot">&lt;-</span> <span class="fu">lm</span>(measurement <span class="sc">~</span> Species <span class="sc">*</span> structure_measured, <span class="at">data =</span> iris_stacked)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="q4.2.1-check-the-diagnostic-plots-and-summary-is-this-model-ok" class="level4">
+<h4 class="anchored" data-anchor-id="q4.2.1-check-the-diagnostic-plots-and-summary-is-this-model-ok">Q4.2.1 Check the diagnostic plots and summary – is this model ok?</h4>
+<p>What might you consider changing?</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_ssi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-21-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-21-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-21-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_ssi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = measurement ~ Species * structure_measured, data = iris_stacked)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.6880 -0.2260 -0.0260  0.1985  1.3480 
+
+Coefficients:
+                                                 Estimate Std. Error t value
+(Intercept)                                       1.46200    0.05511   26.53
+Speciesversicolor                                 2.79800    0.07794   35.90
+Speciesvirginica                                  4.09000    0.07794   52.48
+structure_measuredPetal.Width                    -1.21600    0.07794  -15.60
+structure_measuredSepal.Length                    3.54400    0.07794   45.47
+structure_measuredSepal.Width                     1.96600    0.07794   25.23
+Speciesversicolor:structure_measuredPetal.Width  -1.71800    0.11022  -15.59
+Speciesvirginica:structure_measuredPetal.Width   -2.31000    0.11022  -20.96
+Speciesversicolor:structure_measuredSepal.Length -1.86800    0.11022  -16.95
+Speciesvirginica:structure_measuredSepal.Length  -2.50800    0.11022  -22.75
+Speciesversicolor:structure_measuredSepal.Width  -3.45600    0.11022  -31.35
+Speciesvirginica:structure_measuredSepal.Width   -4.54400    0.11022  -41.23
+                                                 Pr(&gt;|t|)    
+(Intercept)                                        &lt;2e-16 ***
+Speciesversicolor                                  &lt;2e-16 ***
+Speciesvirginica                                   &lt;2e-16 ***
+structure_measuredPetal.Width                      &lt;2e-16 ***
+structure_measuredSepal.Length                     &lt;2e-16 ***
+structure_measuredSepal.Width                      &lt;2e-16 ***
+Speciesversicolor:structure_measuredPetal.Width    &lt;2e-16 ***
+Speciesvirginica:structure_measuredPetal.Width     &lt;2e-16 ***
+Speciesversicolor:structure_measuredSepal.Length   &lt;2e-16 ***
+Speciesvirginica:structure_measuredSepal.Length    &lt;2e-16 ***
+Speciesversicolor:structure_measuredSepal.Width    &lt;2e-16 ***
+Speciesvirginica:structure_measuredSepal.Width     &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3897 on 588 degrees of freedom
+Multiple R-squared:  0.9618,    Adjusted R-squared:  0.9611 
+F-statistic:  1346 on 11 and 588 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>The model is explaining lots of the variance (96%), but there’s something very striking going on with the residuals – at small values they’re small at large values they’re large. This is visible in all four of the diagnostic plots.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="part-5-fit-a-revised-linear-model-that-doesnt-assume-homoscedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="part-5-fit-a-revised-linear-model-that-doesnt-assume-homoscedasticity">Part 5: Fit a revised linear model that doesn’t assume homoscedasticity</h2>
+<p>For this will need to use the <code>gls()</code> function in the <code>nlme</code> package. gls stands for ‘generalized least squares’ it lets us relax some of the stict assumptions in a normal linear model.</p>
+<section id="fit-exactly-the-same-model-as-we-fitted-with-lm-but-with-gls" class="level3">
+<h3 class="anchored" data-anchor-id="fit-exactly-the-same-model-as-we-fitted-with-lm-but-with-gls">5.1 Fit exactly the same model as we fitted with <code>lm()</code>, but with <code>gls()</code></h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>model_ssi_g <span class="ot">&lt;-</span> <span class="fu">gls</span>(measurement <span class="sc">~</span> Species <span class="sc">*</span> structure_measured, <span class="at">data =</span> iris_stacked)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="q5.1.1-compare-the-models-fitted-by-lm-and-gls-convince-yourself-that-the-underlying-model-is-the-same-and-use-tools-you-know-about-e.g.-plot-summary-anova-to-compare-how-they-are-presented." class="level4">
+<h4 class="anchored" data-anchor-id="q5.1.1-compare-the-models-fitted-by-lm-and-gls-convince-yourself-that-the-underlying-model-is-the-same-and-use-tools-you-know-about-e.g.-plot-summary-anova-to-compare-how-they-are-presented.">Q5.1.1 Compare the models fitted by <code>lm</code> and <code>gls</code> – convince yourself that the underlying model is the same and use tools you know about (e.g.&nbsp;<code>plot()</code>, <code>summary()</code>, <code>anova()</code>) to compare how they are presented.</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>gls gives a simpler output from plot:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_ssi_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>but more output in its summary</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_ssi_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized least squares fit by REML
+  Model: measurement ~ Species * structure_measured 
+  Data: iris_stacked 
+       AIC      BIC    logLik
+  633.3803 690.2778 -303.6902
+
+Coefficients:
+                                                  Value  Std.Error   t-value
+(Intercept)                                       1.462 0.05511195  26.52782
+Speciesversicolor                                 2.798 0.07794006  35.89938
+Speciesvirginica                                  4.090 0.07794006  52.47622
+structure_measuredPetal.Width                    -1.216 0.07794006 -15.60173
+structure_measuredSepal.Length                    3.544 0.07794006  45.47084
+structure_measuredSepal.Width                     1.966 0.07794006  25.22451
+Speciesversicolor:structure_measuredPetal.Width  -1.718 0.11022389 -15.58646
+Speciesvirginica:structure_measuredPetal.Width   -2.310 0.11022389 -20.95734
+Speciesversicolor:structure_measuredSepal.Length -1.868 0.11022389 -16.94732
+Speciesvirginica:structure_measuredSepal.Length  -2.508 0.11022389 -22.75369
+Speciesversicolor:structure_measuredSepal.Width  -3.456 0.11022389 -31.35436
+Speciesvirginica:structure_measuredSepal.Width   -4.544 0.11022389 -41.22518
+                                                 p-value
+(Intercept)                                            0
+Speciesversicolor                                      0
+Speciesvirginica                                       0
+structure_measuredPetal.Width                          0
+structure_measuredSepal.Length                         0
+structure_measuredSepal.Width                          0
+Speciesversicolor:structure_measuredPetal.Width        0
+Speciesvirginica:structure_measuredPetal.Width         0
+Speciesversicolor:structure_measuredSepal.Length       0
+Speciesvirginica:structure_measuredSepal.Length        0
+Speciesversicolor:structure_measuredSepal.Width        0
+Speciesvirginica:structure_measuredSepal.Width         0
+
+ Correlation: 
+                                                 (Intr) Spcsvrs Spcsvrg st_P.W
+Speciesversicolor                                -0.707                       
+Speciesvirginica                                 -0.707  0.500                
+structure_measuredPetal.Width                    -0.707  0.500   0.500        
+structure_measuredSepal.Length                   -0.707  0.500   0.500   0.500
+structure_measuredSepal.Width                    -0.707  0.500   0.500   0.500
+Speciesversicolor:structure_measuredPetal.Width   0.500 -0.707  -0.354  -0.707
+Speciesvirginica:structure_measuredPetal.Width    0.500 -0.354  -0.707  -0.707
+Speciesversicolor:structure_measuredSepal.Length  0.500 -0.707  -0.354  -0.354
+Speciesvirginica:structure_measuredSepal.Length   0.500 -0.354  -0.707  -0.354
+Speciesversicolor:structure_measuredSepal.Width   0.500 -0.707  -0.354  -0.354
+Speciesvirginica:structure_measuredSepal.Width    0.500 -0.354  -0.707  -0.354
+                                                 st_S.L st_S.W Spcsvrs:_P.W
+Speciesversicolor                                                          
+Speciesvirginica                                                           
+structure_measuredPetal.Width                                              
+structure_measuredSepal.Length                                             
+structure_measuredSepal.Width                     0.500                    
+Speciesversicolor:structure_measuredPetal.Width  -0.354 -0.354             
+Speciesvirginica:structure_measuredPetal.Width   -0.354 -0.354  0.500      
+Speciesversicolor:structure_measuredSepal.Length -0.707 -0.354  0.500      
+Speciesvirginica:structure_measuredSepal.Length  -0.707 -0.354  0.250      
+Speciesversicolor:structure_measuredSepal.Width  -0.354 -0.707  0.500      
+Speciesvirginica:structure_measuredSepal.Width   -0.354 -0.707  0.250      
+                                                 Spcsvrg:_P.W Spcsvrs:_S.L
+Speciesversicolor                                                         
+Speciesvirginica                                                          
+structure_measuredPetal.Width                                             
+structure_measuredSepal.Length                                            
+structure_measuredSepal.Width                                             
+Speciesversicolor:structure_measuredPetal.Width                           
+Speciesvirginica:structure_measuredPetal.Width                            
+Speciesversicolor:structure_measuredSepal.Length  0.250                   
+Speciesvirginica:structure_measuredSepal.Length   0.500        0.500      
+Speciesversicolor:structure_measuredSepal.Width   0.250        0.500      
+Speciesvirginica:structure_measuredSepal.Width    0.500        0.250      
+                                                 Spcsvrg:_S.L Spcsvrs:_S.W
+Speciesversicolor                                                         
+Speciesvirginica                                                          
+structure_measuredPetal.Width                                             
+structure_measuredSepal.Length                                            
+structure_measuredSepal.Width                                             
+Speciesversicolor:structure_measuredPetal.Width                           
+Speciesvirginica:structure_measuredPetal.Width                            
+Speciesversicolor:structure_measuredSepal.Length                          
+Speciesvirginica:structure_measuredSepal.Length                           
+Speciesversicolor:structure_measuredSepal.Width   0.250                   
+Speciesvirginica:structure_measuredSepal.Width    0.500        0.500      
+
+Standardized residuals:
+        Min          Q1         Med          Q3         Max 
+-4.33153371 -0.57993283 -0.06671794  0.50936578  3.45906839 
+
+Residual standard error: 0.3897003 
+Degrees of freedom: 600 total; 588 residual</code></pre>
+</div>
+</div>
+<p>anova presents the output slightly differently</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_ssi_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Denom. DF: 588 
+                           numDF  F-value p-value
+(Intercept)                    1 47421.02  &lt;.0001
+Species                        2  1019.34  &lt;.0001
+structure_measured             3  3635.35  &lt;.0001
+Species:structure_measured     6   309.99  &lt;.0001</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>The models can be directly compared via <code>anova</code>, showing that the fit of the two models is equivalent</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_ssi_g, model_ssi)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Model df      AIC      BIC    logLik
+model_ssi_g     1 13 633.3803 690.2778 -303.6902
+model_ssi       2 13 633.3803 690.2778 -303.6902</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="fit-a-model-where-the-variance-can-change-with-the-fitted-value" class="level3">
+<h3 class="anchored" data-anchor-id="fit-a-model-where-the-variance-can-change-with-the-fitted-value">5.2 Fit a model where the variance can change with the fitted value</h3>
+<p>There are different ways we could imagine the variance changing, so there are several different variance structures available that we could try (see <code>?varClasses</code>), but <code>varPower</code> is one that, by default, allows variance to change as a power function of the fitted value. It often does a good job. Slightly oddly, it is given as the <code>weights</code> argument:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>model_ssi_gv <span class="ot">&lt;-</span> <span class="fu">gls</span>(measurement <span class="sc">~</span> Species <span class="sc">*</span> structure_measured, <span class="at">weights =</span> <span class="fu">varPower</span>(), <span class="at">data =</span> iris_stacked)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If we now examine the fit (just printing the model here, though could use <code>summary()</code> to get more output), can see that it’s fitted an extra parameter <code>power</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>model_ssi_gv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized least squares fit by REML
+  Model: measurement ~ Species * structure_measured 
+  Data: iris_stacked 
+  Log-restricted-likelihood: -199.9178
+
+Coefficients:
+                                     (Intercept) 
+                                           1.462 
+                               Speciesversicolor 
+                                           2.798 
+                                Speciesvirginica 
+                                           4.090 
+                   structure_measuredPetal.Width 
+                                          -1.216 
+                  structure_measuredSepal.Length 
+                                           3.544 
+                   structure_measuredSepal.Width 
+                                           1.966 
+ Speciesversicolor:structure_measuredPetal.Width 
+                                          -1.718 
+  Speciesvirginica:structure_measuredPetal.Width 
+                                          -2.310 
+Speciesversicolor:structure_measuredSepal.Length 
+                                          -1.868 
+ Speciesvirginica:structure_measuredSepal.Length 
+                                          -2.508 
+ Speciesversicolor:structure_measuredSepal.Width 
+                                          -3.456 
+  Speciesvirginica:structure_measuredSepal.Width 
+                                          -4.544 
+
+Variance function:
+ Structure: Power of variance covariate
+ Formula: ~fitted(.) 
+ Parameter estimates:
+    power 
+0.5426381 
+Degrees of freedom: 600 total; 588 residual
+Residual standard error: 0.1920414 </code></pre>
+</div>
+</div>
+<p>The fitted value of power is 0.54. That’s positive, meaning that the variance is increasing with the fitted value as we saw in the <code>lm</code> fit. Since this is a power function, that means that variance is increasing roughly with the square root of the fitted value.</p>
+<section id="q5.2.1-compare-the-two-gls-models-using-anova-the-one-with-the-changing-variance-and-the-one-without-does-this-extra-parameter-make-the-model-better-any-more-than-would-be-expected-just-by-having-a-more-complex-model" class="level4">
+<h4 class="anchored" data-anchor-id="q5.2.1-compare-the-two-gls-models-using-anova-the-one-with-the-changing-variance-and-the-one-without-does-this-extra-parameter-make-the-model-better-any-more-than-would-be-expected-just-by-having-a-more-complex-model">Q5.2.1 Compare the two <code>gls</code> models using <code>anova()</code> – the one with the changing variance and the one without – does this extra parameter make the model better, any more than would be expected just by having a more complex model?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(model_ssi_g, model_ssi_gv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+model_ssi_g      1 13 633.3803 690.2778 -303.6902                        
+model_ssi_gv     2 14 427.8356 489.1098 -199.9178 1 vs 2 207.5447  &lt;.0001</code></pre>
+</div>
+</div>
+<p>Both the likelihood ratio test and AIC make it very clear that there’s a significant improvement in the model by allowing for the heteroscedasticity.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q5.2.2-look-at-the-summaries-of-the-models-with-and-without-the-variance-effect---what-has-and-what-hasnt-changed-among-the-parameters" class="level4">
+<h4 class="anchored" data-anchor-id="q5.2.2-look-at-the-summaries-of-the-models-with-and-without-the-variance-effect---what-has-and-what-hasnt-changed-among-the-parameters">Q5.2.2 Look at the summaries of the models with and without the variance effect - what has and what hasn’t changed among the parameters?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The coefficients are exactly the same, but the errors on the estimates are all smaller, meaning we can be more sure about differences. For example, look at the confidence intervals on the parameters – the differences aren’t massive, but they’re consistent:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model_ssi_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                     2.5 %    97.5 %
+(Intercept)                                       1.353983  1.570017
+Speciesversicolor                                 2.645240  2.950760
+Speciesvirginica                                  3.937240  4.242760
+structure_measuredPetal.Width                    -1.368760 -1.063240
+structure_measuredSepal.Length                    3.391240  3.696760
+structure_measuredSepal.Width                     1.813240  2.118760
+Speciesversicolor:structure_measuredPetal.Width  -1.934035 -1.501965
+Speciesvirginica:structure_measuredPetal.Width   -2.526035 -2.093965
+Speciesversicolor:structure_measuredSepal.Length -2.084035 -1.651965
+Speciesvirginica:structure_measuredSepal.Length  -2.724035 -2.291965
+Speciesversicolor:structure_measuredSepal.Width  -3.672035 -3.239965
+Speciesvirginica:structure_measuredSepal.Width   -4.760035 -4.327965</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(model_ssi_gv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                     2.5 %    97.5 %
+(Intercept)                                       1.396587  1.527413
+Speciesversicolor                                 2.664070  2.931930
+Speciesvirginica                                  3.940046  4.239954
+structure_measuredPetal.Width                    -1.285981 -1.146019
+structure_measuredSepal.Length                    3.400642  3.687358
+structure_measuredSepal.Width                     1.843249  2.088751
+Speciesversicolor:structure_measuredPetal.Width  -1.867681 -1.568319
+Speciesvirginica:structure_measuredPetal.Width   -2.480885 -2.139115
+Speciesversicolor:structure_measuredSepal.Length -2.099922 -1.636078
+Speciesvirginica:structure_measuredSepal.Length  -2.754336 -2.261664
+Speciesversicolor:structure_measuredSepal.Width  -3.649099 -3.262901
+Speciesvirginica:structure_measuredSepal.Width   -4.750211 -4.337789</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Because the estimates of the coefficients haven’t changed, we might expect the residuals plots to look the same too, but they don’t. This is because the residuals plots show ‘Standardised residuals’. That means that the residuals have been scaled by the expected variance, which is different in the two models, so we can inspect them to see if the model is now ok.</p>
+</section>
+<section id="q5.2.3-look-at-the-residuals-plots-for-this-heteroscedastic-model-are-they-better-are-there-other-aspects-that-could-still-be-improved" class="level4">
+<h4 class="anchored" data-anchor-id="q5.2.3-look-at-the-residuals-plots-for-this-heteroscedastic-model-are-they-better-are-there-other-aspects-that-could-still-be-improved">Q5.2.3 Look at the residuals plots for this heteroscedastic model – are they better? Are there other aspects that could still be improved?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(model_ssi_gv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(model_ssi_gv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Maybe a bit too spread out at the lowest values, but MUCH better than before. Could maybe try one of the other variance functions to see if that works any better.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q5.2.4-redo-your-plot-of-the-data-from-q4.1.2-but-add-on-blobs-for-the-predicted-values-from-model_ssi_gv-and-give-it-a-squareroot-y-axis-using-scale_y_sqrt-which-we-now-expect-to-make-the-variance-look-similar-across-all-the-data." class="level4">
+<h4 class="anchored" data-anchor-id="q5.2.4-redo-your-plot-of-the-data-from-q4.1.2-but-add-on-blobs-for-the-predicted-values-from-model_ssi_gv-and-give-it-a-squareroot-y-axis-using-scale_y_sqrt-which-we-now-expect-to-make-the-variance-look-similar-across-all-the-data.">Q5.2.4 Redo your plot of the data from Q4.1.2, but add on blobs for the predicted values from <code>model_ssi_gv</code> and give it a squareroot y-axis using <code>scale_y_sqrt()</code>, which we now expect to make the variance look similar across all the data.</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>iris_stacked <span class="sc">|&gt;</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(model_ssi_gv)) <span class="sc">|&gt;</span> </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> structure_measured, <span class="at">y =</span> measurement, <span class="at">fill =</span> structure_measured))<span class="sc">+</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">alpha =</span> <span class="fl">0.1</span>)<span class="sc">+</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outliers =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred))<span class="sc">+</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_sqrt</span>()<span class="sc">+</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Species)<span class="sc">+</span></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="st">"none"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical3_answers_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="q5.2.5-look-at-the-coefficients-of-the-model.-the-wald-tests-on-all-of-them-are-significant-meaning-that-the-coefficients-themselves-are-significantly-different-from-zero-but-try-figuring-out-exactly-what-biological-hypothesis-is-being-tested-by-the-first-of-the-interaction-terms." class="level4">
+<h4 class="anchored" data-anchor-id="q5.2.5-look-at-the-coefficients-of-the-model.-the-wald-tests-on-all-of-them-are-significant-meaning-that-the-coefficients-themselves-are-significantly-different-from-zero-but-try-figuring-out-exactly-what-biological-hypothesis-is-being-tested-by-the-first-of-the-interaction-terms.">Q5.2.5 Look at the coefficients of the model. The Wald tests on ALL of them are significant, meaning that the coefficients themselves are significantly different from zero, but try figuring out exactly what biological hypothesis is being tested by the first of the interaction terms.</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first interaction term is Speciesversicolor:structure_measuredPetal.Width, i.e.&nbsp;saying what we need to add on to our predicted value if the species is versicolor and our measured structure is petal width. The reference levels are setosa for species and Petal.Length for for structure measured. Therefore the value given (-1.7) is saying that, since petal.length is bigger in versicolor than setosa by 2.8 (the Speciesversicolor line), we might expect petal width to be 2.8 bigger too, but it’s not, it’s 1.7 less than that (i.e.&nbsp;only about 1.1 bigger). The Wald test is therefore asking if that amount that versicolor petal width is less than expected from just being versicolor (not setosa) and just being a measurement of petal width (not petal length) is significantly different from zero and the answer is ‘yes’.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="part-6-reflection" class="level2">
+<h2 class="anchored" data-anchor-id="part-6-reflection">Part 6: Reflection</h2>
+<ul>
+<li><p>What we’ve done with this <code>iris</code> analysis would be called a <strong>two-way ANOVA</strong> because there are two categorical explanatory variables – species and structure measured, whereas the trees analysis would be called a <strong>multiple regression</strong> because there are two continuous explanatory variables. However, what we’ve done in both cases is very similar and the mechanics of how R has done the analysis is very similar, so it’s often best just to refer to both of them as <strong>linear models</strong></p></li>
+<li><p>All the effects in both of these models were highly significant, so while you probably would need to report the <em>p</em>-values for the effects (girth or height; structure_measured or species), the use of the analysis has much more to do with what the parameters are, what the predictions are, how much variance is explained and what that variance is like.</p></li>
+<li><p>In the <code>iris</code> analysis you might still have questions about whether particular structures are significantly different from one another e.g.&nbsp;<em>versicolor</em> sepal width versus <em>virginica</em> sepal width. The best way to go about this is to have hypotheses you want to ask clear before you start the analysis and arrange the levels of the factors (e.g.&nbsp;using <code>relevel()</code> to make versicolor and sepal width the to be the reference levels of species and structure_measured) so that the Wald test tests your hypothesis. This is called using <strong>planned contrasts</strong>. There are ways of doing such comparisons once you’ve got your model too, these are called <strong>posthoc tests</strong>.</p></li>
+<li><p>Often posthoc tests make all possible comparisons – this is usually a bad idea, because we usually have some sort of idea what we’re looking for and if we do enough tests a small proportion of them will come out significant just by chance. If you really want to do posthoc tests, e.g.&nbsp;with the <code>emmeans</code> or <code>multcomp</code> packages, use what you know about the comparisons, e.g.&nbsp;if you have a control treatment, you might only want to compare each treatment to the control, not everything to everything, using <strong>Dunnett’s test</strong>. If you really do want to compare everything to everything else, at least do it ‘honestly’ using <strong>Tukey’s HSD</strong> (honest significant difference) test which accounts for doing lots of tests. Both are available in <code>emmeans</code> and <code>multcomp</code>.</p></li>
+<li><p>The fact that the two categorical variables in the <code>iris_stacked</code> tibble had different classes didn’t cause problems for either the plotting or the analysis. However, if we start to modify those variables, for example to change the reference level with relevel(), that will work on a factor column (Species), but not a character column (structure measured), which would need to be changed into a factor column e.g.&nbsp;with <code>mutate(structure_measured = as.factor(structure_measured) |&gt; relevel(ref = "Sepal.Width"))</code>)</p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

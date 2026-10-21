@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BIOL33031/BIOL65161">
+<meta name="description" content="Importing, inspecting, and cleaning data in R">
+
+<title>Data wrangling – BIOL33031/BIOL65161</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2216a8e0a9d9492edde58845aa8d0122.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../html.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">BIOL33031/BIOL65161</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">1 - Introduction to Data</a></li><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">Data wrangling</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Intro session</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/00_why-statistics/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why we need statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/01_intro-to-R/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/02_intro-to-tidyverse/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to the tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/03_open-science/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Open Science movement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/intro-practical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Introduction</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">1 - Introduction to Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/04_data-wrangling/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data wrangling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/05_data-summary/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/06_visualisation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data representation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: R Data Wrangling and Visualisation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">2 - Classical statistical tests</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/07_hypothesis/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hypothesis testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/08_t-test/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><em>t</em>-tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/09_contingency/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chi² &amp; Fisher’s exact tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/10_correlation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploring correlations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Classical statistics in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">3 - Linear modelling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/11_linear-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Linear modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">4 - Mixed effects models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/12_mixed-effects-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed-effects modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical 4: Mixed effects modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">5 - Other models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/13_glm/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalised linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/14_random-forests/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Random forest models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Generalised linear models and Random Forests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Quarto</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/quarto/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Crash-course in Quarto</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link active" data-scroll-target="#data-wrangling">Data wrangling</a>
+  <ul class="collapse">
+  <li><a href="#what-is-data-wrangling" id="toc-what-is-data-wrangling" class="nav-link" data-scroll-target="#what-is-data-wrangling">What is data wrangling?</a></li>
+  <li><a href="#remember-tibbles" id="toc-remember-tibbles" class="nav-link" data-scroll-target="#remember-tibbles">Remember tibbles?</a></li>
+  <li><a href="#telling-r-where-to-look-for-data" id="toc-telling-r-where-to-look-for-data" class="nav-link" data-scroll-target="#telling-r-where-to-look-for-data">Telling R where to look for data</a></li>
+  <li><a href="#palmer-penguins-dataset" id="toc-palmer-penguins-dataset" class="nav-link" data-scroll-target="#palmer-penguins-dataset">Palmer penguins dataset 🐧</a></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing data</a></li>
+  <li><a href="#meeting-the-tibble" id="toc-meeting-the-tibble" class="nav-link" data-scroll-target="#meeting-the-tibble">Meeting the tibble</a></li>
+  <li><a href="#looking-at-the-data" id="toc-looking-at-the-data" class="nav-link" data-scroll-target="#looking-at-the-data">Looking at the data</a></li>
+  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types">Data types</a></li>
+  </ul></li>
+  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link" data-scroll-target="#tidy-data">Tidy data</a>
+  <ul class="collapse">
+  <li><a href="#what-is-tidy-data" id="toc-what-is-tidy-data" class="nav-link" data-scroll-target="#what-is-tidy-data">What is tidy data?</a></li>
+  <li><a href="#tidying-untidy-data" id="toc-tidying-untidy-data" class="nav-link" data-scroll-target="#tidying-untidy-data">Tidying ‘untidy’ data</a></li>
+  <li><a href="#making-it-tidy" id="toc-making-it-tidy" class="nav-link" data-scroll-target="#making-it-tidy">Making it tidy</a></li>
+  <li><a href="#cleaning-and-preparing-for-analysis" id="toc-cleaning-and-preparing-for-analysis" class="nav-link" data-scroll-target="#cleaning-and-preparing-for-analysis">Cleaning and preparing for analysis</a></li>
+  <li><a href="#dealing-with-missing-values" id="toc-dealing-with-missing-values" class="nav-link" data-scroll-target="#dealing-with-missing-values">Dealing with missing values</a></li>
+  <li><a href="#chaining-steps-with-pipes" id="toc-chaining-steps-with-pipes" class="nav-link" data-scroll-target="#chaining-steps-with-pipes">Chaining steps with pipes</a></li>
+  <li><a href="#recap-next-steps" id="toc-recap-next-steps" class="nav-link" data-scroll-target="#recap-next-steps">Recap &amp; next steps</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓Check your understanding</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="slides.html"><i class="bi bi-postcard"></i>Slides</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">1 - Introduction to Data</a></li><li class="breadcrumb-item"><a href="../../lectures/04_data-wrangling/index.html">Data wrangling</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Data wrangling</h1>
+</div>
+
+<div>
+  <div class="description">
+    Importing, inspecting, and cleaning data in R
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BIOL33031/BIOL65161 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-94ec-7b5d-0000-0199c457ea40" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="">
+</iframe>
+<section id="data-wrangling" class="level1">
+<h1>Data wrangling</h1>
+<div class="notes">
+<p>Welcome to our session on data wrangling. This week we’ll look at how we take raw biological data and turn it into something we can actually analyse. Real datasets are rarely perfect — they come with missing values, messy names, or too many columns. Our job is to wrangle them into a clean, tidy form that R can work with.</p>
+</div>
+<section id="what-is-data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-data-wrangling">What is data wrangling?</h2>
+<p>When we collect biological data, it never arrives perfectly polished. Files might have missing values, inconsistent names, or more information than we really need.<br>
+</p>
+<p>Before we can analyse or visualise, we first have to <em>wrangle</em> our data into a form that both we, and R, can understand. Part of this also involves checking if there are any problems with the data (like missing values), or anything unexpected that might be confusing (like columns with unintuitive names).<br>
+</p>
+<p>The word <em>wrangle</em> can mean either “to have an argument that continues for a long time” (chiefly UK), or “to take care of, control, or move large animals, often with difficulty or coercion” (chiefly North American). In dealing with biological data, either definition can sometimes feel appropriate!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/king-penguin-colony.jpg" class="img-fluid figure-img" alt="A colony of thousands of King Penguins. The colony fills the entire image, showing no ground or sky. The intent is to evoke a chaotic disorganised scene in need of 'wrangling'."></p>
+<figcaption>“King Penguin Colony” (<em>Aptenodytes patagonicus</em>) by <a href="https://www.flickr.com/photos/31525296@N06/2973619580">Scott Henderson</a>, CC <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/">BY-NC-SA 2.0</a></figcaption>
+</figure>
+</div>
+<div class="notes">
+<p>When we talk about wrangling, we mean cleaning, reshaping, and preparing data. It’s the step between collecting your data and analysing it. Sometimes it feels like arguing endlessly with your data, and other times like herding stubborn animals — both meanings of “wrangle” are pretty accurate! But once the data are tamed, everything that follows becomes easier.</p>
+</div>
+<hr>
+</section>
+<section id="remember-tibbles" class="level2">
+<h2 class="anchored" data-anchor-id="remember-tibbles">Remember tibbles?</h2>
+<p>In the first session, we made some <strong>tibbles by hand</strong> to see how R stores data.<br>
+A tibble is just a table where:</p>
+<ul>
+<li>Each <strong>column</strong> is a variable (e.g.&nbsp;species, sepal length)<br>
+</li>
+<li>Each <strong>row</strong> is an observation (e.g.&nbsp;one plant)<br>
+</li>
+<li>Each <strong>cell</strong> is a single value (i.e.&nbsp;the measurement of that variable for that individual)</li>
+</ul>
+<p>Example from last time:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>plants <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"fertilised"</span>, <span class="st">"control"</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">height_cm =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">13</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">survival =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>plants</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now, it would be a colossal waste of time if we had to write out each tibble manually!<br>
+Typically in R, we read in data from files on our computer or from the internet.</p>
+<div class="notes">
+<p>You might remember that in R we store data in tibbles — tidy little tables. Each column is a variable, each row is an observation, and each cell holds one value. For example, one column could be “species”, another “flipper length”, and each row would be a single penguin. Writing these by hand would be ridiculous — so we normally import data from files instead of typing them out manually.</p>
+</div>
+</section>
+<section id="telling-r-where-to-look-for-data" class="level2">
+<h2 class="anchored" data-anchor-id="telling-r-where-to-look-for-data">Telling R where to look for data</h2>
+<div class="{columns}">
+<div class="column" style="width:50%;">
+<div class="incremental">
+<ul class="incremental">
+<li>Every time R looks for a file, it needs to know <em>where to look</em>.<br>
+</li>
+<li>The simplest way to do this is to set your <strong>working directory</strong>, and keep your <code>.R</code> scripts and data files together in the same place</li>
+<li>Imagine your computer as a giant house 🏡. The working directory is the room you’re currently in. R will look for files within that room. If the file is in another room, R won’t find it unless you give the full address.</li>
+</ul>
+</div>
+<div class="fragment">
+<p>You can check or set the working directory with <code>getwd()</code> and <code>setwd()</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()                 <span class="co"># shows where you are now</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"path/to/folder"</span>) <span class="co"># moves R to another room</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>💡 How you specify your working directory, and ‘paths’ to files more generally, will depend on what operating system you are using</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set working directory, e.g.:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Documents/04_data-wrangling/analysis"</span>) <span class="co"># Windows</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/danna/04_data-wrangling/analysis"</span>) <span class="co"># Mac</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/home/danna/04_data-wrangling/analysis"</span>)  <span class="co"># Linux</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div class="column fragment" style="width:50%;">
+<p>You can also set the working directory using the menu:<br>
+“Session &gt; Set Working Directory &gt; Choose Directory…”</p>
+<p>Or, you can use the Files tab on the right:</p>
+<p><img src="images/files-tab-working-directory.png" class="img-fluid" alt="A screenshot of how to set the working directory from the files tab."></p>
+</div>
+</div>
+<div class="notes">
+<p>Before we can import data, R needs to know where the file lives. That’s what the working directory is. Imagine your computer as a big house and R as standing in one room — that room is your working directory. If your data are in another room, R can’t see them unless you give it the full address. You can check where you are with getwd() and move rooms with setwd(), or just use the Files tab or Session menu in RStudio.</p>
+</div>
+<hr>
+</section>
+<section id="palmer-penguins-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="palmer-penguins-dataset">Palmer penguins dataset 🐧</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Let’s have a look at some common data wrangling steps using real data.</p>
+<p>The <code>palmerpenguins</code> dataset<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> contains size measurements for 3 penguin species observed between 2007‒2009 in the Palmer Archipelago, Antarctica, by Dr.&nbsp;Kristen Gorman with the <a href="https://pal.lternet.edu/">Palmer Station Long Term Ecological Research Program</a>.</p>
+<p>If you’re following along in R, please download <a href="../../data/penguins.csv"><code>penguins.csv</code></a> and save it to your working directory.</p>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/antarctica.png" class="img-fluid figure-img"></p>
+<figcaption>Sampling context: (a) Antarctica. (b) Antarctic peninsula. (c) Islands where penguins were sampled: Dream, Torgersen, and Biscoe.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="notes">
+<p>To practise, we’ll use the Palmer Penguins dataset. It contains measurements from three species of penguins collected in the Palmer Archipelago, Antarctica, between 2007 and 2009 by Kristen Gorman and colleagues. If you’re following along, download the file penguins.csv and save it in your working directory. It’s a perfect example of tidy, real biological data.</p>
+</div>
+</section>
+<section id="importing-data" class="level2">
+<h2 class="anchored" data-anchor-id="importing-data">Importing data</h2>
+<p>Most of the time, our data will be stored in <strong>CSV files</strong> (comma-separated values).<br>
+These are simple text files that can be read by almost any program.</p>
+<p>In the tidyverse, we use <code>read_csv()</code><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
+<div style="font-size: 85%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First set working directory to where your file is saved. It looks slightly different on different systems:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"C:/Documents/04_data-wrangling/analysis"</span>) <span class="co"># Windows</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/Users/danna/04_data-wrangling/analysis"</span>) <span class="co"># Mac</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">"/home/danna/04_data-wrangling/analysis"</span>)  <span class="co"># Linux</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the data using read_csv():</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># From a file saved on your computer in your working directory</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"penguins.csv"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># From a folder called 'data' within your working directory (a 'relative path')</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/penguins.csv"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># From a file saved somewhere else on your computer (an 'absolute path')</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"C:/Documents/data/penguins.csv"</span>)              <span class="co"># Windows</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/home/username/Documents/data/penguins.csv"</span>)  <span class="co"># Mac</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"/Users/username/Documents/data/penguins.csv"</span>) <span class="co"># Linux</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Directly from a URL</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<!--
+You might find small hurdles at this stage:
+
+-   If R says the file is not found, check your working directory with `getwd()`.\
+-   If your working directory is correct, use your operating system to navigate to where that file should be, and check that it is there.
+-   If the file uses tabs instead of commas, try `read_tsv()`.\
+-   If the file has no headers, you can add `col_names = FALSE`.
+-->
+<div class="notes">
+<p>Most datasets come as CSV files — comma-separated values. They’re plain text and easy to open in almost any software. In the tidyverse we use read_csv() to import them. You can read a file from your computer, from a “data” folder, or even directly from a URL. Whichever method you use, read_csv() gives you a tibble containing your data, ready to explore.</p>
+</div>
+<hr>
+</section>
+<section id="meeting-the-tibble" class="level2">
+<h2 class="anchored" data-anchor-id="meeting-the-tibble">Meeting the tibble</h2>
+<div class="columns">
+<div class="column" style="width:70%;">
+<p>When you use <code>read_csv()</code>, R gives you a tibble, just like the ones we wrote by hand.</p>
+<p>Typing in the name of the tibble and pressing Ctrl+Enter (Windows/Linux) or Cmd+Enter (Mac) will print the first 10 rows to the Console window:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>penguins</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 344 × 8
+   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+ 1 Adelie  Torgersen           39.1          18.7               181        3750
+ 2 Adelie  Torgersen           39.5          17.4               186        3800
+ 3 Adelie  Torgersen           40.3          18                 195        3250
+ 4 Adelie  Torgersen           NA            NA                  NA          NA
+ 5 Adelie  Torgersen           36.7          19.3               193        3450
+ 6 Adelie  Torgersen           39.3          20.6               190        3650
+ 7 Adelie  Torgersen           38.9          17.8               181        3625
+ 8 Adelie  Torgersen           39.2          19.6               195        4675
+ 9 Adelie  Torgersen           34.1          18.1               193        3475
+10 Adelie  Torgersen           42            20.2               190        4250
+# ℹ 334 more rows
+# ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:30%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/2007_Snow-Hill-Island-Adelie-Penguins.jpg" class="img-fluid figure-img"></p>
+<figcaption>Adélie penguin (<em>Pygoscelis adeliae</em>) near Snow Hill, Antarctica (2007). Source: <a href="https://commons.wikimedia.org/wiki/File:2007_Snow-Hill-Island_Luyten-De-Hauwere-Adelie-Penguin-23.jpg">Wikimedia</a>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="notes">
+<p>After you import, just type the name of the tibble to see the first few rows. You should see columns for species, island, bill length, bill depth, flipper length, body mass, sex, and year — one row per penguin. This quick peek confirms the data loaded properly. It’s also a good habit to always look at your data before doing anything else.</p>
+</div>
+</section>
+<section id="looking-at-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="looking-at-the-data">Looking at the data</h2>
+<p>Once you have loaded your data, you should check to see if it looks the way you think it should.<br>
+There are a few quick ways to peek. You should type these into the Console window.</p>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(penguins)      <span class="co"># shows the first few rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+  species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+  &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+1 Adelie  Torgersen           39.1          18.7               181        3750
+2 Adelie  Torgersen           39.5          17.4               186        3800
+3 Adelie  Torgersen           40.3          18                 195        3250
+4 Adelie  Torgersen           NA            NA                  NA          NA
+5 Adelie  Torgersen           36.7          19.3               193        3450
+6 Adelie  Torgersen           39.3          20.6               190        3650
+# ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+</div>
+<div class="line-block"><br>
+</div>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(penguins)   <span class="co"># a sideways summary of all columns</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 344
+Columns: 8
+$ species           &lt;fct&gt; Adelie, Adelie, Adelie, Adelie, Adelie, Adelie, Adel…
+$ island            &lt;fct&gt; Torgersen, Torgersen, Torgersen, Torgersen, Torgerse…
+$ bill_length_mm    &lt;dbl&gt; 39.1, 39.5, 40.3, NA, 36.7, 39.3, 38.9, 39.2, 34.1, …
+$ bill_depth_mm     &lt;dbl&gt; 18.7, 17.4, 18.0, NA, 19.3, 20.6, 17.8, 19.6, 18.1, …
+$ flipper_length_mm &lt;int&gt; 181, 186, 195, NA, 193, 190, 181, 195, 193, 190, 186…
+$ body_mass_g       &lt;int&gt; 3750, 3800, 3250, NA, 3450, 3650, 3625, 4675, 3475, …
+$ sex               &lt;fct&gt; male, female, female, NA, female, male, female, male…
+$ year              &lt;int&gt; 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007, 2007…</code></pre>
+</div>
+</div>
+<div class="line-block"><br>
+</div>
+</div>
+<div class="fragment">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(penguins)   <span class="co"># a spreadsheet-style viewer (but you cannot edit values).</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><img src="images/clipboard-1180943393.png" class="img-fluid"> You can also click the object’s name in the Environment window.</p>
+<div class="notes">
+<p>🟦 Looking at the data</p>
+<p>There are a few handy ways to inspect it. head() shows the first few rows. glimpse() gives a sideways summary of all the columns and their data types. And View() opens a spreadsheet-style viewer in RStudio — useful for spotting issues, though you can’t edit values there. Always take a moment to check that the data look as expected.</p>
+</div>
+</section>
+<section id="data-types" class="level2">
+<h2 class="anchored" data-anchor-id="data-types">Data types</h2>
+<p>In the <code>head()</code> and <code>glimpse()</code> output above, you’ll notice that each column has a designation <code>&lt;abc&gt;</code> either below or beside it. These correspond to the “type” of data each column contains. The main data types you will encounter are listed below:</p>
+<ul>
+<li><code>&lt;chr&gt;</code> means <code>character</code>, which is text or a mixture of text, numbers &amp; punctuation.<br>
+</li>
+<li><code>&lt;fct&gt;</code> means <code>factor</code>, a special type of text where the levels are pre-defined (e.g.&nbsp;sex).<br>
+</li>
+<li><code>&lt;dbl&gt;</code> means numbers with decimals, <code>double</code>, a type of <code>numeric</code>.<br>
+</li>
+<li><code>&lt;int&gt;</code> means whole numbers, <code>integer</code>, another type of <code>numeric</code>.<br>
+</li>
+<li><code>&lt;lgl&gt;</code> means <code>logical</code>, TRUE/FALSE values (not shown here).<br>
+</li>
+<li><code>&lt;date&gt;</code> means calendar dates (also not shown here).</li>
+</ul>
+<p>This is different from Excel. You should only put data of the same type together in a single column. If you mix data types, it will default to character.</p>
+<div class="notes">
+<p>In the output from head() or glimpse(), you’ll see labels like <chr>, <dbl>, or <fct>. These are the data types: <chr> for character, or text <fct> for factor, used for categories like “male” or “female” <dbl> for numbers with decimals <int> for whole numbers <lgl> for logical, TRUE or FALSE R behaves differently depending on these types, so make sure each column has the right one.</lgl></int></dbl></fct></chr></fct></dbl></chr></p>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>What is a “double”? How R and other programming languages represent numbers
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You don’t need to know this, but you might be wondering why R calls decimal numbers “doubles”, <code>&lt;dbl&gt;</code>.</p>
+<p>In R there are basically two main <code>numeric</code> types:</p>
+<ul>
+<li>Integers: whole numbers (e.g.&nbsp;5, -12)</li>
+<li>Doubles: decimal numbers (e.g.&nbsp;5.0, -9.13, 3.14159).</li>
+</ul>
+<p>“Double” in this context means <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">double-precision floating-point format</a>: a format that gives high accuracy (lots of decimal places) and can handle very big or very small values, but take up more memory than less precise formats.</p>
+<p>Computers today manage doubles easily, so R uses them by default. <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format">Singles</a> (less precise decimals) aren’t used in R, but the term double is still used for consistency.</p>
+<p>Whole numbers can—and ideally should—be stored as <a href="https://en.wikipedia.org/wiki/Integer_(computer_science)">integers</a> (<code>&lt;int&gt;</code>). One reason for this is that doubles and singles can’t exactly represent integers, they can only approximate them.</p>
+<p>But there’s also real biological distinction between data recorded as integers and decimals, particularly when it comes to counting—you can’t have 5.73 penguins, for instance (well, not living ones, at least).</p>
+<p>This distinction can be meaningful when you apply different statistical tests, as some tests are more appropriate for decimal numbers, and others for e.g.&nbsp;counts. We’ll come to this distinction in the session on generalised linear modelling.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="tidy-data" class="level1">
+<h1>Tidy data</h1>
+<div class="notes">
+<p>Now that we know what our data look like, let’s talk about tidy data.</p>
+</div>
+<section id="what-is-tidy-data" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-tidy-data">What is tidy data?</h2>
+<p>A huge amount of effort in analysis goes into <em>cleaning</em> data so that it’s usable. <strong>Tidy data</strong> gives us a simple, consistent structure that makes analysis, modelling, and visualisation easier.</p>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p>In tidy data:</p>
+<ul>
+<li>Each <strong>variable</strong> forms a <strong>column</strong><br>
+</li>
+<li>Each <strong>observation</strong> forms a <strong>row</strong><br>
+</li>
+<li>Each <strong>value</strong> is a cell.</li>
+</ul>
+</div><div class="column" style="width:65%;">
+<p>Our <code>penguins</code> dataset is already tidy:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 344 × 6
+   species island    bill_length_mm bill_depth_mm sex     year
+   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt; &lt;fct&gt;  &lt;int&gt;
+ 1 Adelie  Torgersen           39.1          18.7 male    2007
+ 2 Adelie  Torgersen           39.5          17.4 female  2007
+ 3 Adelie  Torgersen           40.3          18   female  2007
+ 4 Adelie  Torgersen           NA            NA   &lt;NA&gt;    2007
+ 5 Adelie  Torgersen           36.7          19.3 female  2007
+ 6 Adelie  Torgersen           39.3          20.6 male    2007
+ 7 Adelie  Torgersen           38.9          17.8 female  2007
+ 8 Adelie  Torgersen           39.2          19.6 male    2007
+ 9 Adelie  Torgersen           34.1          18.1 &lt;NA&gt;    2007
+10 Adelie  Torgersen           42            20.2 &lt;NA&gt;    2007
+# ℹ 334 more rows</code></pre>
+</div>
+</div>
+</div>
+</div>
+<p>This also ensures different variables measured on the same observation always stay together.</p>
+<div class="notes">
+<p>Tidy data have a simple structure: each variable in its own column, each observation in its own row, and each value in its own cell. Our penguins data already follow this tidy format, which is why they’re so pleasant to work with. Tidy data make analysis, modelling, and plotting consistent across the tidyverse.</p>
+</div>
+</section>
+<section id="tidying-untidy-data" class="level2">
+<h2 class="anchored" data-anchor-id="tidying-untidy-data">Tidying ‘untidy’ data</h2>
+<p>Untidy data are arranged in any other way, e.g, when column names are actually values, or when several variables are crammed into one column. Here’s some untidy data on Weddell seals, which also live in Antarctica.</p>
+<p>Each column represents a combination of <em>variable</em> and <em>year</em>, so the dataset is <strong>not tidy</strong> — the years are stored as column headers.</p>
+<div class="cell" data-output-location="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>weddell <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">seal_id =</span> <span class="fu">c</span>(<span class="st">"W01"</span>, <span class="st">"W02"</span>, <span class="st">"W03"</span>, <span class="st">"W04"</span>, <span class="st">"W05"</span>),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">length_2022 =</span> <span class="fu">c</span>(<span class="dv">260</span>, <span class="dv">250</span>, <span class="dv">270</span>, <span class="dv">255</span>, <span class="dv">265</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight_2022 =</span> <span class="fu">c</span>(<span class="dv">420</span>, <span class="dv">390</span>, <span class="dv">450</span>, <span class="dv">410</span>, <span class="dv">430</span>),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">length_2023 =</span> <span class="fu">c</span>(<span class="dv">265</span>, <span class="dv">253</span>, <span class="dv">275</span>, <span class="dv">260</span>, <span class="dv">270</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">weight_2023 =</span> <span class="fu">c</span>(<span class="dv">430</span>, <span class="dv">400</span>, <span class="dv">460</span>, <span class="dv">420</span>, <span class="dv">440</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>weddell</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  seal_id length_2022 weight_2022 length_2023 weight_2023
+  &lt;chr&gt;         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+1 W01             260         420         265         430
+2 W02             250         390         253         400
+3 W03             270         450         275         460
+4 W04             255         410         260         420
+5 W05             265         430         270         440</code></pre>
+</div>
+</div>
+<p>This layout hides the meaning of the data:</p>
+<ul>
+<li><code>Year</code> is buried in the column names</li>
+<li>Each row mixes multiple observations (2022 and 2023) for the same seal</li>
+</ul>
+<div class="notes">
+<p>But not all datasets you’ll come across are in tidy form. Let’s look at example. Here’s some untidy data on Weddell seals, which also live in Antarctica. This dataset is untidy because the variable ‘year’ is embedded in the column name. Also, each row contains multiple observations for the same seal. This kind of layout is awkward to analyse because the meaning is hidden in the structure.</p>
+</div>
+</section>
+<section id="making-it-tidy" class="level2">
+<h2 class="anchored" data-anchor-id="making-it-tidy">Making it tidy</h2>
+<p>We can tidy the seal data by turning those year-specific columns into variables for <strong>year</strong>, <strong>length</strong>, and <strong>weight</strong>.</p>
+<div class="cell" data-output-location="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>weddell_tidy <span class="ot">&lt;-</span> weddell <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"length"</span>, <span class="st">"weight"</span>)),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"year"</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>weddell_tidy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   seal_id year  length weight
+   &lt;chr&gt;   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 W01     2022     260    420
+ 2 W01     2023     265    430
+ 3 W02     2022     250    390
+ 4 W02     2023     253    400
+ 5 W03     2022     270    450
+ 6 W03     2023     275    460
+ 7 W04     2022     255    410
+ 8 W04     2023     260    420
+ 9 W05     2022     265    430
+10 W05     2023     270    440</code></pre>
+</div>
+</div>
+<p>Now each row is a single observation: one seal, in one year, with one set of measurements</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="images/Face_of_Weddell_Seal.jpg" class="img-fluid figure-img"></p>
+<figcaption>Weddell seal (<em>Leptonychotes weddellii</em>). Image taken by enzofloyd <a href="https://commons.wikimedia.org/wiki/File:Face_of_Weddell_Seal.jpg">CC-BY-SA 3.0</a></figcaption>
+</figure>
+</div>
+<div class="notes">
+<p>We can fix that using pivot_longer(). It takes those year-specific columns and turns them into proper variables: one for year, one for length, and one for weight. Now each row represents one seal, in one year, with one set of measurements. That’s the tidy structure we want, and it makes future analyses much easier.</p>
+</div>
+</section>
+<section id="cleaning-and-preparing-for-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="cleaning-and-preparing-for-analysis">Cleaning and preparing for analysis</h2>
+<div class="{columns}">
+<div class="column fragment" style="width:70%;">
+<p>Let’s return to our <code>penguins</code> data.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 344 × 8
+   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+ 1 Adelie  Torgersen           39.1          18.7               181        3750
+ 2 Adelie  Torgersen           39.5          17.4               186        3800
+ 3 Adelie  Torgersen           40.3          18                 195        3250
+ 4 Adelie  Torgersen           NA            NA                  NA          NA
+ 5 Adelie  Torgersen           36.7          19.3               193        3450
+ 6 Adelie  Torgersen           39.3          20.6               190        3650
+ 7 Adelie  Torgersen           38.9          17.8               181        3625
+ 8 Adelie  Torgersen           39.2          19.6               195        4675
+ 9 Adelie  Torgersen           34.1          18.1               193        3475
+10 Adelie  Torgersen           42            20.2               190        4250
+# ℹ 334 more rows
+# ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>The dataset is already <em>tidy</em>, but that doesn’t mean it’s completely <em>clean</em>. Real datasets often have:</p>
+<ul>
+<li>messy or inconsistent column names,<br>
+</li>
+<li>extra variables we don’t need,</li>
+<li>values that need to be converted or fixed, or</li>
+<li>missing values.</li>
+</ul>
+</div>
+<div class="column fragment" style="width:30%;">
+<p>We often need to <strong>clean and prepare</strong> imported data before analysis. You can:</p>
+<ul>
+<li><code>rename()</code> columns to make them clearer<br>
+</li>
+<li><code>select()</code> only the variables you need<br>
+</li>
+<li><code>filter()</code> rows to focus on certain observations<br>
+</li>
+<li><code>mutate()</code> to create new variables<br>
+</li>
+<li><code>arrange()</code> to sort your data</li>
+</ul>
+</div>
+</div>
+<div class="notes">
+<p>Let’s return to the penguins. The dataset is tidy, but that doesn’t mean it’s clean. Real data almost always have quirks — inconsistent column names, unnecessary variables, or missing values. We can clean them up using a handful of tidyverse functions.</p>
+</div>
+<p>Here are some examples of cleaning steps</p>
+<div class="fragment">
+<p>Rename columns to help understanding:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="at">bill_length_mm =</span> bill_len,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">bill_depth_mm =</span> bill_dep) <span class="co"># new_name = old_name</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Select only the columns you need for your analysis:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sometimes we only need a few columns:</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">select</span>(species, island, body_mass)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Subset the data, e.g.&nbsp;to focus on a single species:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sometimes we want to focus on just one subset, a single species:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Adelie"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Create a new column from existing data:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">weight_kg =</span> body_mass_g <span class="sc">/</span> <span class="dv">1000</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>Rearrange the order of the table according to one or more columns:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">arrange</span>(bill_length_mm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="notes">
+<p>The main tools are: rename() to change column names, select() to choose columns, filter() to pick rows, mutate() to create or transform variables, and arrange() to sort the data. For example, we could rename “bill_len” to “bill_length_mm”, select only species and body mass, filter for Adelie penguins, add a new column converting grams to kilograms, and finally arrange by bill length.</p>
+</div>
+</section>
+<section id="dealing-with-missing-values" class="level2">
+<h2 class="anchored" data-anchor-id="dealing-with-missing-values">Dealing with missing values</h2>
+<p>Sometimes datasets have ‘holes’: a penguin might have been captured but not weighed, for instance. Let’s look at the first ten penguin body mass measurements of our penguins:</p>
+<div class="cell" data-output-location="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>penguins<span class="sc">$</span>body_mass_g[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 3750 3800 3250   NA 3450 3650 3625 4675 3475 4250</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>The special value <code>NA</code> is how R identifies missing data. What happens if you try to take the mean?</p>
+<div class="cell" data-output-location="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(penguins<span class="sc">$</span>body_mass_g)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>One solution for some functions is to tell R to ignore <code>NA</code> values in its calculations:</p>
+<div class="cell" data-output-location="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(penguins<span class="sc">$</span>body_mass_g, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4201.754</code></pre>
+</div>
+</div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:70%;">
+<p>However, for some functions, ignoring <code>NA</code> is not possible and R will return an error message.</p>
+<div class="fragment">
+<p>Sometimes it’s appropriate to remove entries missing values from the dataset entirely</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Returns TRUE for cells where sex is unknown</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(penguins<span class="sc">$</span>sex)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Keeps rows where sex *is* known:</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>penguins_clean <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(sex))</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Removes rows with missing data in *any* column:</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>penguins_clean <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span> <span class="fu">remove_missing</span>()   </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:30%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/pingu.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" alt="A picture of the claymation character Pingu with an obstinate expression, captioned with the text &quot;Well now I'm not doing it&quot;"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="notes">
+<p>Many biological datasets have missing values — maybe a penguin wasn’t weighed, or the data weren’t recorded. In R, missing data are shown as NA. If you try to calculate a mean and the column includes NAs, R will return NA because it doesn’t know what to do. You can tell it to ignore missing values with na.rm = TRUE. Or, if you prefer, you can remove those rows entirely using filter(!is.na(variable)) or remove_missing(). Be deliberate: sometimes it’s fine to ignore missing data, other times it changes your results.</p>
+</div>
+</section>
+<section id="chaining-steps-with-pipes" class="level2">
+<h2 class="anchored" data-anchor-id="chaining-steps-with-pipes">Chaining steps with pipes</h2>
+<p>Often, we want to do several of these actions in a row.<br>
+The pipe operator <code>|&gt;</code> lets us pass the result of one step straight into the next:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">remove_missing</span>() <span class="sc">|&gt;</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Gentoo"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">weight_kg =</span> body_mass_g <span class="sc">/</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(species, island, weight_kg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Reading this top to bottom is almost like reading a recipe:</p>
+<ul>
+<li>Start with the whole <code>penguins</code> data set<br>
+</li>
+<li>Filter for the species Gentoo<br>
+</li>
+<li>Calculate weight in kg<br>
+</li>
+<li>Select just the columns needed for your analysis</li>
+</ul>
+<p>This makes your code readable for both you and anyone else who needs to check it later.</p>
+<div class="notes">
+<p>When you start combining several cleaning steps, your code can look messy. The pipe operator, |&gt;, helps keep it readable. It passes the output of one step directly into the next — almost like saying “and then.” For example: start with penguins, and then remove missing values, and then filter for Gentoo penguins, and then create weight_kg, and finally select the columns you need. This helps keep your workflow clear.</p>
+</div>
+<hr>
+</section>
+<section id="recap-next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="recap-next-steps">Recap &amp; next steps</h2>
+<ul>
+<li>Data wrangling is about preparing data for analysis.<br>
+</li>
+<li>Always inspect what you imported.<br>
+</li>
+<li>Tidyverse functions like <code>filter</code>, <code>mutate</code>, <code>select</code>, <code>arrange</code>, <code>rename</code> are your everyday tools.<br>
+</li>
+<li>Pipes make your workflow clear and logical.</li>
+<li>Missing values (<code>NA</code>) are common and should be handled.<br>
+</li>
+</ul>
+<p>You’ve now learned how to import and tidy real biological datasets. Next, we’ll take a look at how to summarise this data using handy functions from the <code>tidyverse</code>.</p>
+<div class="notes">
+<p>To recap, in this session we’ve covered: data wrangling, the process of preparing data for analysis. Inspecting data after importing it. Tidyverse functions for tidying and cleaning data. How to use pipes in a tidy workflow How to handle missing values.</p>
+<p>In our next session, we’ll see how to summarise and describe that data using functions from the tidyverse. See you in the next one!</p>
+</div>
+<hr>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-understanding">❓Check your understanding</h2>
+<ol type="1">
+<li>You have a file called <code>plants.csv</code> in your working directory.<br>
+Write the line of code that would import it as a tibble.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>plants <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"plants.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li>After importing a dataset, you want to quickly check its structure.<br>
+Which two functions could you use?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(plants)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(plants)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<ol start="3" type="1">
+<li>You try to calculate <code>sd(height)</code> but get <code>NA</code> as the result.<br>
+How would you fix this?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(height, <span class="at">na.rm =</span> T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<ol start="4" type="1">
+<li>Write code to filter the <code>penguins</code> tibble for rows where the island is <code>"Dream"</code>.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(island <span class="sc">==</span> <span class="st">"Dream"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If you want to make a new tibble with only the Dream island penguins, don’t forget to assign the filtered tibble to a new object</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>penguins_dream <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(island <span class="sc">==</span> <span class="st">"Dream"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<ol start="5" type="1">
+<li>Add a new column to <code>penguins</code> called <code>bill_ratio</code> equal to <code>bill_length_mm / bill_depth_mm</code>. Remember, to <em>add</em> a column, you need to reassign <code>penguins</code>. Otherwise the new column is only printed to the screen.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">bill_ratio =</span> bill_length_mm<span class="sc">/</span>bill_depth)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class=":::">
+
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p><strong>Horst AM, Hill AP, Gorman KB</strong> (2020). <code>palmerpenguins</code>: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. <a href="#0">https://allisonhorst.github.io/palmerpenguins/</a>. Data are available by <a href="https://creativecommons.org/share-your-work/public-domain/cc0/">CC-0</a> license in accordance with the <a href="https://pallter.marine.rutgers.edu/data/">Palmer Station LTER Data Policy</a> and the <a href="https://lternet.edu/data-access-policy/">LTER Data Access Policy for Type I data</a>, part of the <a href="https://lternet.edu/">US Long Term Ecological Research Network</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Original publication: <strong>Gorman KB, Williams TD, Fraser WR</strong> (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus <em>Pygoscelis</em>). <em>PLoS ONE</em> 9(3):e90081. <a href="https://doi.org/10.1371/journal.pone.0090081" class="uri">https://doi.org/10.1371/journal.pone.0090081</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>NB: It is important that you use <code>read_csv()</code> throughout the unit. Base R uses <code>read.csv()</code>, which imports data in a slightly different way.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<style id="force-hide-notes">
+  /* Obliterate all .notes blocks everywhere */
+  .notes, div.notes, section .notes {
+    all: unset !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    z-index: -9999 !important;
+  }
+</style>
+  <script>
+  // As a backup, remove them entirely after load
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.notes').forEach(el => el.remove());
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BIOL33031 / BIOL65161">
+
+<title>Hypothesis testing – BIOL33031/BIOL65161</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2216a8e0a9d9492edde58845aa8d0122.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../html.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">BIOL33031/BIOL65161</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/07_hypothesis/index.html">2 - Classical statistical tests</a></li><li class="breadcrumb-item"><a href="../../lectures/07_hypothesis/index.html">Hypothesis testing</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Intro session</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/00_why-statistics/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why we need statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/01_intro-to-R/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R and RStudio</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/02_intro-to-tidyverse/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome to the tidyverse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/03_open-science/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The Open Science movement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/intro-practical.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Introduction</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">1 - Introduction to Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/04_data-wrangling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data wrangling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/05_data-summary/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Summary statistics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/06_visualisation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data representation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: R Data Wrangling and Visualisation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">2 - Classical statistical tests</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/07_hypothesis/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Hypothesis testing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/08_t-test/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><em>t</em>-tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/09_contingency/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chi² &amp; Fisher’s exact tests</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/10_correlation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploring correlations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Classical statistics in R</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">3 - Linear modelling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/11_linear-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Linear modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">4 - Mixed effects models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/12_mixed-effects-modelling/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed-effects modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical 4: Mixed effects modelling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">5 - Other models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/13_glm/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generalised linear modelling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/14_random-forests/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Random forest models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../worksheets/practical5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">📝 Practical: Generalised linear models and Random Forests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Quarto</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../lectures/quarto/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Crash-course in Quarto</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-we-need-hypothesis-testing" id="toc-why-we-need-hypothesis-testing" class="nav-link active" data-scroll-target="#why-we-need-hypothesis-testing">Why we need hypothesis testing</a></li>
+  <li><a href="#the-idea-of-a-null-hypothesis" id="toc-the-idea-of-a-null-hypothesis" class="nav-link" data-scroll-target="#the-idea-of-a-null-hypothesis">The idea of a null hypothesis</a></li>
+  <li><a href="#the-test-statistic" id="toc-the-test-statistic" class="nav-link" data-scroll-target="#the-test-statistic">The test statistic</a></li>
+  <li><a href="#the-p-value" id="toc-the-p-value" class="nav-link" data-scroll-target="#the-p-value">The <em>p</em>-value</a></li>
+  <li><a href="#visualisng-p-values-two-tailed-hypotheses" id="toc-visualisng-p-values-two-tailed-hypotheses" class="nav-link" data-scroll-target="#visualisng-p-values-two-tailed-hypotheses">Visualisng <em>p</em>-values: two-tailed hypotheses</a></li>
+  <li><a href="#visualising-p-values-one-tailed-hypotheses" id="toc-visualising-p-values-one-tailed-hypotheses" class="nav-link" data-scroll-target="#visualising-p-values-one-tailed-hypotheses">Visualising <em>p</em>-values: one-tailed hypotheses</a></li>
+  <li><a href="#example-antibiotic-test" id="toc-example-antibiotic-test" class="nav-link" data-scroll-target="#example-antibiotic-test">Example: Antibiotic test</a></li>
+  <li><a href="#type-i-and-type-ii-errors" id="toc-type-i-and-type-ii-errors" class="nav-link" data-scroll-target="#type-i-and-type-ii-errors">Type I and Type II errors</a></li>
+  <li><a href="#statistical-power" id="toc-statistical-power" class="nav-link" data-scroll-target="#statistical-power">Statistical power</a></li>
+  <li><a href="#statistical-vs-biological-significance" id="toc-statistical-vs-biological-significance" class="nav-link" data-scroll-target="#statistical-vs-biological-significance">Statistical vs biological significance</a></li>
+  <li><a href="#common-misunderstandings" id="toc-common-misunderstandings" class="nav-link" data-scroll-target="#common-misunderstandings">Common misunderstandings</a></li>
+  <li><a href="#reporting-results" id="toc-reporting-results" class="nav-link" data-scroll-target="#reporting-results">Reporting results</a></li>
+  <li><a href="#recap-next-steps" id="toc-recap-next-steps" class="nav-link" data-scroll-target="#recap-next-steps">Recap &amp; next steps</a></li>
+  <li><a href="#check-your-understanding" id="toc-check-your-understanding" class="nav-link" data-scroll-target="#check-your-understanding">❓Check your understanding</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="slides.html"><i class="bi bi-postcard"></i>Slides</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../lectures/07_hypothesis/index.html">2 - Classical statistical tests</a></li><li class="breadcrumb-item"><a href="../../lectures/07_hypothesis/index.html">Hypothesis testing</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Hypothesis testing</h1>
+<p class="subtitle lead">From questions to statistical decisions</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BIOL33031 / BIOL65161 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-a4f5-6c55-0000-0199df1d8d80" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="">
+</iframe>
+<section id="why-we-need-hypothesis-testing" class="level2">
+<h2 class="anchored" data-anchor-id="why-we-need-hypothesis-testing">Why we need hypothesis testing</h2>
+<p>We use hypothesis testing to assess whether the pattern we see in our data is <strong>unlikely to have arisen by random chance alone</strong>.</p>
+<p>For example:</p>
+<ul>
+<li>Do males and females of a given species differ in body mass?<br>
+</li>
+<li>Does an antibiotic reduce bacterial growth compared with a control?</li>
+</ul>
+<p>Because biological data are variable, we can’t trust a single mean difference — we need a framework to decide <strong>when an effect is convincing</strong>.</p>
+<div class="notes">
+<p>In biology, variation is everywhere — individuals differ, experiments fluctuate, and sampling introduces noise.<br>
+Hypothesis testing provides a structured way to ask whether a pattern could have arisen by chance alone.<br>
+We don’t want to over-interpret small fluctuations, so this framework gives us a level of confidence before drawing conclusions.</p>
+</div>
+<hr>
+</section>
+<section id="the-idea-of-a-null-hypothesis" class="level2">
+<h2 class="anchored" data-anchor-id="the-idea-of-a-null-hypothesis">The idea of a null hypothesis</h2>
+<p>The <strong>null hypothesis (H₀)</strong> represents the idea of <em>no real effect</em>.</p>
+<ul>
+<li>It represents what we’d expect if any difference is just due to random noise.</li>
+<li>We compare it with the <strong>alternative hypothesis (H₁)</strong>, which suggests a real effect exists.</li>
+</ul>
+<p>If our question is something like, <em>“Does body mass differ between and females?”</em> our null and alternative hypotheses would be:</p>
+<ul>
+<li>H₀: Mean body mass is the same for both sexes.<br>
+</li>
+<li>H₁: Mean body mass differs between sexes.</li>
+</ul>
+<p>This is known as a “two-tailed hypothesis test”: we are interested in whether our data differ than we expected under the null hypothesis, i.e.&nbsp;is either larger or smaller (we don’t care which).</p>
+<p>Our question could also be <em>“Is the flipper length of males larger than females?”</em></p>
+<ul>
+<li>H₀: Male mean flipper length is equal to or less than female mean flipper length.</li>
+<li>H₁: Male mean flipper length is larger than female flipper length.</li>
+</ul>
+<p>Or, <em>“Is the bill length of Gentoo penguins shorter than of Chinstrap penguins?”</em></p>
+<ul>
+<li>H₀: Mean bill length for Gentoo penguins is equal to or longer than for Chinstrap penguins.</li>
+<li>H₁: Mean bill length for Gentoo penguins is shorter than for Chinstrap penguins.</li>
+</ul>
+<p>These are both examples of “one-tailed hypothesis tests”: we are interested in testing whether are data are either larger, or smaller, than expected under the null hypothesis–and the direction of the difference matters.</p>
+<div class="notes">
+<p>We start every test with the assumption that there’s no real difference — that’s the null hypothesis.<br>
+Then we collect data and see how far the results deviate from that assumption.<br>
+If the data look very unlikely under H₀, we begin to doubt it and consider the alternative.</p>
+</div>
+<hr>
+</section>
+<section id="the-test-statistic" class="level2">
+<h2 class="anchored" data-anchor-id="the-test-statistic">The test statistic</h2>
+<p>To answer that question, we calculate a <strong>test statistic</strong> — a number that captures how different our observed data are from what we’d expect under H₀.</p>
+<p>Different tests use different statistics:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Test</th>
+<th>Typical data type</th>
+<th>Statistic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>t-test</td>
+<td>Comparing means</td>
+<td>t-value</td>
+</tr>
+<tr class="even">
+<td>χ² test</td>
+<td>Counts/frequencies</td>
+<td>χ² value</td>
+</tr>
+<tr class="odd">
+<td>correlation</td>
+<td>Relationship between variables</td>
+<td>r</td>
+</tr>
+</tbody>
+</table>
+<p>Large values of the statistic usually mean the data deviate strongly from H₀.</p>
+<div class="notes">
+<p>The test statistic is like a summary of how likely we are to have observed our data if the the null hypothesis was true.<br>
+Each statistical test converts your raw data into a single value that’s easy to compare against a theoretical distribution.<br>
+We then see whether that value is extreme enough to make us doubt H₀.</p>
+</div>
+<hr>
+</section>
+<section id="the-p-value" class="level2">
+<h2 class="anchored" data-anchor-id="the-p-value">The <em>p</em>-value</h2>
+<p>The <strong><em>p</em>-value</strong> is the probability of seeing a result as extreme as ours <em>if the null hypothesis were true</em>.</p>
+<ul>
+<li>A <strong>small <em>p</em>-value</strong> means our data are unlikely under H₀.<br>
+</li>
+<li>A <strong>large <em>p</em>-value</strong> means the data are compatible with H₀.</li>
+</ul>
+<p>Conventionally, we use a <strong>threshold (<em>α</em>)</strong>, often 0.05:</p>
+<ul>
+<li>If <em>p</em> &lt; 0.05: we <strong>reject H₀</strong> (evidence for an effect).<br>
+</li>
+<li>If <em>p</em> ≥ 0.05: we <strong>fail to reject H₀</strong> (no evidence of an effect).</li>
+</ul>
+<p>Note: we never “accept” or “prove” H₀ — we only fail to reject it.</p>
+<div class="notes">
+<p>This is the heart of hypothesis testing.<br>
+A <em>p</em>-value tells us how extreme our data are if the null were actually true.<br>
+A small <em>p</em>-value suggests the data don’t fit the null well — but it doesn’t tell us the probability that H₀ is true.</p>
+<p>It’s important to note that we never “accept” or “prove” the null hypothesis, we only fail to reject it.</p>
+</div>
+<hr>
+</section>
+<section id="visualisng-p-values-two-tailed-hypotheses" class="level2">
+<h2 class="anchored" data-anchor-id="visualisng-p-values-two-tailed-hypotheses">Visualisng <em>p</em>-values: two-tailed hypotheses</h2>
+<p>Imagine the distribution of outcomes expected under H₀.<br>
+Most outcomes cluster near the centre (small differences), but extreme outcomes are rare.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If our test statistic falls in the red region (<em>p</em> &lt; 0.05), we reject H₀.</p>
+<div class="notes">
+<p>This figure shows how hypothesis testing works visually.<br>
+If your test statistic lies within the centre region, the result is common under H₀.<br>
+But if it’s in the tails (the red regions) the result would be unexpected if H₀ were true, so we reject it.</p>
+</div>
+</section>
+<section id="visualising-p-values-one-tailed-hypotheses" class="level2">
+<h2 class="anchored" data-anchor-id="visualising-p-values-one-tailed-hypotheses">Visualising <em>p</em>-values: one-tailed hypotheses</h2>
+<p>When our alternative hypothesis predicts a <strong>specific direction</strong> of effect, we only consider <strong>one tail</strong> of the distribution.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+</div>
+<p>If our test statistic falls in the red region (p &lt; 0.05), we reject H₀ in favour of the directional alternative.</p>
+<div class="notes">
+<p>In a one-tailed test, we only look for an effect in one direction. The entire α (e.g.&nbsp;0.05) is concentrated in a single tail, so the rejection region is larger compared with each tail of a two-tailed test. This makes the test more sensitive to effects in the predicted direction — but unable to detect effects in the opposite direction.</p>
+</div>
+<hr>
+</section>
+<section id="example-antibiotic-test" class="level2">
+<h2 class="anchored" data-anchor-id="example-antibiotic-test">Example: Antibiotic test</h2>
+<p>Suppose we grow bacteria with and without an antibiotic:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Treatment</th>
+<th>Mean OD600</th>
+<th>SD</th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Control</td>
+<td>0.80</td>
+<td>0.05</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>Antibiotic</td>
+<td>0.62</td>
+<td>0.06</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>We perform a t-test and get <strong>p = 0.01</strong>.</p>
+<p>Interpretation:</p>
+<ul>
+<li>If there were <em>no real difference</em> in growth, data like this would occur only about 1% of the time.<br>
+</li>
+<li>Therefore, we reject H₀ — the antibiotic likely reduces growth.</li>
+</ul>
+<div class="notes">
+<p>It helps to ground the concept in a biological example.<br>
+Here we compare bacterial growth with and without antibiotic treatment.<br>
+Because the <em>p</em>-value is small, we conclude that the difference is unlikely to be due to random variation alone.</p>
+</div>
+<hr>
+</section>
+<section id="type-i-and-type-ii-errors" class="level2">
+<h2 class="anchored" data-anchor-id="type-i-and-type-ii-errors">Type I and Type II errors</h2>
+<p>Statistical testing involves probabilities — so mistakes can happen.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 35%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Error type</th>
+<th>What happens</th>
+<th>Probability</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Type I</strong></td>
+<td>Reject H₀ when it’s actually true (false positive)</td>
+<td>α (e.g.&nbsp;0.05)</td>
+</tr>
+<tr class="even">
+<td><strong>Type II</strong></td>
+<td>Fail to reject H₀ when it’s actually false (false negative)</td>
+<td>β</td>
+</tr>
+</tbody>
+</table>
+<p>Reducing α makes Type I errors rarer, but increases Type II errors.<br>
+We can reduce both by collecting <strong>larger samples</strong> (increasing power).</p>
+<div class="notes">
+<p>No test is perfect.<br>
+If we’re too strict, we might miss real effects (Type II).<br>
+If we’re too lenient, we’ll claim effects that aren’t real (Type I).<br>
+The solution is usually to increase our sample size — more data means fewer mistakes.</p>
+</div>
+<hr>
+</section>
+<section id="statistical-power" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-power">Statistical power</h2>
+<p><strong>Power</strong> = probability of correctly rejecting a false null hypothesis (1 − β).</p>
+<p>Power increases with:</p>
+<ul>
+<li>Larger sample size<br>
+</li>
+<li>Larger true effect size<br>
+</li>
+<li>Lower variability<br>
+</li>
+<li>Higher α (though that increases false positives)</li>
+</ul>
+<p>Power analysis helps plan experiments that are <strong>sensitive enough</strong> to detect real effects.</p>
+<div class="notes">
+<p>Power is about the <em>sensitivity</em> of a test.<br>
+A low-power experiment might miss real biological patterns, leading to misleading “no effect” results.<br>
+Planning with power in mind ensures experiments can detect effects that matter.</p>
+</div>
+</section>
+<section id="statistical-vs-biological-significance" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-vs-biological-significance">Statistical vs biological significance</h2>
+<p>Even a very small difference can be “statistically significant” if n is large.<br>
+But that doesn’t mean it’s <strong>biologically meaningful</strong>.</p>
+<p>Example:</p>
+<ul>
+<li>0.2 g difference in penguin body mass might be statistically significant but trivial biologically.</li>
+</ul>
+<p>Always interpret results in context: does the difference matter biologically, or just statistically?</p>
+<div class="notes">
+<p>Statistical significance isn’t the same as importance.<br>
+We care about whether the effect size makes a meaningful biological difference.<br>
+Always connect your statistical findings back to the biology.</p>
+</div>
+<hr>
+</section>
+<section id="common-misunderstandings" class="level2">
+<h2 class="anchored" data-anchor-id="common-misunderstandings">Common misunderstandings</h2>
+<ul>
+<li>A <em>p</em>-value does <strong>not</strong> tell us the probability that H₀ is true.<br>
+</li>
+<li>Non-significant results don’t prove there is “no effect.”<br>
+</li>
+<li>Statistical significance ≠ importance.<br>
+</li>
+<li>Multiple testing inflates false positives — corrections are needed.</li>
+</ul>
+<div class="notes">
+<p>Students often misinterpret <em>p</em>-values and non-significant results.<br>
+It’s worth repeating: “not significant” doesn’t mean “no effect.”<br>
+And when testing many hypotheses, the chance of false positives rises — that’s where corrections like Bonferroni or FDR come in.</p>
+</div>
+<hr>
+</section>
+<section id="reporting-results" class="level2">
+<h2 class="anchored" data-anchor-id="reporting-results">Reporting results</h2>
+<p>Always report:</p>
+<ul>
+<li>The <strong>test used</strong> (e.g.&nbsp;Welch’s t-test)<br>
+</li>
+<li>The <strong>test statistic</strong> (t, F, χ², etc.)<br>
+</li>
+<li><strong>Degrees of freedom</strong> and <strong><em>p</em>-value</strong><br>
+</li>
+<li>Optionally, <strong>effect size</strong> and <strong>confidence interval</strong></li>
+</ul>
+<p>Example:</p>
+<blockquote class="blockquote">
+<p>Welch’s t-test: t(8) = 3.12, p = 0.014; mean difference = 0.18 ± 0.06 (95% CI).</p>
+</blockquote>
+<div class="notes">
+<p>Good reporting is about transparency.<br>
+Anyone reading your paper should know what test was used, what the result was numerically, and how big the effect was.<br>
+Including confidence intervals helps readers judge precision.</p>
+</div>
+<hr>
+</section>
+<section id="recap-next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="recap-next-steps">Recap &amp; next steps</h2>
+<ul>
+<li>Hypothesis testing compares observed data with what we’d expect under no effect.<br>
+</li>
+<li>The <em>p</em>-value measures how extreme our data are under H₀.<br>
+</li>
+<li>We make decisions using a threshold (α), but always with caution.<br>
+</li>
+<li>Interpretation requires both <strong>statistical reasoning</strong> and <strong>biological insight</strong>.</li>
+</ul>
+<p>In the next practical session, you’ll learn how to apply t-tests in R, interpret <em>p</em>-values and confidence intervals, and practice describing results clearly in text.</p>
+<div class="notes">
+<p>Summarise key ideas before finishing.<br>
+Remind students that hypothesis testing is a tool, not a truth machine — it helps guide inference but must be interpreted in context.</p>
+</div>
+</section>
+<section id="check-your-understanding" class="level2">
+<h2 class="anchored" data-anchor-id="check-your-understanding">❓Check your understanding</h2>
+<ol type="1">
+<li>What does the null hypothesis (H₀) represent in a statistical test?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It represents the idea of <strong>no true effect or difference</strong> — that any pattern we observe arises from <strong>random variation</strong> alone.<br>
+It provides a baseline model of what the data would look like if nothing systematic were happening.</p>
+</div>
+</div>
+</div>
+<hr>
+<ol start="2" type="1">
+<li>A small <em>p</em>-value tells us that our observed data are unlikely if H₀ were true.<br>
+Does this mean H₀ is false? Why or why not?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Not necessarily.<br>
+A small <em>p</em>-value means the data are <strong>inconsistent with the assumption of H₀</strong>, but it doesn’t tell us the probability that H₀ is true or false.<br>
+It only quantifies how surprising our data are under that model.</p>
+</div>
+</div>
+</div>
+<hr>
+<ol start="3" type="1">
+<li>Why might a researcher choose a <strong>one-tailed</strong> test instead of a <strong>two-tailed</strong> one?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A one-tailed test is used when the researcher has a <strong>specific directional hypothesis</strong> — for example, predicting that a treatment will <em>increase</em> growth, not just change it.<br>
+This concentrates α in one tail, giving more power to detect effects in the predicted direction, but it cannot detect effects in the opposite direction.</p>
+</div>
+</div>
+</div>
+<hr>
+<ol start="4" type="1">
+<li>What is the difference between <strong>statistical significance</strong> and <strong>biological significance</strong>?</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Statistical significance</strong> means the data are unlikely under H₀ (e.g.&nbsp;<em>p</em> &lt; 0.05).<br>
+</li>
+<li><strong>Biological significance</strong> means the effect is large or meaningful in a real-world biological sense.</li>
+</ul>
+<p>A difference can be statistically significant but biologically trivial — or vice versa if the sample size is too small.</p>
+</div>
+</div>
+</div>
+<hr>
+<ol start="5" type="1">
+<li>Explain what a <strong>Type I</strong> and a <strong>Type II</strong> error mean in the context of hypothesis testing.</li>
+</ol>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Type I error (α):</strong> Concluding there is an effect when in fact there isn’t (false positive).<br>
+</li>
+<li><strong>Type II error (β):</strong> Failing to detect an effect that really exists (false negative).</li>
+</ul>
+<p>Increasing sample size reduces the risk of both errors by improving statistical power.</p>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<style id="force-hide-notes">
+  /* Obliterate all .notes blocks everywhere */
+  .notes, div.notes, section .notes {
+    all: unset !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    z-index: -9999 !important;
+  }
+</style>
+  <script>
+  // As a backup, remove them entirely after load
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.notes').forEach(el => el.remove());
+});
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

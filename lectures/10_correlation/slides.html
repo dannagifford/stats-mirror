@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
+
+  <meta name="author" content="BIOL33031 / BIOL65161">
+  <title>BIOL33031/BIOL65161 – Exploring correlations</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-62e7fbe6667cfaa5ccea0d9cd418f856.css">
+  <link rel="stylesheet" href="../slides.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Exploring correlations</h1>
+  <p class="subtitle">Quantifying relationships between continuous variables</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+BIOL33031 / BIOL65161 
+</div>
+</div>
+</div>
+
+</section>
+<section id="defining-correlation" class="slide level2">
+<h2>Defining correlation</h2>
+<p>Correlation tells us <strong>how strongly two continuous variables vary together</strong>.</p>
+<p>Examples in biology:</p>
+<ul>
+<li>Do heavier animals tend to live longer?</li>
+<li>Do larger cells contain more protein?</li>
+<li>Does bacterial growth rate increase with temperature?</li>
+</ul>
+<aside class="notes">
+<p>Correlation gives us a way to quantify the degree to which two variables move together — either positively or negatively.<br>
+In biology, we’re often interested in whether size, performance, or expression levels are linked.<br>
+This is a descriptive measure — not causal proof.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="interpreting-patterns" class="slide level2">
+<h2>Interpreting patterns</h2>
+<ul>
+<li>Positive correlation: as one variable increases, so does the other.<br>
+</li>
+<li>Negative correlation: as one increases, the other decreases.<br>
+</li>
+<li>No correlation: no consistent trend.</li>
+</ul>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" class="img-fluid r-stretch" width="960"><aside class="notes">
+<p>These examples illustrate what correlation looks like.<br>
+The line direction tells you whether the relationship is positive or negative.<br>
+A tight clustering around a line means a stronger relationship.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="quantifying-correlation" class="slide level2">
+<h2>Quantifying correlation</h2>
+<p>The <strong>Pearson correlation coefficient (r)</strong> measures <strong>linear</strong> association:</p>
+<p><span class="math display">\[
+r = \frac{\text{cov}(x, y)}{s_x s_y}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(r\)</span> ranges from <strong>−1 to +1</strong></li>
+<li>+1: perfect positive linear relationship<br>
+</li>
+<li>−1: perfect negative<br>
+</li>
+<li>0: no linear relationship</li>
+</ul>
+</section>
+<section id="example-using-real-data" class="slide level2">
+<h2>Example using real data</h2>
+<p>Let’s return to our Palmer Penguins. We’ll look at whether there’s a correlation between bill depth and bill length for Gentoo penguins:</p>
+<div class="{columns}">
+<div class="column" style="width:50%;">
+<p><img data-src="images/bill-diagram.png" class="img-fluid"></p>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="co"># Only Gentoo data</span></span>
+<span id="cb1-2"><a></a>Gentoo <span class="ot">&lt;-</span> penguins <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a></a>  <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Gentoo"</span>)</span>
+<span id="cb1-4"><a></a></span>
+<span id="cb1-5"><a></a><span class="fu">cor</span>(<span class="at">x =</span> Gentoo<span class="sc">$</span>bill_length_mm,</span>
+<span id="cb1-6"><a></a>    <span class="at">y =</span> Gentoo<span class="sc">$</span>bill_depth_mm,</span>
+<span id="cb1-7"><a></a>    <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The correlation coefficient <em>r</em> is 0.64, indicating a positive correlation.</p>
+</div></div>
+<aside class="notes">
+<p>Pearson’s <em>r</em> is a normalised measure of covariance, showing how much two variables co-vary relative to their individual variation.<br>
+Values near 0 mean little to no linear relationship.<br>
+We typically use <code>cor()</code> in R to compute it.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="statistical-significance-for-correlations" class="slide level2">
+<h2>Statistical significance for correlations</h2>
+<p>To test whether the observed <em>r</em> could arise by chance, use a <strong>correlation test</strong>.</p>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a></a><span class="fu">cor.test</span>(</span>
+<span id="cb2-2"><a></a>  <span class="at">x =</span> Gentoo<span class="sc">$</span>bill_length_mm, </span>
+<span id="cb2-3"><a></a>  <span class="at">y =</span> Gentoo<span class="sc">$</span>bill_depth_mm,</span>
+<span id="cb2-4"><a></a>  <span class="at">use =</span> <span class="st">"complete.obs"</span>   <span class="co"># Ignore NAs</span></span>
+<span id="cb2-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  Gentoo$bill_length_mm and Gentoo$bill_depth_mm
+t = 9.2447, df = 121, p-value = 1.016e-15
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.5262952 0.7365271
+sample estimates:
+      cor 
+0.6433839 </code></pre>
+</div>
+</div></div>
+<p>There is a significant correlation between bill length and depth for Gentoo penguins (Pearson correlation: <span class="math inline">\(r=0.64\)</span>, <span class="math inline">\(t_{121} = 9.24\)</span>, <span class="math inline">\(p=1\times10^{-15}\)</span>).</p>
+<aside class="notes">
+<p><code>cor.test()</code> performs a hypothesis test for whether the true correlation is 0.<br>
+The null hypothesis is <em>no correlation</em>.<br>
+It returns <em>r</em>, a p-value, and a confidence interval.<br>
+Interpret it like other hypothesis tests — p &lt; 0.05 suggests a significant correlation.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="assumptions" class="slide level2">
+<h2>Assumptions</h2>
+<p>Pearson’s correlation assumes:</p>
+<ul>
+<li>Both variables are <strong>continuous</strong></li>
+<li>Relationship is <strong>linear</strong></li>
+<li>Data are <strong>approximately normally distributed</strong></li>
+<li><strong>No major outliers</strong></li>
+</ul>
+<p>All four of these plots have <em>r</em> = 0.816, but show different data:</p>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-5-1.png" class="img-fluid r-stretch" width="960"></section>
+<section id="comparing-across-groups" class="slide level2">
+<h2>Comparing across groups</h2>
+<p>Perhaps we want to know if the strength of the correlation differs between species. We can do this using <code>group_by(species)</code> and <code>summarise()</code> from the <code>tidyverse</code>, just like we did previously for means:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a></a>penguins <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span> </span>
+<span id="cb4-3"><a></a>  <span class="fu">summarise</span>(<span class="at">r =</span> <span class="fu">cor</span>(<span class="at">x =</span> bill_length_mm, </span>
+<span id="cb4-4"><a></a>                    <span class="at">y =</span> bill_depth_mm,</span>
+<span id="cb4-5"><a></a>                    <span class="at">use =</span> <span class="st">"complete.obs"</span>)) <span class="co"># Ignore NAs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  species       r
+  &lt;fct&gt;     &lt;dbl&gt;
+1 Adelie    0.391
+2 Chinstrap 0.654
+3 Gentoo    0.643</code></pre>
+</div>
+</div>
+<p>Here, Adélie penguins have the lowest correlation between bill length and depth.</p>
+<aside class="notes">
+<p>Sometimes we’re interested in whether the relationship differs by group — species, treatments, etc.<br>
+By grouping, we can see that correlations can vary in strength and even direction between biological groups.<br>
+Never assume one overall correlation describes your entire dataset.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="visualising-correlations" class="slide level2">
+<h2>Visualising correlations</h2>
+<p>It’s important to check whether it is reasonable to assume linearity</p>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" class="img-fluid r-stretch" width="960"><aside class="notes">
+<p>Plots can reveal non-linear relationships, clusters, or outliers that might mislead correlation coefficients.<br>
+For instance, a strong correlation may exist within each group but cancel out across species.<br>
+Always start with a scatter plot. Adding a regression line helps to assess linearity visually.<br>
+A straight, consistent slope suggests correlation is appropriate.<br>
+A curved or clustered pattern means you may need a different approach.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="rank-correlations" class="slide level2">
+<h2>Rank correlations</h2>
+<p>When data are <strong>not normally distributed</strong>, contain <strong>outliers</strong>, or the relationship is <strong>non-linear</strong>, we can use a <strong>rank-based correlation</strong> instead of Pearson’s.</p>
+<p>Two common types:</p>
+<h3 id="spearmans-ρ-rho"><strong>Spearman’s ρ (rho):</strong></h3>
+<ul>
+<li>X and Y are converted to ranks (i.e.&nbsp;ordered from smallest to largest)</li>
+<li>A correlation between the ranks of X and Y is performed</li>
+<li>Good for non-linear associations with moderate sample size</li>
+</ul>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a><span class="co"># Example: Spearman correlation</span></span>
+<span id="cb6-2"><a></a><span class="fu">cor.test</span>(<span class="at">x =</span> Gentoo<span class="sc">$</span>bill_length_mm,</span>
+<span id="cb6-3"><a></a>         <span class="at">y =</span> Gentoo<span class="sc">$</span>bill_depth_mm, </span>
+<span id="cb6-4"><a></a>         <span class="at">method =</span> <span class="st">"spearman"</span>, </span>
+<span id="cb6-5"><a></a>         <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Spearman's rank correlation rho
+
+data:  Gentoo$bill_length_mm and Gentoo$bill_depth_mm
+S = 113069, p-value = 2.919e-15
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.6354081 </code></pre>
+</div>
+</div></div>
+</section>
+<section id="rank-correlations-1" class="slide level2">
+<h2>Rank correlations</h2>
+<p>When data are <strong>not normally distributed</strong>, contain <strong>outliers</strong>, or the relationship is <strong>non-linear</strong>, we can use a <strong>rank-based correlation</strong> instead of Pearson’s.</p>
+<p>Two common types:</p>
+<h3 id="kendalls-τ-tau"><strong>Kendall’s τ (tau):</strong></h3>
+<ul>
+<li>Each X and Y observation is paired to every other X and Y observation</li>
+<li>If X and Y change in the same direction for each pair, τ increases</li>
+<li>More robust than Spearman’s for small samples and outliers</li>
+<li>Kendall’s τ will almost always be smaller than Spearman’s ρ</li>
+</ul>
+<div class="cell columns column-output-location">
+<div class="column">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a></a><span class="co"># Example: Kendall correlation</span></span>
+<span id="cb8-2"><a></a><span class="fu">cor.test</span>(<span class="at">x =</span> Gentoo<span class="sc">$</span>bill_length_mm,</span>
+<span id="cb8-3"><a></a>         <span class="at">y =</span> Gentoo<span class="sc">$</span>bill_depth_mm, </span>
+<span id="cb8-4"><a></a>         <span class="at">method =</span> <span class="st">"kendal"</span>, </span>
+<span id="cb8-5"><a></a>         <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kendall's rank correlation tau
+
+data:  Gentoo$bill_length_mm and Gentoo$bill_depth_mm
+z = 7.5905, p-value = 3.188e-14
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.4712505 </code></pre>
+</div>
+</div></div>
+<aside class="notes">
+<p>Rank correlations are useful when your data violate the assumptions of Pearson’s correlation — especially non-linearity or strong outliers. Spearman’s correlation converts the data to ranks and measures how well those ranks align between two variables. Kendall’s tau instead looks at the proportion of pairs of observations that move in the same direction (concordant) versus opposite directions (discordant). In practice, Spearman’s is more common, but Kendall’s can be more robust with small or heavily tied datasets. Both are non-parametric and assess monotonic relationships rather than strictly linear ones.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="summary-of-key-functions-in-r" class="slide level2">
+<h2>Summary of key functions in R</h2>
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 38%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Function</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Calculate correlation</td>
+<td><code>cor(x, y)</code></td>
+<td>Simple estimate</td>
+</tr>
+<tr class="even">
+<td>Test correlation</td>
+<td><code>cor.test(x, y)</code></td>
+<td>Includes p-value</td>
+</tr>
+<tr class="odd">
+<td>Groupwise correlation</td>
+<td><code>group_by()</code> + <code>summarise(cor())</code></td>
+<td>Compare groups</td>
+</tr>
+<tr class="even">
+<td>Non-parametric version</td>
+<td><code>method = "spearman"</code></td>
+<td>Rank-based test</td>
+</tr>
+</tbody>
+</table>
+<aside class="notes">
+<p>This table summarises the key steps.<br>
+Students can use these as a workflow: visualise: compute: interpret: test.<br>
+Encourage exploring both Pearson and Spearman to see differences in output.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="correlation-and-the-coefficient-of-determination-r2" class="slide level2">
+<h2>Correlation and the coefficient of determination (R<sup>2</sup>)</h2>
+<p>The <strong>correlation coefficient (<em>r</em>)</strong> measures the <strong>strength and direction</strong> of a linear relationship.</p>
+<p>The <strong>coefficient of determination (<em>R</em><sup>2</sup>)</strong> tells us <strong>how much of the variation in one variable is explained by the other</strong>.</p>
+<p>Relationship between them (for simple linear relationships): <span class="math display">\[ R^2 = r \times r = r^2 \]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a></a><span class="co"># Compute r and R² for penguins data</span></span>
+<span id="cb10-2"><a></a>r <span class="ot">&lt;-</span> <span class="fu">cor</span>(<span class="at">x =</span> Gentoo<span class="sc">$</span>bill_length_mm,</span>
+<span id="cb10-3"><a></a>         <span class="at">y =</span> Gentoo<span class="sc">$</span>bill_depth_mm,</span>
+<span id="cb10-4"><a></a>         <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb10-5"><a></a><span class="co"># Correlation coefficient r</span></span>
+<span id="cb10-6"><a></a>r</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.6433839</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a><span class="co"># Coefficient of determination, R2</span></span>
+<span id="cb12-2"><a></a>r<span class="sc">^</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4139429</code></pre>
+</div>
+</div>
+<p>For <em>R</em><sup>2</sup>, we would report this as: Variation in bill length predicts 41% of the variation in bill depth (<em>R</em><sup>2</sup> = 0.41).</p>
+</section>
+<section id="a-note-on-correlation-vs.-causation" class="slide level2">
+<h2>A note on correlation vs.&nbsp;causation</h2>
+<p>Correlation does not necessarily equal causation. Even if two variables change together, one <strong>may not cause</strong> the other.</p>
+<p>Examples:</p>
+<ul>
+<li>Ice cream sales and shark attacks (both increase with temperature)</li>
+<li>Human height and vocabulary size (both increase with age in children)</li>
+<li>Number of storks and human births (classic <em>spurious correlation</em>)</li>
+</ul>
+<p>Correlations can arise due to:</p>
+<ul>
+<li><strong>Confounding variables</strong> (a third variable influencing both)</li>
+<li><strong>Coincidence</strong>, especially with small or selective datasets</li>
+<li><strong>Indirect relationships</strong>, where one variable affects another through an intermediate</li>
+</ul>
+<p>We need <strong>experiments, controls, or mechanistic understanding</strong> to establish causation.</p>
+</section>
+<section id="a-note-on-correlation-vs.-causation-1" class="slide level2">
+<h2>A note on correlation vs.&nbsp;causation</h2>
+
+<img data-src="images/divorce-disney.png" class="img-fluid r-stretch quarto-figure-center" style="width:60.0%" alt="A spurious correlation showing a strong correlation between divorce rates in the UK and the number of Disney movies released in the same year." id="fig-disney"><p class="caption">Correlation <span class="math inline">\(r = 0.925\)</span>, <span class="math inline">\(r^2 = 0.86\)</span>. Plot by <a href="https://tylervigen.com/">Tyler Vigen</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p><aside class="notes">
+<p>This is one of the most important points in interpreting statistics.<br>
+Correlation tells us that variables move together — but <em>not why</em>.<br>
+In biology, that “why” is everything.<br>
+For example, antibiotic use and resistance are correlated, but the cause is the selective pressure antibiotics impose, not a direct magical link between prescribing and resistance gene frequency.<br>
+Confounders can make relationships look causal when they’re not — for instance, temperature explains both ice cream sales and shark attacks.<br>
+Students should always ask: could something else be driving both variables?<br>
+We use experimental design and replication to tease apart true causation.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="recap-next-steps" class="slide level2">
+<h2>Recap &amp; next steps</h2>
+<ul>
+<li>Correlation quantifies <strong>linear association</strong> between two continuous variables<br>
+</li>
+<li>Visualise first — avoid being misled by non-linear patterns or outliers<br>
+</li>
+<li>Use <strong>Pearson</strong> for approximately linear data, <strong>Spearman</strong>/<strong>Kendal</strong> otherwise<br>
+</li>
+<li>Correlation ≠ causation — interpret biologically</li>
+</ul>
+<p>You are now ready for the workshop covering hypothesis testing, classical statistical tests, and correlation.</p>
+<aside class="notes">
+<p>This wraps up the session on correlation.<br>
+Students should now be comfortable identifying, calculating, and interpreting correlations, and knowing when to apply Pearson vs Spearman.<br>
+Encourage them to test relationships in their own datasets — always starting with a plot.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

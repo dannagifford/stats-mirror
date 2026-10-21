@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
+
+  <meta name="author" content="BIOL33031/BIOL65161">
+  <title>BIOL33031/BIOL65161 – Summary statistics</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-62e7fbe6667cfaa5ccea0d9cd418f856.css">
+  <link rel="stylesheet" href="../slides.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Summary statistics</h1>
+  <p class="subtitle">Making sense of biological variation</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+BIOL33031/BIOL65161 
+</div>
+</div>
+</div>
+
+</section>
+<section class="slide level2">
+
+<aside class="notes">
+<p>Biological data are full of variation — no two cells, animals, or populations are exactly alike.<br>
+Summarising helps us describe this variation in a meaningful way.<br>
+Instead of listing every value, we use numbers that capture the <em>essence</em> of the data: where the centre lies, how spread out values are, and what shape the distribution takes.<br>
+These summaries help us communicate results clearly and spot patterns worth investigating further.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="why-summarise-data" class="slide level2">
+<h2>Why summarise data?</h2>
+<p>Biological data are often large and messy.</p>
+<p><strong>Summary statistics</strong> reduce many data points down to a few values that capture the overall picture. Consider our <code>penguins</code> from last time.</p>
+<div class="{columns}">
+<div class="column fragment">
+<p>This first plot contains the raw data of all recorded body masses for all 344 penguins.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" class="img-fluid" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column fragment">
+<p>The second contains a summary commonly known as a box plot.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-3-1.png" class="img-fluid" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<div class="fragment">
+<p>Which one do you find easier for picking out meaningful differences?</p>
+</div>
+<aside class="notes">
+<p>Let’s return to our penguins to see the value of summarisation.</p>
+<p>The plot on the left you can see the raw data: every penguin’s body mass. It’s rich, but hard to make meaningful comparisons between different species.</p>
+<p>On the right is a box plot—a compact summary of the same data. The line in the box is the median, the box shows the middle 50%—the interquartile range—and the whiskers cover typical values. Points beyond that are potential outliers: interesting cases to check.</p>
+<p>Which one do you find easier for picking out meaningful differences? What can you infer from the plot on the right? Male penguins tend to be larger than females within each species, and Gentoos tend to be larger than Adélies or Chinstraps. Body mass seems to be constant through time, although only three years were sampled.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-key-tools" class="slide level2">
+<h2>The key tools</h2>
+<p>In the tidyverse, we use two main functions for summarisation:</p>
+<ul>
+<li><code>summarise()</code> – creates new summary values, like a mean or standard deviation.<br>
+</li>
+<li><code>group_by()</code> – tells R to calculate summaries separately for each group (e.g.&nbsp;for each species).</li>
+</ul>
+<p>There are also helper functions that make our life easier:</p>
+<ul>
+<li><code>mean()</code>, <code>median()</code>, <code>sd()</code> – common ways to summarise numbers used in biology<br>
+</li>
+<li><code>n()</code> – the number of rows in each group<br>
+</li>
+<li><code>count()</code> – a shortcut for counting rows in each group</li>
+</ul>
+<aside class="notes">
+<p>The tidyverse provides some handy functions for summarising data.</p>
+<p>The first one is summarise(). This creates new summary values—things like the mean or the standard deviation. It’s how we collapse lots of individual measurements into one or two numbers that describe the group as a whole.</p>
+<p>The second is group_by(). This tells R to calculate those summaries separately for each category—say, for each penguin species or each island. Without group_by(), you just get one overall mean; with it, you get a mean for every group.</p>
+<p>Then there are a few handy helpers. mean(), median(), and sd() are the classic ways we summarise biological data. n() tells us how many rows—or individuals—are in each group. And count() is a shortcut when you just want to tally up how many cases you have per category.</p>
+<p>The code shows how these functions work together to calculate mean bill length of each species.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="calculating-means" class="slide level2">
+<h2>Calculating means</h2>
+<p>Let’s start simple. Suppose we want the overall mean bill length across all penguins.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a></a>  <span class="fu">summarise</span>(<span class="at">mean_bill_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mean_bill_length
+             &lt;dbl&gt;
+1             43.9</code></pre>
+</div>
+</div>
+<p>The average bill length of all penguins that were sampled is 43.9 mm.</p>
+<p>Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length <strong>per species</strong>?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a></a>  <span class="fu">summarise</span>(<span class="at">mean_bill_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  species   mean_bill_length
+  &lt;fct&gt;                &lt;dbl&gt;
+1 Adelie                38.8
+2 Chinstrap             48.8
+3 Gentoo                47.5</code></pre>
+</div>
+</div>
+<p>Here <code>group_by()</code> separates the data into groups by species, and <code>summarise()</code> calculates the mean within each of those groups.</p>
+<aside class="notes">
+<p>Here’s a simple example showing how to calculate the mean bill length across all penguins. The average bill length of all penguins that were sampled is 43.9 mm.</p>
+<p>Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length <strong>per species</strong>?</p>
+<p>Here <code>group_by()</code> separates the data into groups by species, and <code>summarise()</code> calculates the mean within each of those groups.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="tallying-group-sizes" class="slide level2">
+<h2>Tallying group sizes</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Another simple question is, how many penguins do we have of each species?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a></a>  <span class="fu">count</span>(species)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The function <code>count()</code> is shorthand for:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a></a>  <span class="fu">group_by</span>(species) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>How many of each were on each island?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a></a>  <span class="fu">count</span>(species, island)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  species   island        n
+  &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;
+1 Adelie    Biscoe       44
+2 Adelie    Dream        56
+3 Adelie    Torgersen    52
+4 Chinstrap Dream        68
+5 Gentoo    Biscoe      124</code></pre>
+</div>
+</div>
+</div>
+</div><div class="column fragment" style="width:50%;">
+<p>Only Adélie penguins were found on all three islands; Chinstrap and Gentoo were only recorded on Dream and Biscoe, respectively.</p>
+<p>Notice <code>count()</code> hasn’t given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using <code>complete()</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a></a>  <span class="fu">count</span>(species, island) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a></a>  <span class="fu">complete</span>(species, island, <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">n =</span> <span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 3
+  species   island        n
+  &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;
+1 Adelie    Biscoe       44
+2 Adelie    Dream        56
+3 Adelie    Torgersen    52
+4 Chinstrap Biscoe        0
+5 Chinstrap Dream        68
+6 Chinstrap Torgersen     0
+7 Gentoo    Biscoe      124
+8 Gentoo    Dream         0
+9 Gentoo    Torgersen     0</code></pre>
+</div>
+</div>
+</div></div>
+<aside class="notes">
+<p>Here’s an example of how we can use the special function count to tally the number of each species. By giving ‘species’ as the argument to count, we tell R to provide a count of the number of occurrences of each species.</p>
+<p>Count is simply shorthand for a combination of group_by, summarise, and n.</p>
+<p>We can also give count two variables, species and island, to get a count of how many of each species were on each island.</p>
+<p>Notice however that <code>count()</code> hasn’t given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using another function called complete()</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="multiple-summaries-at-once" class="slide level2">
+<h2>Multiple summaries at once</h2>
+<p>We are not limited to one summary per group. For example, we might want the mean, the <strong>standard deviation</strong>, and the sample size all together.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a></a>  <span class="fu">group_by</span>(species, sex) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a></a>    <span class="at">mean_length =</span> <span class="fu">mean</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-5"><a></a>    <span class="at">sd_length =</span> <span class="fu">sd</span>(bill_length_mm, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-6"><a></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb11-7"><a></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+# Groups:   species [3]
+  species   sex    mean_length sd_length     n
+  &lt;fct&gt;     &lt;fct&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;
+1 Adelie    female        37.3      2.03    73
+2 Adelie    male          40.4      2.28    73
+3 Adelie    &lt;NA&gt;          37.8      2.80     6
+4 Chinstrap female        46.6      3.11    34
+5 Chinstrap male          51.1      1.56    34
+6 Gentoo    female        45.6      2.05    58
+7 Gentoo    male          49.5      2.72    61
+8 Gentoo    &lt;NA&gt;          45.6      1.37     5</code></pre>
+</div>
+</div>
+<p>The <strong>standard deviation</strong>, <code>sd()</code>, tells us something about the spread of the data around the mean, or how variable bill length is between different individual birds of the same species and sex. This provides a richer description of the variation in bill length than simply looking at the mean.</p>
+<aside class="notes">
+<p>Often in biology, we want to summarise data in multiple ways at the same time. With summarise, we can compute multiple summaries at once. Here’s an example calculating the mean bill length, standard deviation, and number of penguins, separated by sex and species of bird.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<!--
+
+## Dropping groups
+
+By default, once you run `summarise()`, R forgets the grouping. This is usually what we want: the result is a smaller tibble with one row per group.  
+
+But sometimes you might want to keep the grouping for later steps. In that case, you can use:  
+
+```r
+summarise(..., .groups = "keep")
+```
+-->
+</section>
+<section id="measures-of-central-tendency" class="slide level2">
+<h2>Measures of central tendency</h2>
+<p>Different summaries describe the <em>centre</em> of the data in different ways.</p>
+<ul>
+<li><strong>Mean</strong>: arithmetic average; sensitive to extreme values.</li>
+<li><strong>Median</strong>: middle value; robust to outliers.</li>
+<li><strong>Mode</strong>: most common value; rarely used for continuous measures.</li>
+</ul>
+<p>Example (mean and median flipper length by species):</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  species   mean_flipper median_flipper
+  &lt;fct&gt;            &lt;dbl&gt;          &lt;dbl&gt;
+1 Adelie            190.            190
+2 Chinstrap         196.            196
+3 Gentoo            217.            216</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>The mean we looked at on the last slide is probably the one you’re most familiar with. It’s the arithmetic average — we add everything up and divide by how many measurements we have. The mean works well when our data follow a roughly bell-shaped, or normal, distribution, where values are fairly evenly spread around the centre–more on that later.</p>
+<p>But not all biological data behave that nicely. Sometimes we have outliers — unusually large or small values — that can pull the mean away from where most of the data really sit. In those cases, the median can give a better sense of the centre. The median is simply the middle value when all measurements are ordered from smallest to largest. It’s robust to outliers, meaning it doesn’t get dragged around by extreme points.</p>
+<p>There’s also the mode, which is the most common value. It’s useful when you’re working with categories—like the most common species or colour—but it’s rarely helpful for continuous measurements like length or mass.</p>
+<p>So, different summaries tell slightly different stories about where the ‘centre’ lies.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="measures-of-spread" class="slide level2">
+<h2>Measures of spread</h2>
+<p>Two groups can have the same average but very different variability.<br>
+Measures of spread help us compare how consistent or scattered values are.</p>
+<ul>
+<li><strong>Range</strong>: <code>max - min</code> (influenced by outliers).<br>
+</li>
+<li><strong>Interquartile range (IQR)</strong>: the middle 50% of the data.<br>
+</li>
+<li><strong>Standard deviation (SD)</strong>: average distance from the mean.</li>
+</ul>
+<p>Example (variation in flipper length by species):</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  species   min_flipper max_flipper iqr_flipper sd_flipper
+  &lt;fct&gt;           &lt;int&gt;       &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;
+1 Adelie            172         210           9       6.54
+2 Chinstrap         178         212          10       7.13
+3 Gentoo            203         231           9       6.48</code></pre>
+</div>
+</div>
+<aside class="notes">
+<p>Two groups can have exactly the same average but look completely different once we consider how spread out the data are. Measures of spread tell us how consistent or variable our data are—whether all individuals are similar, or if some differ a lot from the rest.</p>
+<p>The simplest measure is the range, which is just the maximum minus the minimum value. It gives a quick sense of spread but can be distorted by a single outlier.</p>
+<p>The interquartile range, or IQR, focuses on the middle 50% of the data. It’s much more robust—less sensitive to extreme values—and is what the width of a box in a box plot represents.</p>
+<p>And then there’s the standard deviation, or SD. This tells us, on average, how far each value sits from the mean. A small SD means most individuals are close to the mean; a large SD means there’s a lot of variability.</p>
+<p>In this next example, we’re comparing variation in flipper length between penguin species. Even if their averages are similar, the spread gives us a sense of how consistent each species is.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="when-to-use-which" class="slide level2">
+<h2>When to use which?</h2>
+<p>Different measures of spread are useful for describing the data in different situations:</p>
+<ul>
+<li><strong>Mean + SD</strong>: Best when data are roughly symmetric (bell-shaped) and not affected by extreme values.<br>
+</li>
+<li><strong>Median + IQR</strong>: Best when data are skewed or contain outliers, because they are more robust.<br>
+</li>
+<li><strong>Range</strong>: Good for reporting extremes (minimum and maximum), but can be misleading if one unusual value dominates.</li>
+</ul>
+<p>Always think about the biological question: are you interested in the “typical” value, the variability, or the extremes?</p>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-11-1.png" class="img-fluid r-stretch" width="960"><aside class="notes">
+<p>Different measures of spread are useful in different situations, and it’s worth matching the summary to the kind of data you have.</p>
+<p>When your data are roughly symmetric—think of that nice bell-shaped curve—and there aren’t any extreme values, you can report the mean and standard deviation. Together, they describe the typical value and the average variation around it.</p>
+<p>If the data are skewed or contain outliers, the median and interquartile range are better. They focus on the middle of the data and aren’t thrown off by a few extreme individuals.</p>
+<p>The range—the minimum and maximum—is useful when you want to emphasise the extremes, like the smallest and largest animals measured. But remember, a single unusual value can make the range look huge.</p>
+<p>So always come back to your biological question: are you trying to describe what’s typical, how variable individuals are, or what the limits of your data look like? That choice should guide which summary you report.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="standard-deviation-sd-vs-standard-error-se" class="slide level2">
+<h2>Standard deviation (SD) vs standard error (SE)</h2>
+<p><strong>SD</strong> and <strong>SE</strong> are often confused, but they mean different things.</p>
+<ul>
+<li><p><strong>Standard deviation (SD)</strong>: Describes how <strong>spread out the data</strong> are around the mean.<br>
+Example: how variable are flipper lengths among individual Gentoo penguins?</p></li>
+<li><p><strong>Standard error (SE)</strong>: Describes how precisely the <strong>mean</strong> has been estimated. It depends on both the spread of the data and the sample size.<br>
+Example: how close is our sample mean flipper length to the true population mean?</p></li>
+</ul>
+<p>SE is related to SD through the following formula: <span class="math display">\[ SE = \frac{SD}{\sqrt{n}} \]</span> You may see means reported with either SD or SE (e.g.&nbsp;mean ± SD, mean ± SE). They are not interchangeable: use <strong>SD</strong> to show biological variation, and <strong>SE</strong> to show precision of the mean. We will revisit SE when we look at the <em>t</em>-test.</p>
+<aside class="notes">
+<p>I want to end by briefly talking about two measures of spread that are often confused in biology, the standard deviation and the standard error.</p>
+<p>People often mix up standard deviation and standard error, but they answer very different questions.</p>
+<p>The standard deviation, or SD, describes how spread out the data themselves are. It tells us about biological variation—how much individuals differ from each other. For example, how variable are the flipper lengths among individual Gentoo penguins?</p>
+<p>The standard error, or SE, is about precision. It tells us how precisely we’ve estimated the mean. SE depends on both the variation in the data and the sample size—larger samples give smaller SEs because our estimate of the mean becomes more reliable.</p>
+<p>They’re connected mathematically: SE equals SD divided by the square root of n, the sample size. So as you collect more data, SE gets smaller, but SD stays the same because the biological variation hasn’t changed.</p>
+<p>You’ll often see results reported as mean ± SD or mean ± SE. They are not interchangeable. Use SD when you want to show biological variation, and SE when you want to show how precise your estimate of the mean is. We’ll return to SE later when we discuss the t-test and confidence intervals.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="recap-next-steps" class="slide level2">
+<h2>Recap &amp; next steps</h2>
+<ul>
+<li>Summarisation helps us see patterns in messy biological data.<br>
+</li>
+<li><code>summarise()</code> and <code>group_by()</code> are the core tidyverse tools.<br>
+</li>
+<li>Helper functions like <code>n()</code>, <code>mean()</code>, and <code>count()</code> make common tasks quick.<br>
+</li>
+<li>Always watch out for missing values!</li>
+</ul>
+<p>We’ll build on the <code>tidyverse</code> skills you’ve learned now to tackle one of the most important aspects of data analysis and scientific communication, data visualisation, in the next session.</p>
+
+<img data-src="images/Penguin_in_Antarctica_jumping_out_of_the_water.jpg" class="img-fluid r-stretch quarto-figure-left" alt="Penguin jumping out of hole in icy water, its wing waived as if to say good-bye."><p class="caption">See you next time… <a href="https://commons.wikimedia.org/wiki/File:Penguin_in_Antarctica_jumping_out_of_the_water.jpg">Image</a> by Christopher Michel CC <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/">BY-NC-SA 2.0</a></p><aside class="notes">
+<p>To wrap up—summarising data is how we turn messy biological variation into something we can actually interpret.</p>
+<p>We’ve seen how summarise() and group_by() work together to create tidy summaries, and how helper functions like n(), mean(), and count() make quick work of common calculations. And remember, missing values can quietly cause errors or distort your results, so always check for them.</p>
+<p>In the next session, we’ll take these summaries and bring them to life through data visualisation—one of the most powerful ways to explore patterns and communicate science clearly.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

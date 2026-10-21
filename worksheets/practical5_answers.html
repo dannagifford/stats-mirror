@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="BIOL33031/BIOL65161">
+
+<title>📝 Practical: Generalised linear models and Random Forests – BIOL33031/BIOL65161</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-2216a8e0a9d9492edde58845aa8d0122.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../html.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#part-1-loading-and-visualising-the-data" id="toc-part-1-loading-and-visualising-the-data" class="nav-link active" data-scroll-target="#part-1-loading-and-visualising-the-data">Part 1: Loading and visualising the data</a>
+  <ul class="collapse">
+  <li><a href="#load-up-the-data" id="toc-load-up-the-data" class="nav-link" data-scroll-target="#load-up-the-data">1.1 Load up the data</a></li>
+  <li><a href="#take-a-first-look-at-visualising-the-data" id="toc-take-a-first-look-at-visualising-the-data" class="nav-link" data-scroll-target="#take-a-first-look-at-visualising-the-data">1.2 Take a first look at visualising the data</a></li>
+  </ul></li>
+  <li><a href="#part-2-basic-fits-for-the-data" id="toc-part-2-basic-fits-for-the-data" class="nav-link" data-scroll-target="#part-2-basic-fits-for-the-data">Part 2: Basic fits for the data</a>
+  <ul class="collapse">
+  <li><a href="#fit-binomial-model-of-low-birth-weight-as-a-function-of-maternal-age" id="toc-fit-binomial-model-of-low-birth-weight-as-a-function-of-maternal-age" class="nav-link" data-scroll-target="#fit-binomial-model-of-low-birth-weight-as-a-function-of-maternal-age">2.1 Fit binomial model of low birth-weight as a function of maternal age</a></li>
+  <li><a href="#look-at-what-the-binomial-model-is-doing" id="toc-look-at-what-the-binomial-model-is-doing" class="nav-link" data-scroll-target="#look-at-what-the-binomial-model-is-doing">2.2 look at what the binomial model is doing</a></li>
+  </ul></li>
+  <li><a href="#part-3-fitting-more-of-the-data" id="toc-part-3-fitting-more-of-the-data" class="nav-link" data-scroll-target="#part-3-fitting-more-of-the-data">Part 3: Fitting more of the data</a>
+  <ul class="collapse">
+  <li><a href="#fitting-very-complex-models" id="toc-fitting-very-complex-models" class="nav-link" data-scroll-target="#fitting-very-complex-models">3.1 Fitting very complex models</a></li>
+  <li><a href="#fitting-reduced-models" id="toc-fitting-reduced-models" class="nav-link" data-scroll-target="#fitting-reduced-models">3.2 Fitting reduced models</a></li>
+  <li><a href="#interpreting-the-linear-models" id="toc-interpreting-the-linear-models" class="nav-link" data-scroll-target="#interpreting-the-linear-models">3.3 Interpreting the linear models</a></li>
+  </ul></li>
+  <li><a href="#part-4-comparing-different-sorts-of-regression" id="toc-part-4-comparing-different-sorts-of-regression" class="nav-link" data-scroll-target="#part-4-comparing-different-sorts-of-regression">Part 4: Comparing different sorts of regression</a>
+  <ul class="collapse">
+  <li><a href="#fitting-a-random-forest" id="toc-fitting-a-random-forest" class="nav-link" data-scroll-target="#fitting-a-random-forest">4.1 Fitting a random forest</a></li>
+  <li><a href="#split-up-and-use-training-and-test-data-sets" id="toc-split-up-and-use-training-and-test-data-sets" class="nav-link" data-scroll-target="#split-up-and-use-training-and-test-data-sets">4.2 Split up and use training and test data sets</a></li>
+  <li><a href="#interpret-the-random-forest" id="toc-interpret-the-random-forest" class="nav-link" data-scroll-target="#interpret-the-random-forest">4.3 Interpret the random forest</a></li>
+  <li><a href="#reflections-on-the-modelling" id="toc-reflections-on-the-modelling" class="nav-link" data-scroll-target="#reflections-on-the-modelling">4.4 Reflections on the modelling</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">📝 Practical: Generalised linear models and Random Forests</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>BIOL33031/BIOL65161 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This worksheet will practice fitting and using <strong>generalised linear models</strong>. It will use ideas previously introduced in the <strong>linear</strong> and <strong>mixed effects modelling</strong> sessions and implement the approaches described in the videos using <strong>real data and R code</strong>. We will compare generalised linear models with Random Forests, a method from outside the linear modelling framework.</p>
+<p>We’ll focus this week on humans, specifically the <code>birthwt</code> data set which give information about 189 births at an American medical centre.</p>
+<hr>
+<section id="part-1-loading-and-visualising-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-loading-and-visualising-the-data">Part 1: Loading and visualising the data</h2>
+<p>The <code>birthwt</code> data comes with the <code>MASS</code> package</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>Side note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>MASS contains various useful functions and datasets, all associated with the book ‘Modern Applied Statistics with S’ - S was a language developed commercially in the 1970s that was fundamentally the same as its free and open source successor, R</p>
+</div>
+</div>
+</div>
+<section id="load-up-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="load-up-the-data">1.1 Load up the data</h3>
+<p>Load the packages</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The packages we will use today</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MASS"</span>, <span class="st">"GGally"</span>, <span class="st">"DHARMa"</span>, <span class="st">"mlbench"</span>, <span class="st">"sjPlot"</span>, <span class="st">"randomForest"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># This loops through the packages and installs them if not already installed</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(p <span class="cf">in</span> packages) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(p, <span class="at">character.only =</span> <span class="cn">TRUE</span>)){</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(p)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Useful for reproducibility by others. See also package managers e.g. pacman</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the packages:</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># **NB: Must load MASS before `tidyverse` because both have a `select()` function.**</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># **The function that gets loaded 2nd is the one that R uses.**</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mlbench)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Take a preliminary look at the data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">|&gt;</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 189 × 10
+     low   age   lwt  race smoke   ptl    ht    ui   ftv   bwt
+   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+ 1     0    19   182     2     0     0     0     1     0  2523
+ 2     0    33   155     3     0     0     0     0     3  2551
+ 3     0    20   105     1     1     0     0     0     1  2557
+ 4     0    21   108     1     1     0     0     1     2  2594
+ 5     0    18   107     1     1     0     0     1     0  2600
+ 6     0    21   124     3     0     0     0     0     0  2622
+ 7     0    22   118     1     0     0     0     0     1  2637
+ 8     0    17   103     3     0     0     0     0     1  2637
+ 9     0    29   123     1     1     0     0     0     1  2663
+10     0    26   113     1     1     0     0     0     0  2665
+# ℹ 179 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a look at the help file to see what the columns each mean</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>?birthwt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Slightly surprisingly, all the variables come through as the same type</p>
+<section id="q1.1.1-what-is-the-variable-type-that-all-the-variables-have-been-created-as-what-alternatives-might-be-appropriate" class="level4">
+<h4 class="anchored" data-anchor-id="q1.1.1-what-is-the-variable-type-that-all-the-variables-have-been-created-as-what-alternatives-might-be-appropriate">Q1.1.1 What is the variable type that all the variables have been created as? What alternatives might be appropriate?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>These have all been read in as integers. Some of the variables might be better treated as continuous variables (&lt;dbl&gt;) – <code>bwt</code>, <code>lwt</code> and <code>age</code>. On the other hand some are binary indicator variables that might be better thought of as logical TRUE/FALSE variables – <code>low</code>, <code>smoke</code>, <code>ht</code>, <code>ui</code>. With three levels, <code>race</code> might be better as a factor. Only for <code>ptl</code> and <code>ftv</code> does integer seem the best data type.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q1.1.2-what-might-we-expect-to-treat-as-response-and-explanatory-variables" class="level4">
+<h4 class="anchored" data-anchor-id="q1.1.2-what-might-we-expect-to-treat-as-response-and-explanatory-variables">Q1.1.2 What might we expect to treat as response and explanatory variables?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Those associated with birth-weight, i.e.&nbsp;<code>bwt</code> and <code>low</code> seem like the most obvious response variables we might care about. But this is not a planned experiment with clear manipulated variables distinct from measured variables. This means we might want to treat almost any or even all of these as responses, e.g.&nbsp;maybe what we really care about is smoking and how that varies with age in this particular group of people. It also means we have to be careful in interpreting the associations we find – correlation is not causality!</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="take-a-first-look-at-visualising-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="take-a-first-look-at-visualising-the-data">1.2 Take a first look at visualising the data</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(birthwt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This isn’t a great visualisation, but it gives us an overview of the columns.</p>
+<p>We’re going to focus initially on low birth-weight (column <code>low</code>) and see how well we can predict it from the other variables.</p>
+<p>We’re going to start by focusing on a single explanatory variable <code>age</code>, to ask <strong>is maternal age predictive of the chance of low birth-weight?</strong></p>
+<section id="q1.2.1-create-a-plot-better-than-the-pairs-plot-of-low-birth-weight-as-a-function-of-age." class="level4">
+<h4 class="anchored" data-anchor-id="q1.2.1-create-a-plot-better-than-the-pairs-plot-of-low-birth-weight-as-a-function-of-age.">Q1.2.1 Create a plot (better than the pairs plot!) of low birth-weight as a function of age.</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Could use a boxplot, but a ‘violin’ of the distribution might be clearer</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> <span class="fu">as.logical</span>(low))) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">"maternal age"</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="st">"Low birth-weight?"</span>) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>The plot is not hugely encouraging that there’s any significant difference in the probability of low birth-weight across maternal age, but let’s fit the model to put some numbers on that intuition.</p>
+</section>
+</section>
+</section>
+<section id="part-2-basic-fits-for-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-basic-fits-for-the-data">Part 2: Basic fits for the data</h2>
+<p>Low birth-weight is a binary measurement i.e.&nbsp;1 or 0, in the data as we have it, but could equally be True or False; “yes” or “no”; “low” or “notLow”. If we count the numbers of low birth-weight births, we also know how many non-low-birth-weight births we’ve counted. This is a typical binomial response. Binomial responses can be put in a data table in different ways – here we have a single binary column; sometimes they could be two columns, with a count for the numbers of low birth-weight births in one and non-low-birth-weight births in the other. The good news is that binomial models can take binomial data in at least three different formats. Look at the help page <code>?family</code> to see what these are – think how data in this format might be wrangled into one of the other formats.</p>
+<section id="fit-binomial-model-of-low-birth-weight-as-a-function-of-maternal-age" class="level3">
+<h3 class="anchored" data-anchor-id="fit-binomial-model-of-low-birth-weight-as-a-function-of-maternal-age">2.1 Fit binomial model of low birth-weight as a function of maternal age</h3>
+<p>This is straightforward with <code>glm()</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> age, <span class="at">family =</span> binomial, <span class="at">data =</span> birthwt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="q2.1.1-what-is-the-dispersion-paramter-for-this-model" class="level4">
+<h4 class="anchored" data-anchor-id="q2.1.1-what-is-the-dispersion-paramter-for-this-model">Q2.1.1 What is the dispersion paramter for this model?</h4>
+<p>clue: dispersion parameter for a binomial model works in the same way as for a Poisson model involving the residual deviance.</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The value of the the residual deviance and degrees of freedom are given in the summary, but they can also be extracted more directly from the model - the dispersion parameter is just their ratio</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">deviance</span>(m1)<span class="sc">/</span>m1<span class="sc">$</span>df.residual</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.240171</code></pre>
+</div>
+</div>
+<p>This suggests modest overdispersion.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="look-at-what-the-binomial-model-is-doing" class="level3">
+<h3 class="anchored" data-anchor-id="look-at-what-the-binomial-model-is-doing">2.2 look at what the binomial model is doing</h3>
+<p>First look at the default diagnostic plots</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-7-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These plots have the same axes as a normal <code>lm()</code> (Gaussian) model, but they look appallingly bad – what’s going on?</p>
+<p>Let’s try plotting the data with the model</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(m1, <span class="at">type =</span> <span class="st">"response"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> low)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> pred)) <span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">"maternal age"</span>) <span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The prediction looks like a curvy line which goes nowhere near the data, which explains why the diagnostic plots look bizarre, but is it actually wrong?</p>
+<p>Binomial regression is sometimes referred to as <strong>logistic regression</strong> This is because the curve we can see here is a logistic, S-shaped curve fit to data which are all either zero (not low birth-weight) or one (low birth-weight). It fits a switch between zeros and ones - where that is on the explanatory variable scale and how sharp, but the curve itself asymptotes – it never actually reaches zero or 1, so doesn’t go directly through the data. This is clearer on a dataset where the relationship is more obvious – between plasma glucose and having diabetes, as we have in the dataset we will look at below:</p>
+<p>NB: This example originally used the dataset <code>PimaIndiansDiabetes2</code>, which was created from a study on diabetes prevalence among the <a href="https://en.wikipedia.org/wiki/Akimel_O%CA%BCodham" class="external" target="_blank">Akimel O’odham</a> community, whose land lies in what is now southern Arizona and northern Mexico. The name “Pima” was not chosen by the community themselves, but was given to them by European colonisers. It may have come from the phrase <em>pi ʼañi mac</em> or <em>pi mac</em>, meaning “I don’t know”, which they used repeatedly in their initial meetings with Spanish colonists. The Spanish referred to them as the Pima, which was later adopted by English-speaking colonisers. The Akimel Oʼodham called themselves <em>Othama</em>.</p>
+<p>In 2026, this dataset was removed from the <code>mlbench</code> package as it was found to have been shared without proper consent. Instead, we will use a synthetic dataset <code>SynthDiabetes2</code> that maintains the same structure as the original, but using simulated values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"SynthDiabetes2"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>SynthDiabetes2 <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(glucose)) <span class="sc">|&gt;</span> <span class="co"># Remove missing values</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diabetes_bin =</span> <span class="fu">ifelse</span>(diabetes <span class="sc">==</span> <span class="st">"pos"</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span>  <span class="co"># Convert the column of 'neg' and 'pos' into 1s and 0s</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> glucose, <span class="at">y =</span> diabetes_bin )) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"glm"</span>, </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">family =</span> <span class="st">"binomial"</span>)) <span class="sc">+</span> <span class="co"># Can get a glm binomial fit direct with geom_smooth</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Plasma Glucose Concentration"</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probability of being diabetic"</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The S-shaped curve is symmetrical and has upper and lower asymptotes at 1 and 0. The fitted curve in between can be interpreted as estimating the probability of “success” i.e.&nbsp;being a one (in this case being diabetic) or a zero (not being diabetic).</p>
+<p>Because the residuals plots for a binomial fit like this look pretty horrible and hard to interpret, the DHARMa package uses a simulation-based approach to create more interpretably scaled residuals (see <code>vignette("DHARMa")</code> for details). This approach works for many different kinds of linear models, including various generalised linear models and mixed effects models. The result can be interpreted in the same way as residual plots we’ve used previously – we ideally want a linear quantile-quantile plot and an evenly spread ‘stary sky’ of residuals against predictions. Going back to our model of low birth-weight as a function of age:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>m1_dh <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(m1)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1_dh)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That looks pretty good.</p>
+<p>However, does the model actually explain anything? The summary of the model didn’t give an <span class="math inline">\(R^2\)</span> value and given the fact that we don’t expect the fit ever to go directly through any of the data, we probably shouldn’t expect one in quite the same way as a Gaussian model. However, we can calculate the proportion of variance or deviance explained, which is pretty easy to calculate from the same deviance value we used for the dispersion parameter (residual deviance) and the deviance before fitting the model (null deviance):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">deviance</span>(m1)<span class="sc">/</span>m1<span class="sc">$</span>null.deviance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.01176126</code></pre>
+</div>
+</div>
+<p>1.2% is pretty small for a proportion of variance explained!</p>
+<section id="q2.2.1-look-back-at-the-the-diabetes-plot-guestimate-the-proportion-of-variation-that-model-explains-now-have-a-go-at-fitting-it-directly-with-glm-and-calculate-how-much-it-actually-is" class="level4">
+<h4 class="anchored" data-anchor-id="q2.2.1-look-back-at-the-the-diabetes-plot-guestimate-the-proportion-of-variation-that-model-explains-now-have-a-go-at-fitting-it-directly-with-glm-and-calculate-how-much-it-actually-is">Q2.2.1 Look back at the the Diabetes plot – guestimate the proportion of variation that model explains – now have a go at fitting it directly with <code>glm()</code> and calculate how much it actually is</h4>
+<p>Clue: use the same data preparation as used for the plot above</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>diabetes <span class="ot">&lt;-</span> SynthDiabetes2 <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(glucose)) <span class="sc">|&gt;</span> <span class="co"># Remove missing values</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diabetes_bin =</span> <span class="fu">ifelse</span>(diabetes <span class="sc">==</span> <span class="st">"pos"</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="co"># Convert the column of 'neg' and 'pos' into 1s and 0s</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>md <span class="ot">&lt;-</span> <span class="fu">glm</span>(diabetes_bin <span class="sc">~</span> glucose, <span class="at">family =</span> binomial, <span class="at">data =</span> diabetes) <span class="co"># Fit the model</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">deviance</span>(md)<span class="sc">/</span>md<span class="sc">$</span>null.deviance <span class="co"># Calculate the R-squared</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1872662</code></pre>
+</div>
+</div>
+<p>So about 20% – substantially more than age explains for low birth-weight, but still relatively low</p>
+</div>
+</div>
+</div>
+</section>
+<section id="q2.2.2-given-that-it-only-explains-1-of-the-variance-it-seems-unlikely-that-theres-going-to-be-a-significant-effect-of-age-alone-on-low-birth-weight.-however-its-worth-checking-find-a-p-value-associated-with-a-hypothesis-test-for-a-simple-effect-of-age-on-the-probability-of-low-birth-weight" class="level4">
+<h4 class="anchored" data-anchor-id="q2.2.2-given-that-it-only-explains-1-of-the-variance-it-seems-unlikely-that-theres-going-to-be-a-significant-effect-of-age-alone-on-low-birth-weight.-however-its-worth-checking-find-a-p-value-associated-with-a-hypothesis-test-for-a-simple-effect-of-age-on-the-probability-of-low-birth-weight">Q2.2.2 Given that it only explains 1% of the variance, it seems unlikely that there’s going to be a significant effect of age alone on low birth-weight. However, it’s worth checking – find a <em>p</em> value associated with a hypothesis test for a simple effect of age on the probability of low birth-weight</h4>
+<p>There are three different ways we’ve done this – see if you can check at least two of them</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first place is via the Wald test available from the model summary</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = low ~ age, family = binomial, data = birthwt)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)  0.38458    0.73212   0.525    0.599
+age         -0.05115    0.03151  -1.623    0.105
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 234.67  on 188  degrees of freedom
+Residual deviance: 231.91  on 187  degrees of freedom
+AIC: 235.91
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+<p>So <em>P</em> = 0.11 via a z test</p>
+<p>Slightly better is using anova</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model: binomial, link: logit
+
+Response: low
+
+Terms added sequentially (first to last)
+
+     Df Deviance Resid. Df Resid. Dev Pr(&gt;Chi)  
+NULL                   188     234.67           
+age   1     2.76       187     231.91  0.09665 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>So <em>P</em> = 0.097 via a Chi-squared test – a similar, but slightly different number</p>
+<p>The third way is by subtraction - coming up with a model without the effect and comparing by likelihood ratio test</p>
+<p>Since there is only one explanatory variable in the model, removing it leaves us just with an intercept, which is represented by <code>1</code> in a model formula:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> <span class="dv">1</span>, <span class="at">family =</span> binomial, <span class="at">data =</span> birthwt)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m1,m0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model 1: low ~ age
+Model 2: low ~ 1
+  Resid. Df Resid. Dev Df Deviance Pr(&gt;Chi)  
+1       187     231.91                       
+2       188     234.67 -1    -2.76  0.09665 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>So <em>P</em> = 0.097 – exactly the same as we got via <code>anova()</code> directly on m1. Don’t assume that those numbers will always be identical, particularly if you have a more complex model with random effects and/or heteroscedasticity.</p>
+</div>
+</div>
+</div>
+<p>So, by some measures at least, the effect of age on low birth weight is <strong>suggestive</strong> (jargon sometimes used for <em>p</em> values that are less than 0.1 but greater than 0.05). However, even if there is a suggestion of statistical significance, the fact that it explains so little of the variation implies that its biological significance or usefulness for prediction of low birth weight is limited or non-existent.</p>
+</section>
+</section>
+</section>
+<section id="part-3-fitting-more-of-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-fitting-more-of-the-data">Part 3: Fitting more of the data</h2>
+<p>So if maternal age isn’t predictive of low birth weight, <strong>do we have <em>any</em> ability to predict low birth weight from the data we have</strong>?</p>
+<section id="fitting-very-complex-models" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-very-complex-models">3.1 Fitting very complex models</h3>
+<p>Naively we might want to take every variable we have and all their interactions, like this:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mfull <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> age <span class="sc">*</span> lwt <span class="sc">*</span> race <span class="sc">*</span> smoke <span class="sc">*</span> ptl <span class="sc">*</span> ht <span class="sc">*</span> ui <span class="sc">*</span> ftv,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">family =</span> binomial,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> birthwt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: algorithm did not converge</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+</div>
+</div>
+<p>Surprisingly this has fitted with only a mild-looking warning. However, look at this model using <code>summary(mfull)</code> – loads of the parameters are <code>NA</code> (missing). It tells us this at the top of the coefficients table: “Coefficients: (167 not defined because of singularities)”. There is a rather obvious reason for this – we have nowhere near enough data. There are 8 explanatory variables, most of them binary and 2^8 = 256 this is how many parameters this model is trying to fit:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(mfull) <span class="sc">|&gt;</span> <span class="fu">length</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 256</code></pre>
+</div>
+</div>
+<p>And yet we only have 189 data points – no parametric linear model can produce more fitted parameters than the number of numbers it takes in. In fact a rule of thumb is to have at least 10 data points for every parameter you want to fit. While this is not a particularly strong rule (e.g.&nbsp;compared with having 5 levels to estimate a random effect), we are not going to be able to parameterise complex interactions among all these variables from this size of dataset. The fact that <code>glm</code> does do something with such over-parameterised models can be useful, but shouldn’t be taken too seriously. <code>lm</code> does this too; <code>lmer</code> and <code>glmer</code> (for fitting linear mixed effects models and generalised linear mixed effects models respectively) are less forgiving by default.</p>
+<p>So what can we do if we just want the best prediction model we can out of the data?</p>
+<p>We could attempt to define a subset of the variables and their interactions that has a significant effect on the response variable. We’ve come across <code>step()</code> as a function that can reduce models based on AIC. However, maybe don’t run the following unless you want to clog up your R session and for it to fail because it never gets as far as a sensibly parameterised model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#mred &lt;- step(mfull)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Better to start with a model that looks more reasonable to start with. This formula syntax will include only 2-way interactions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mfull2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> (age <span class="sc">+</span> lwt <span class="sc">+</span> race <span class="sc">+</span> smoke <span class="sc">+</span> ptl <span class="sc">+</span> ht <span class="sc">+</span> ui <span class="sc">+</span> ftv)<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">family =</span> binomial,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> birthwt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Here, the <code>^2</code> tells R to fit all <strong>two-way interaction terms</strong> for the terms within the brackets. If you wanted, you could look at all three-way interaction terms using <code>^3</code>. Have a look at <code>?formula</code> to see all the different ways you could write a model formula like this to define different main effects and interactions. (Note it does not tell R to square any of the variables; for that, you would need to enclose the variable in the function <code>I()</code> as we saw in a previous practical.)</p>
+<section id="q3.1.1-how-many-data-points-do-we-have-per-parameter-in-this-model" class="level4">
+<h4 class="anchored" data-anchor-id="q3.1.1-how-many-data-points-do-we-have-per-parameter-in-this-model">Q3.1.1 How many data points do we have per parameter in this model?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have 189 data points and can extract the number of parameters fitted by asking the model directly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>n_coef <span class="ot">&lt;-</span> <span class="fu">coef</span>(mfull2) <span class="sc">|&gt;</span> <span class="fu">length</span>()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="dv">189</span><span class="sc">/</span>n_coef</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.108108</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Clearly this is fewer than the ≥10 we would like, but it’s a reasonable start</p>
+</section>
+</section>
+<section id="fitting-reduced-models" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-reduced-models">3.2 Fitting reduced models</h3>
+<p>To try and get a model that contains the explanatory variables we need and not those we don’t, we can try simplifying the complex model, an approach to <strong>model selection</strong>. Look through the printed output to see if you can work out what it’s doing:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>mred1 <span class="ot">&lt;-</span> <span class="fu">step</span>(mfull2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This reduced model has a much more appropriate complexity (14.5 data points per parameter - check this for yourself if in doubt).</p>
+<p>How sure are we that all the parameters in this model have a significant effect on low birth weight?</p>
+<p>We can look at the possible next step of model simplification via <code>drop1()</code> we can ask that to do a liklihood ratio test too (<code>test = "LRT"</code>)</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mred1 <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop1</span>(<span class="at">test =</span> <span class="st">"LRT"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>( <span class="at">rownames =</span> <span class="st">"effect"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 6
+  effect       Df Deviance   AIC   LRT `Pr(&gt;Chi)`
+  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 &lt;none&gt;       NA     183.  209. NA     NA       
+2 lwt:smoke     1     186.  210.  2.31   0.129   
+3 age:smoke     1     186.  210.  2.87   0.0905  
+4 age:ptl       1     187.  211.  3.43   0.0641  
+5 ht            1     189.  213.  6.07   0.0137  
+6 ptl:ui        1     191.  215.  7.34   0.00673 
+7 age:ftv       1     199.  223. 15.1    0.000100</code></pre>
+</div>
+</div>
+<p>Clearly this model has the lowest AIC, but removing the next effect (the <code>lwt:smoke</code> interaction) doesn’t make the model significantly worse by likelihood ratio test.</p>
+<p>We can update a model to remove a single effect like this using the <code>update()</code> function:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mred2 <span class="ot">&lt;-</span> <span class="fu">update</span>(mred1, <span class="sc">~</span>.<span class="sc">-</span>lwt<span class="sc">:</span>smoke)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Notice the slightly odd looking syntax <code>~.-</code> This can be read “as a function of everything, minus” the dot represents all the effects currently in the model. So <code>mred2</code> contains all the effects in <code>mred1</code> minus <code>lwt:smoke</code></p>
+<p>It’s possible to continue this process by using <code>drop1</code> again on the new model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mred2 <span class="sc">|&gt;</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop1</span>(<span class="at">test =</span> <span class="st">"LRT"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>( <span class="at">rownames =</span> <span class="st">"effect"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 6
+  effect       Df Deviance   AIC   LRT `Pr(&gt;Chi)`
+  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 &lt;none&gt;       NA     186.  210. NA     NA       
+2 age:ptl       1     189.  211.  3.10   0.0785  
+3 age:smoke     1     189.  211.  3.14   0.0763  
+4 lwt           1     191.  213.  5.31   0.0212  
+5 ptl:ui        1     193.  215.  7.44   0.00637 
+6 ht            1     193.  215.  7.57   0.00592 
+7 age:ftv       1     200.  222. 14.0    0.000187</code></pre>
+</div>
+</div>
+<p>So again it looks like, while removing the <code>age:ptl</code> effect increases the AIC, we can’t really say that it is statistically significant as, by likelihood ratio test, removing it doesn’t make the model significantly worse, though it is suggestive (<em>p</em> = 0.078).</p>
+<section id="q3.2.1-continue-this-process-of-removing-one-effect-at-a-time-and-checking-by-likelihood-ratio-test-using-drop1-until-removing-an-effect-makes-the-model-significantly-worse." class="level4">
+<h4 class="anchored" data-anchor-id="q3.2.1-continue-this-process-of-removing-one-effect-at-a-time-and-checking-by-likelihood-ratio-test-using-drop1-until-removing-an-effect-makes-the-model-significantly-worse.">Q3.2.1 Continue this process of removing one effect at a time and checking by likelihood ratio test using <code>drop1()</code> until removing an effect makes the model significantly worse.</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Starting with <code>age:ptl</code> mentioned above - need to make sure we’re subracting it from the correct model:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>mred3 <span class="ot">&lt;-</span> <span class="fu">update</span>(mred2, <span class="sc">~</span>.<span class="sc">-</span>age<span class="sc">:</span>ptl)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>mred3 <span class="sc">|&gt;</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop1</span>(<span class="at">test =</span> <span class="st">"LRT"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>( <span class="at">rownames =</span> <span class="st">"effect"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  effect       Df Deviance   AIC   LRT `Pr(&gt;Chi)`
+  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 age:smoke     1     190.  210.  1.50   0.221   
+2 &lt;none&gt;       NA     189.  211. NA     NA       
+3 lwt           1     194.  214.  5.03   0.0250  
+4 ptl:ui        1     194.  214.  5.42   0.0199  
+5 ht            1     196.  216.  7.17   0.00743 
+6 age:ftv       1     202.  222. 13.6    0.000227</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>mred4 <span class="ot">&lt;-</span> <span class="fu">update</span>(mred3, <span class="sc">~</span>.<span class="sc">-</span>age<span class="sc">:</span>smoke)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>mred4 <span class="sc">|&gt;</span> </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop1</span>(<span class="at">test =</span> <span class="st">"LRT"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>( <span class="at">rownames =</span> <span class="st">"effect"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  effect     Df Deviance   AIC   LRT `Pr(&gt;Chi)`
+  &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 &lt;none&gt;     NA     190.  210. NA     NA       
+2 smoke       1     193.  211.  3.00   0.0833  
+3 ptl:ui      1     196.  214.  5.22   0.0223  
+4 lwt         1     196.  214.  5.48   0.0193  
+5 ht          1     197.  215.  7.19   0.00731 
+6 age:ftv     1     205.  223. 14.2    0.000160</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>mred5 <span class="ot">&lt;-</span> <span class="fu">update</span>(mred4, <span class="sc">~</span>.<span class="sc">-</span>smoke)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>mred5 <span class="sc">|&gt;</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop1</span>(<span class="at">test =</span> <span class="st">"LRT"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>( <span class="at">rownames =</span> <span class="st">"effect"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  effect     Df Deviance   AIC   LRT `Pr(&gt;Chi)`
+  &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;
+1 &lt;none&gt;     NA     193.  211. NA     NA       
+2 ptl:ui      1     199.  215.  5.31   0.0212  
+3 lwt         1     199.  215.  5.94   0.0148  
+4 ht          1     201.  217.  7.43   0.00640 
+5 age:ftv     1     207.  223. 13.8    0.000207</code></pre>
+</div>
+</div>
+<p>Removing the next effect <code>ptl:ui</code> would make the model significantly worse (<em>p</em> = 0.02), so stop here with <code>mred5</code></p>
+<p>This is now a much simpler and more readily interpretable model as visible via</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mred5)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Deviance Table
+
+Model: binomial, link: logit
+
+Response: low
+
+Terms added sequentially (first to last)
+
+        Df Deviance Resid. Df Resid. Dev Pr(&gt;Chi)    
+NULL                      188     234.67             
+age      1   2.7600       187     231.91 0.096646 .  
+lwt      1   4.7886       186     227.12 0.028649 *  
+ptl      1   6.0692       185     221.05 0.013756 *  
+ht       1   7.0435       184     214.01 0.007955 ** 
+ui       1   2.6811       183     211.33 0.101549    
+ftv      1   0.0006       182     211.33 0.980441    
+age:ftv  1  12.7240       181     198.60 0.000361 ***
+ptl:ui   1   5.3104       180     193.29 0.021199 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3.2.2-calculate-r2-values-for-both-the-first-reduced-model-mred1-and-the-further-reduced-model-youve-created-check-the-residuals-on-both-think-about-which-might-be-the-better-model-for-what-purposes" class="level4">
+<h4 class="anchored" data-anchor-id="q3.2.2-calculate-r2-values-for-both-the-first-reduced-model-mred1-and-the-further-reduced-model-youve-created-check-the-residuals-on-both-think-about-which-might-be-the-better-model-for-what-purposes">Q3.2.2 Calculate <span class="math inline">\(R^2\)</span> values for both the first reduced model (<code>mred1</code>) and the further reduced model you’ve created – check the residuals on both – think about which might be the better model for what purposes</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>for <code>mred1</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">deviance</span>(mred1)<span class="sc">/</span>mred1<span class="sc">$</span>null.deviance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2185112</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>mr1_r <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mred1)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mr1_r )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>for <code>mred5</code></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">deviance</span>(mred5)<span class="sc">/</span>mred5<span class="sc">$</span>null.deviance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1763196</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>mr5_r <span class="ot">&lt;-</span> <span class="fu">simulateResiduals</span>(mred5)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mr5_r )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These models seem to fit reasonably ok and the variance explained is greater for the more complex model. If we are really about testing the significance of particular variables, <code>mred5</code> is better, but if we just want the best predictor, <code>mred1</code> is likely to be a better compromise.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="interpreting-the-linear-models" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-linear-models">3.3 Interpreting the linear models</h3>
+<p>The proportion of variance explained isn’t massive, but it’s a lot better than the 1% we managed with age alone, though interestingly it does still involve a significant effect of <code>age</code>, in interaction, particularly with <code>ftv.</code> To help think about what this interaction might mean biologically, a good approach is to hold other variables at fixed values and see how the response changes as a function of these two variables of interest. This is known as looking at the <strong>marginal effects</strong> of explanatory variables and several packages exist that help visualise these. This is how we might do that for <code>age</code> and <code>ftv</code> using the <code>sjPlot</code> package:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_model</span>(mred1, <span class="at">type =</span> <span class="st">"pred"</span>, <span class="at">terms =</span> <span class="fu">c</span>(<span class="st">"age [all]"</span>, <span class="st">"ftv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="q3.3.1-how-might-you-interpret-this-plot-in-terms-of-the-interaction-between-ftv-and-age-is-this-what-you-would-have-understood-just-from-looking-at-the-coefficients-in-the-model-summary" class="level4">
+<h4 class="anchored" data-anchor-id="q3.3.1-how-might-you-interpret-this-plot-in-terms-of-the-interaction-between-ftv-and-age-is-this-what-you-would-have-understood-just-from-looking-at-the-coefficients-in-the-model-summary">Q3.3.1 How might you interpret this plot in terms of the interaction between <code>ftv</code> and <code>age</code>? Is this what you would have understood just from looking at the coefficients in the model summary?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This makes it clear that the positive association of low birth weight with number of physician visits during the first trimester is really strong for young mothers, but goes away and potentially reverses for older mothers. So age does matter, but primarily in terms of how to interpret the strong association between low birth weight and the <code>ftv</code> measure of doctor contact.</p>
+<p>Visualisation does really help for interpreting what’s going on in generalised linear models. In this case, we have two very differently sized positive parameters (though their differet sizes reflects being on very different scales – 0 - 6 versus 14 - 45) and a negative interaction. The plot clarifies what that really means.</p>
+</div>
+</div>
+</div>
+<p>Generalised linear models can just be harder to figure out and interpret than normal/Gaussian models – the <code>sjPlot</code> package contains a range of plots that can help.</p>
+<p>Let’s look at the predictions as a confusion matrix (turning probabilities of &gt;0.5 into predictions of low birth weight and &lt; 0.5 into predictions of non-low birth weight):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> birthwt <span class="sc">|&gt;</span> </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(mred1, <span class="at">type =</span> <span class="st">"response"</span>),</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lowPred =</span> <span class="fu">ifelse</span>(pred <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>conf_glm <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">actual =</span> a<span class="sc">$</span>low, <span class="at">predicted =</span> a<span class="sc">$</span>lowPred)</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>conf_glm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      predicted
+actual   0   1
+     0 115  15
+     1  30  29</code></pre>
+</div>
+</div>
+<p>Seems pretty good at predicting non-low birth weights (zeros) but at least half the time doesn’t predict low birth weight when it happens (ones), which isn’t ideal. If we think of the prediction error rate rather than the proportion of deviance explained, this comes out as a 24% error rate:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>(conf_glm[<span class="dv">2</span>] <span class="sc">+</span> conf_glm[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_glm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2380952</code></pre>
+</div>
+</div>
+<p>This simplification approach used above has involved lots of choices to keep or drop variables based on a particular measure of goodness (AIC) and arbitrary thresholds of statistical significance (LRT). In that process there are risks of over- or under-fitting. Therefore to get a clearer assessment of the amount of variance either of the models explains, it would be much better not to rely on their own <span class="math inline">\(R^2\)</span> values or error rates, but to see how they do on a test set of data not used to build the model, which we try below.</p>
+</section>
+</section>
+</section>
+<section id="part-4-comparing-different-sorts-of-regression" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-comparing-different-sorts-of-regression">Part 4: Comparing different sorts of regression</h2>
+<p>It wasn’t straightforward to figure out what interactions we could or should reasonably consider in the binomial model – it feels like we could have missed out on important multi-way interactions just because we had to pick which interactions we wanted to focus on in advance of fitting the model. That might be ok, but if our primary aim is to get the best predictor possible, we might want something else. Let’s see how Random Forests does.</p>
+<section id="fitting-a-random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-a-random-forest">4.1 Fitting a random forest</h3>
+<p>We can use very similar syntax for fitting a random forest as for fitting a generalised linear model, except we don’t have to explicitly ask for interactions. However, because it can deal equally well with numeric and categorical response variables, we do need to make it clear what we want by making the response a factor. We can then look at the default output (no useful <code>summary()</code> method here). We’re also going to increase from the default number of trees in the forest (500) and set a seed so that we all can get the same forest, despite the randomness involved in fitting it:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">87</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>mRF1 <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(low <span class="sc">~</span> age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv, <span class="at">data =</span> birthwt <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">low =</span> <span class="fu">factor</span>(low)), <span class="at">ntree =</span> <span class="dv">5000</span>)</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>mRF1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = low ~ age + lwt + race + smoke + ptl +      ht + ui + ftv, data = mutate(birthwt, low = factor(low)),      ntree = 5000) 
+               Type of random forest: classification
+                     Number of trees: 5000
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 31.22%
+Confusion matrix:
+    0  1 class.error
+0 114 16   0.1230769
+1  43 16   0.7288136</code></pre>
+</div>
+</div>
+<p>This is higher Out Of Bag (OOB) error rate than we had with our reduced logistic regression (24%), though the pattern looks similar – pretty good on predicting non-low birth-weights but missing most of the true cases of low birth-weight.</p>
+<p>The default plot is really about how the error decreases as the number of trees in the forest increases, but it does also show how the error on the low birth-weight class (green) is much greater than the non-low class (red), to give that average 31% error:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(mRF1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It’s also apparent that the error continues to settle down well above the default of 500 trees</p>
+</section>
+<section id="split-up-and-use-training-and-test-data-sets" class="level3">
+<h3 class="anchored" data-anchor-id="split-up-and-use-training-and-test-data-sets">4.2 Split up and use training and test data sets</h3>
+<p>It’s not obvious that either the logistic regression or the random forest has really avoided over-fitting. Let’s try creating training and test sets, to see how they do on unseen data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">23</span>)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> birthwt <span class="sc">|&gt;</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="fl">0.8</span>) <span class="co"># Randomly sample 80% of rows</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> birthwt  <span class="sc">|&gt;</span> </span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(train) <span class="co"># Use the remaining 20% of rows for a test set</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining with `by = join_by(low, age, lwt, race, smoke, ptl, ht, ui, ftv, bwt)`</code></pre>
+</div>
+</div>
+<p>Fit both kinds of model to the training data; first a logistic regression, in the same way as before</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>mGLM_tt <span class="ot">&lt;-</span> <span class="fu">glm</span>(low <span class="sc">~</span> (age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv)<span class="sc">^</span><span class="dv">2</span>, <span class="at">family =</span> binomial, <span class="at">data =</span> train) <span class="sc">|&gt;</span> </span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step</span>(<span class="at">trace =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>First let’s check that it’s doing a similar job to the original on the training data by extracting a confusion matrix and the percent error</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> train <span class="sc">|&gt;</span> </span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(mGLM_tt, <span class="at">type =</span> <span class="st">"response"</span>),</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lowPred =</span> <span class="fu">ifelse</span>(pred <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>conf_glm_trn <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">actual =</span> train<span class="sc">$</span>low, <span class="at">predicted =</span> train<span class="sc">$</span>lowPred)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>conf_glm_trn</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      predicted
+actual  0  1
+     0 97  7
+     1 22 25</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>(conf_glm_trn[<span class="dv">2</span>] <span class="sc">+</span> conf_glm_trn[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_glm_trn)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.192053</code></pre>
+</div>
+</div>
+<p>On the training data it seems to think it’s doing a bit better than the model on the whole data (19% error versus 24% error), but in a similar ball-park</p>
+<p>Now extract both the confusion matrix and the % error on the test data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> test <span class="sc">|&gt;</span> </span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(mGLM_tt, <span class="at">newdata =</span> test, <span class="at">type =</span> <span class="st">"response"</span>),</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lowPred =</span> <span class="fu">ifelse</span>(pred <span class="sc">&gt;</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>conf_glm_tt <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">actual =</span> test<span class="sc">$</span>low, <span class="at">predicted =</span> test<span class="sc">$</span>lowPred)</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>conf_glm_tt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      predicted
+actual  0  1
+     0 22  4
+     1  8  4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>(conf_glm_tt[<span class="dv">2</span>] <span class="sc">+</span> conf_glm_tt[<span class="dv">3</span>])<span class="sc">/</span><span class="fu">sum</span>(conf_glm_tt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3157895</code></pre>
+</div>
+</div>
+<p>That error seems markedly higher (32% versus 19%) and the true positives (low birth-weight called as low birth-weight) have moved from the second largest class to being the joint smallest class. All this suggest that the model was over-fitted to the training data.</p>
+<p>Then the random forest, which has an argument for putting test data straight into the original function call and getting everything at once:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>mRF_tt <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(low <span class="sc">~</span> age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv, <span class="at">data =</span> train <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">low =</span> <span class="fu">factor</span>(low)), <span class="at">ntree =</span> <span class="dv">5000</span>, <span class="at">xtest =</span> test <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">c</span>(age, lwt, race, smoke, ptl, ht, ui, ftv)), <span class="at">ytest =</span> test <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">low =</span> <span class="fu">factor</span>(low)) <span class="sc">|&gt;</span> <span class="fu">pull</span>(low))</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>mRF_tt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = low ~ age + lwt + race + smoke + ptl +      ht + ui + ftv, data = mutate(train, low = factor(low)), ntree = 5000,      xtest = select(test, c(age, lwt, race, smoke, ptl, ht, ui,          ftv)), ytest = pull(mutate(test, low = factor(low)),          low)) 
+               Type of random forest: classification
+                     Number of trees: 5000
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 35.1%
+Confusion matrix:
+   0  1 class.error
+0 88 16   0.1538462
+1 37 10   0.7872340
+                Test set error rate: 28.95%
+Confusion matrix:
+   0 1 class.error
+0 25 1  0.03846154
+1 10 2  0.83333333</code></pre>
+</div>
+</div>
+<p>This one has gone the other way – the performance on the test set is actually somewhat better than the training set, though that is mostly down to particularly good (/lucky) performance on the negatives, with only 1/26 mis-predicted. This suggests both that random forests has not over-fit to the training data and that the true error rate on unseen data is pretty similar to that of the logistic regression model, at around 30%</p>
+</section>
+<section id="interpret-the-random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="interpret-the-random-forest">4.3 Interpret the random forest</h3>
+<p>There are packages to try out here (pdp, randomForestExplainer), but the most basic looking into the black box is to ask what the most important variables are. For this it’s best to use the <code>importance = TRUE</code> argument to <code>randomForest()</code> to include a (better) importance measure which can be directly plotted using <code>varImpPlot()</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">87</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>mRF2 <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(low <span class="sc">~</span> age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv, <span class="at">data =</span> birthwt <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">low =</span> <span class="fu">factor</span>(low)), <span class="at">ntree =</span> <span class="dv">5000</span>, <span class="at">importance =</span><span class="cn">TRUE</span>)</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(mRF2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>By default this plots out two importance measures from the most to the least important - from this it’s clear that they are not the same. You can read about how these different measures are calculated at <code>?importance</code>. The interpretation is that the mean decrease in Gini index (a measure of the ‘node impurity’ for classification, there’s a different one for regression with a continuouis response) tells us about what the variables have done in this model. In contrast, the Mean decrease in accuracy uses the out of bag data and permutation to attempt to get at the importance of the variables for prediction, so is usually the better one to consider. The message here is that, in predicting low birth-weight, the number of previous premature labours is particularly helpful, all other variables have some useful association, except race, which is worse than useless (removing it increases rather than decreases accuracy).</p>
+<section id="q4.3.1-look-at-the-variable-importance-plot-for-the-random-forest-fitted-to-the-80-training-data-how-reproducible-are-these-importances" class="level4">
+<h4 class="anchored" data-anchor-id="q4.3.1-look-at-the-variable-importance-plot-for-the-random-forest-fitted-to-the-80-training-data-how-reproducible-are-these-importances">Q4.3.1 Look at the variable importance plot for the random forest fitted to the 80% training data – how reproducible are these importances?</h4>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">95</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>mRF_tti <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(low <span class="sc">~</span> age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv, <span class="at">data =</span> train <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">low =</span> <span class="fu">factor</span>(low)), <span class="at">ntree =</span> <span class="dv">5000</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(mRF_tti)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There’s certainly a correlation with what we saw before, but just dropping 20% of the data seems to have changed the variable importances substantially</p>
+</div>
+</div>
+</div>
+<p>Interpreting importances in random forest models needs to be done with great caution and care. The fact that 80% of the data gives a different answer may reflect on the size of the dataset – 189 is small by the standards of machine learning – random forests will work well with <em>much</em> bigger datasets and we might get better stability for the importances from models using them. In either case a good approach can be to compare the importance of a variable in your model to the importance of the same variable in a model where the association between that explanatory variable and the response variable has been deliberately broken. That can be done by randomly permuting either the response variable, or that explanatory variable alone. You can try this for yourself (the <code>sample()</code> function is particularly good for creating random permutations), but this is also an approach taken to model selection using random forests by the <code>Boruta</code> package.</p>
+</section>
+</section>
+<section id="reflections-on-the-modelling" class="level3">
+<h3 class="anchored" data-anchor-id="reflections-on-the-modelling">4.4 Reflections on the modelling</h3>
+<ul>
+<li><p>It’s important not to interpret any of the associations found here as direct causes – it is completely unclear why these variables were collected rather than others (though it’s fair to assume that convenience and historical contingency/biases come into it) – a model will use a variable like age as a proxy for some of the many other things that are correlated with it but weren’t measured. Instead, models like this highlight associations that exist, providing starting points or hypotheses, ideally for experimental studies that really can pick apart causality. What we’ve done is a benign exercise that could in principle point towards better medical approaches to low birth weight. However, what we have also done is create a black-box model with a protected charateristic (race) as an input. Creation and simplistic interpretation of very similar models for crime has rightly got police forces into a lot of trouble.</p></li>
+<li><p>We should ask whether we started in the right place – doctors love to dichotomise – in this case we’ve gone along with them – we’ve analysed ‘low’ versus non-low birth weight when we had the actual birth weight in the table all along. What does this variable look like?</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>birthwt <span class="sc">|&gt;</span> </span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bwt, <span class="at">fill =</span> <span class="fu">factor</span>(low))) <span class="sc">+</span> </span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">2500</span>, <span class="at">colour =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="practical5_answers_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That looks very much like a continuous distribution with a line drawn through it at a convenient round number (2.5kg) that has nothing to do with biology. Given which, perhaps it would be better just fit birth weight itself?</p>
+<section id="q4.4.1-go-back-and-fit-both-a-linear-model-and-a-random-forest-to-birth-weight-bwt-directly-what-is-similar-and-different-to-fitting-a-binary-low-birthweight-response" class="level4">
+<h4 class="anchored" data-anchor-id="q4.4.1-go-back-and-fit-both-a-linear-model-and-a-random-forest-to-birth-weight-bwt-directly-what-is-similar-and-different-to-fitting-a-binary-low-birthweight-response">Q4.4.1 Go back and fit both a linear model and a random forest to birth-weight (<code>bwt</code>) directly – what is similar and different to fitting a binary low birthweight response?</h4>
+<p>It would be possible to do the full fitting separately to training and test sets – feel free to try such things, but for now just fit to the full data.</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">None</span>✅ Answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Firstly, we can go back to using <code>lm()</code> because we no longer have a binomial response. We can take the same approach to simplification</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>bwtlm <span class="ot">&lt;-</span> <span class="fu">lm</span>(bwt <span class="sc">~</span> (age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv)<span class="sc">^</span><span class="dv">2</span>, <span class="at">data =</span> birthwt) <span class="sc">|&gt;</span> </span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step</span>(<span class="at">trace =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Check its r-squared value</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bwtlm)<span class="sc">$</span>adj.r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.2822925</code></pre>
+</div>
+</div>
+<p>This looks pretty similar to before</p>
+<p>Fitting a random forest doesn’t need to change in the same way, we can just swap in the new response variable (and take out the bits needed for sorting out the old response variable):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>bwtrf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(bwt <span class="sc">~</span> age<span class="sc">+</span>lwt<span class="sc">+</span>race<span class="sc">+</span>smoke<span class="sc">+</span>ptl<span class="sc">+</span>ht<span class="sc">+</span>ui<span class="sc">+</span>ftv, <span class="at">data =</span> birthwt, <span class="at">ntree =</span> <span class="dv">5000</span>)</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>bwtrf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = bwt ~ age + lwt + race + smoke + ptl +      ht + ui + ftv, data = birthwt, ntree = 5000) 
+               Type of random forest: regression
+                     Number of trees: 5000
+No. of variables tried at each split: 2
+
+          Mean of squared residuals: 470866.4
+                    % Var explained: 10.98</code></pre>
+</div>
+</div>
+<p>This time it tells us that the type of forest is ‘regression’ which shows that it’s correctly noticed that <code>bwt</code> is a numeric response. As a result we don’t get a confusion matrix, but we do get a % variation explained. 11% seems rather low and certainly lower than claimed by the linear model <span class="math inline">\(R^2\)</span> of 28%. This seems similar to the situation with the low indicator variable models, but more extreme – it seems likely that there is some over-fitting in the simplified linear model.</p>
+</div>
+</div>
+</div>
+<ul>
+<li><p><code>randomForest</code> is the package that gives the original implementation of the random forests algorithm in R. However there are quicker versions out there, notably in the <code>ranger</code> package. Similarly there are other random forests implementations that specialise in particular data types, such as survival forests in the<code>randomForestSRC</code> package and the <code>orf</code> package for ordered responses.</p></li>
+<li><p>In this workshop, the effectiveness of linear modelling and random forests has been similar – either method gets to about the same error rate – we might prefer a linear model for its interpretability or a random forest model for not needing the model simplification step that gave over-fitting to training data. <em>However</em> with this dataset we were right on the edge of how many explanatory variables linear modelling could deal with in terms of considering interactions at all. Random Forest will become the much better choice if we have more explanatory variables (as would seem reasonable for this kind of dataset) and want to consider interactions – as we saw for <code>age</code> interactions can be important for seeing any effect at all. On the other hand, for hypothesis testing and parameterisation on a more focused set of explanatory variables, linear modelling remains much more straightforward and powerful.</p></li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
