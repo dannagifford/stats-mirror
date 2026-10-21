@@ -1,0 +1,13 @@
+---
+title: "Test Notes"
+format:
+  html: default
+---
+  
+## Slide
+  
+Content here.
+
+::: notes
+These should be hidden in HTML.
+:::

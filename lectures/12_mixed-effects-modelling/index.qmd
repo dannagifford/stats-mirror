@@ -1,0 +1,111 @@
+---
+title: "Mixed-effects modelling"
+subtitle: "Exploring how linear models describe relationships between biological variables"
+author: "BIOL33031 / BIOL65161"
+format:
+  html:
+    css: ../html.css
+include-after-body: ../_after-body.html
+---
+
+In this session, we look at the `Orange` dataset, which records the growth of five orange trees over time. Our aim is to model tree growth, with circumference (a continuous response) as a function of age (a continuous explanatory variable). At first glance, this looks like a simple regression problem. However, because each tree is measured repeatedly, those measurements are **not independent**. Observations from the same tree share similarities that must be modelled appropriately.  
+
+
+## Fixed versus random effects
+
+Link to slides: [PowerPoint](slides/FixedVsRandom.pptx) and [PDF](slides/FixedVsRandom.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-b143-53b0-0000-0199e6f8f760" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+In this first video, we look at what it means to treat a variable as a *fixed* or a *random* effect, using the `Orange` dataset as an example. The dataset records how the circumference of orange trees (a continuous **response variable**) increases with age (a continuous **explanatory variable**) for five individual trees.
+
+Because each tree is measured repeatedly, the observations are **not independent** — measurements from the same tree are *pseudoreplicates*. If we were to fit a single regression line through all the data without accounting for tree, the model would underestimate uncertainty. One approach would be to include `Tree` as a fixed categorical variable in an ANCOVA, fitting separate intercepts or even slopes for each tree. However, this is inefficient and not biologically meaningful when there is nothing inherently special about “Tree 1” versus “Tree 5”.
+
+Instead, we can treat `Tree` as a **random effect**, representing a random sample from a larger population of possible trees. The model then estimates the *variation among trees* rather than individual differences, while retaining a fixed effect for `age`, which captures the average growth pattern. Together, fixed and random effects form a **mixed-effects model**, appropriate for repeated-measures or hierarchical data.
+
+Conceptually, **fixed effects** are of direct interest — they describe mean relationships we want to estimate precisely (e.g. how circumference changes with age). **Random effects**, by contrast, account for background variability among sampled groups or experimental units (e.g. individual trees, replicate plates, or subjects). Practically, a fixed effect can have as few as two levels, while a random effect should usually have at least five levels to estimate variance reliably. With fewer than five, numerical estimates of variability become unstable, and the factor should be treated as fixed instead.
+
+In general, the decision to treat something as fixed or random depends on the scientific question: if we care about specific levels (e.g. whether Tree 1 differs from Tree 2), the factor is fixed; if we only care about the *population variation* they represent, it’s random. It’s also possible to fit models containing only random effects, where the research question concerns variability itself — an approach known as **variance components analysis**.
+
+Distinction between fixed and random effects:
+
+| Fixed effect | Random effect |
+|---------------|----------------|
+| Of direct interest to our question | Usually a nuisance or grouping variable |
+| Describes mean relationships | Describes variability |
+| Levels are defined and limited | Levels are sampled from a population |
+| Measured precisely | Represent random variation |
+| Typically 2+ levels | Ideally ≥5 levels |
+
+
+## Getting started
+
+Link to slides: [PowerPoint](slides/MixedModelling1.pptx) and [PDF](slides/MixedModelling1.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-a8cc-0600-0000-0199e6fe75a0" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+Next, we use the `Orange` dataset to think about how to distinguish between fixed and random effects. The dataset records the circumference of orange trees at different ages for five trees. Here, `age` is a *fixed effect* because we are specifically interested in estimating how growth changes with age — we want the slope of circumference against age.
+
+In contrast, `Tree` is a *random effect* because the five trees represent a random sample from a larger population of possible trees; we’re not interested in each tree individually, but in the variation among them. Treating tree as a random effect allows us to estimate how much of the total variation in growth is due to differences between trees, rather than treating each as a separate fixed category. When we plot the data, we see that growth is not perfectly linear — it curves and shows greater spread at higher ages, indicating heteroscedasticity.
+
+A **log transformation** of circumference (using `log(circumference)`) makes the relationship more consistent and stabilises the variance, which is often appropriate for growth data where change occurs proportionally over time. Using this transformed data, we can fit a quadratic model for one tree to ask a more specific question: *does logarithmic growth slow with age?* The quadratic term is negative and significant (*p* = 0.009), suggesting that growth does indeed slow as trees get older.
+
+While this model fits the observed data well, it should not be extrapolated beyond the observed range — a simple quadratic would predict unrealistic declines in circumference at very high ages. To capture levelling-off behaviour, we’d need to use a non-linear model. For now, this analysis sets up the logic behind using mixed-effects models, which combine both fixed and random effects to account for structure in biological data.
+
+```r
+# Fitting to a subset of the data
+
+# Filter Orange to include only Tree #3
+Orange3 <- Orange |>
+   filter(Tree == 3)
+
+model <- lm(log(circumference) ~ age + I(age^2), data = Orange3)
+summary(model)
+```
+
+## Fitting models
+
+Link to slides: [PowerPoint](slides/MixedModelling2.pptx) and [PDF](slides/MixedModelling2.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-e940-d39f-0000-0199e6ff6000" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+We move on from exploring a single tree to fitting a model that includes all trees at once. Previously, we treated *Tree 3* as a single example, but now we want to understand how the **population of trees** behaves — how much of the variation in circumference comes from age (a fixed effect) and how much comes from differences between trees (a random effect). Rather than fitting separate models for each tree or treating tree as a fixed categorical variable, which would be inefficient and uninformative, we fit a **mixed-effects model** that combines both effects in a single framework.
+
+The model formula in R specifies a fixed effect of age and a random effect of tree, written as `(1 | Tree)`, meaning that each tree has its own random intercept around the population mean. This allows the model to estimate the variability among trees while maintaining a common overall relationship between age and growth. Mixed-effects models can’t be fitted with the base `lm()` function, but can be fitted using packages such as `lme4` (function `lmer()`), `nlme`, or `brms` for Bayesian approaches. In our `Orange` dataset, this model shows that the pattern of growth over age is similar across trees, but some trees are consistently larger than others.
+
+The model summary includes two key sections: one for **fixed effects**, which describe the average curve across all trees, and one for **random effects**, which describe how much trees vary around that curve. The random-effect output includes both variance and standard deviation — the latter is often easier to interpret because it’s on the same scale as the response, though variances are useful for combining sources of variation. In this example, 70% of the total variation in growth is explained by differences among trees, indicating that most of the variability comes from between-tree differences rather than within-tree noise. Understanding this helps not only with interpreting results but also with designing better experiments — for example, deciding whether to sample more trees or more time points to best capture variability.
+
+```r
+# Fitting a mixed-effects model with Tree as a random effect
+
+install.packages("lme4") # Needed first-time only
+library(lme4)            # Load lme4 for lmer() function   
+
+model <- lmer(log(circumference) ~ age + I(age^2) + (1|Tree), data = Orange)
+summary(model)
+```
+
+## Checking and model comparison
+
+Link to slides: [PowerPoint](slides/MixedModelling3.pptx) and [PDF](slides/MixedModelling3.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-c4f7-98c0-0000-0199e7004a60" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+In the final video, we focus on checking the mixed-effects model and asking whether it adequately describes the data. Using the `Orange` dataset again, we have `age` as a fixed effect and `Tree` as a random effect, allowing us to describe both the overall growth trend and the variation among trees. Although the model looks reasonable after applying a log transformation, it’s still important to check for problems like **heteroscedasticity** (unequal variance) and **non-normality** of residuals.
+
+Diagnostic plots can help with this: `plot(model)` produces a residuals-versus-fitted plot, where we look for a roughly random scatter (“a starry sky”) to indicate constant variance, and `qqnorm(resid(model))` checks whether residuals follow a straight line consistent with a normal distribution. In this case, neither plot looks perfect, but both are acceptable — the model seems good enough to proceed. The next question is whether the curvature we saw earlier, represented by the squared age term, is **statistically meaningful**.
+
+To test this, we compare two models: one with the quadratic term and one without it. The comparison uses a **likelihood ratio test (LRT)** via `anova(m1, m2)`, which evaluates whether the more complex model improves fit more than expected by chance. Here, the LRT gives a very small *p*-value (1.2 × 10^-10^), strongly supporting the inclusion of curvature. The **Akaike Information Criterion (AIC)** provides an alternative way to compare models, balancing fit and simplicity — lower AIC values indicate better models. In this example, both AIC and LRT agree that the quadratic model is preferable. In cases where results are less clear (e.g. *p* ≈ 0.05), AIC can offer a useful second opinion, particularly when comparing multiple candidate models.
+
+Overall, this analysis suggests that the curviness in growth rate is real and that the mixed-effects model captures both the average pattern (the fixed effect of age) and the variability among trees (the random effect). Once validated, this model can be used to understand the expected growth trajectory of an “average” tree or to explore variation across the population, provided we avoid over-extrapolating beyond the observed range.
+
+
+```r
+# Fit two models with and without I(age^2) to test curviness
+
+m1 <- lmer(log(circumference) ~ age + I(age^2) + (1|Tree), data = Orange)
+m2 <- lmer(log(circumference) ~ age + (1|Tree), data = Orange)
+
+# Compare two models
+anova(m1,m2)
+```

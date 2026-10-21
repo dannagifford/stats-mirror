@@ -1,0 +1,80 @@
+author: "BIOL33031/BIOL65161"
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - lectures/*/index.qmd   # <- robust glob: any subfolder depth
+    - worksheets/*.qmd
+
+website:
+  title: "BIOL33031/BIOL65161"
+  sidebar:
+    contents:
+    - section: "Intro session"
+      contents:
+       - lectures/00_why-statistics/index.qmd
+       - lectures/01_intro-to-R/index.qmd
+       - lectures/02_intro-to-tidyverse/index.qmd
+       - lectures/03_open-science/index.qmd
+       - worksheets/intro-practical.qmd
+    - section: "1 - Introduction to Data"
+      contents: 
+       - lectures/04_data-wrangling/index.qmd
+       - lectures/05_data-summary/index.qmd
+       - lectures/06_visualisation/index.qmd
+       - worksheets/practical1.qmd
+    - section: "2 - Classical statistical tests"
+      contents: 
+       - lectures/07_hypothesis/index.qmd
+       - lectures/08_t-test/index.qmd
+       - lectures/09_contingency/index.qmd
+       - lectures/10_correlation/index.qmd
+       - worksheets/practical2.qmd
+    - section: "3 - Linear modelling"
+      contents: 
+       - lectures/11_linear-modelling/index.qmd
+       - worksheets/practical3.qmd
+    - section: "4 - Mixed effects models"
+      contents: 
+       - lectures/12_mixed-effects-modelling/index.qmd
+       - worksheets/practical4.qmd
+    - section: "5 - Other models"
+      contents: 
+       - lectures/13_glm/index.qmd
+       - lectures/14_random-forests/index.qmd
+       - worksheets/practical5.qmd
+    - section: "Quarto"
+      contents: 
+       - lectures/quarto/index.qmd
+    search: true
+  navbar:
+    right:
+      - text: "Home"
+        href: index.html
+
+format:
+  html:
+    css: ../html.css
+    toc: true
+
+revealjs:
+    css: slides.css
+    fontsize: 28px
+    auto-stretch: true
+    code-overflow: wrap
+    fig-responsive: true
+    slide-number: true
+    self-contained: false
+    output-file: slides.html
+format-links:
+  - format: revealjs
+    text: Slides
+    icon: postcard
+    target: _blank
+    rel: noopener
+  - html
+
+execute:
+  echo: false
+  include-checks: false

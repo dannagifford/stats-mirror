@@ -1,0 +1,491 @@
+---
+title: "📝 Practical: Linear modelling"
+subtitle: ""
+author: "BIOL33031/BIOL65161"
+format:
+  html:
+    sidebar: false
+    navbar: false
+---
+
+This worksheet will help practice fitting and using **linear models**.
+It will use ideas previously introduced e.g. about **hypothesis testing** —
+including the null hypothesis, *p*-values and their interpretation. It will
+implement the approaches described in the videos using **real data and R
+code**.
+
+We'll focus this time on plant data sets `trees` and `iris`both
+available in R
+
+------------------------------------------------------------------------
+
+## Part 1: Loading and visualising the `trees` data
+
+`trees` is a dataset within R
+
+### 1.1 Load up the data
+
+load and take a first look at some of the data
+
+```{r, echo = T}
+#load the packages we're going to use today - work out how to install them if you don't have them
+library(tidyverse)
+library(nlme)
+library(GGally)
+
+# Take a look at the data
+trees |> 
+  as_tibble()
+
+#take a look at the help file to see what the columns each mean
+?trees
+```
+
+All three variables come through as the same type
+
+#### Q1.1.1 What is the columns' variable type and is it appropriate?
+
+For reference here is a table of possible data types:
+
+| **Category** | **R Type/Class** | **Description / Example Usage** |
+|------------------|----------------------|--------------------------------|
+| **Numeric** | `numeric`, `integer`, `double` | Continuous or count data, e.g. measurements, ages, weights. |
+| **Logical** | `logical` | TRUE/FALSE values for conditions or binary flags. |
+| **Categorical** | `factor`, `ordered` | Discrete categories or ordinal scales (e.g. sex, treatment). |
+| **Text** | `character` | Plain text strings. |
+| **Date / Time** | `Date`, `POSIXct`, `POSIXlt` | Calendar dates and timestamps. |
+| **Complex Numbers** | `complex` | Numbers with real and imaginary parts (rarely used). |
+| **Raw Data** | `raw` | Byte-level data, e.g. binary representations. |
+| **Containers** | `list`, `data.frame`, `tibble`, `matrix` | Structures for grouping multiple variables or elements. |
+
+::: {.callout collapse="true"}
+#### ✅ Answer
+
+The columns are labelled \<dbl\> which is short for 'double' which is a continuous numeric value. This seems appropriate for each of the three variables.
+:::
+#### Q1.1.2 What simple analysis or hypothesis test might we do on this data? -- Try doing that analysis
+
+Think back to options from the last session...don't spend too much time on this!
+
+::: {.callout collapse="true"}
+#### ✅ Answer
+
+Might want to ask if there's a significant correlation between the variables
+```{r, echo = T}
+cor(trees)
+cor.test(trees$Girth, trees$Height)
+```
+:::
+
+#### Q1.1.3 What might we think of as response and explanatory variables here?
+
+Think about why this data was collected and what they might have been
+able to control in collecting the data.
+
+### 1.2 Visualise the data
+
+#### Q1.2.1 Make a plot showing all three variables in an appropriate way
+
+::: {.callout collapse="true"}
+#### ✅ Answer
+
+Can map two continuous variables to axes and the third to colour:
+```{r, echo = T}
+
+trees |>
+ggplot(aes(x = Girth, y = Volume, colour = Height)) +
+  geom_point() +
+  theme_classic()
+
+#or using the other variable
+ trees |> 
+ ggplot(aes(x = Height, y = Volume, colour = Girth)) +
+ geom_point() +
+ theme_classic()
+```
+
+#alternatively could do all pairwise plots at the same time (and get correlations) in one go:
+
+```{r, echo = T}
+library(GGally)
+ggpairs(trees)
+
+```
+:::
+
+## Part 2: Fitting a linear model
+
+### 2.1 fit a linear model of volume as a function of girth
+
+And then check its diagnostic plots
+```{r, echo = T}
+
+model_vg <- lm(Volume ~ Girth, data = trees)
+plot(model_vg)
+
+```
+
+#### Q2.1.1 What do you make of the diagnostics plots and what might you do about it?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+Looks a bit curvy (positive residuals at both low and high values) --
+could transform -- logging both axes would be equivalent to fitting a
+power law instead of a straight line, which might make sense in terms of
+the biology, or just how you get from a linear measurement to a volume
+i.e. $Volume = a \times Girth^b$ where the linear model parameters are $a$ and $b$ and we might expect $b$ to be 2.
+:::
+
+Now look at the summary of the model
+
+```{r, echo = T}
+summary(model_vg)
+```
+
+Notice the R-squared value, i.e. the proportion of variance explained,
+is very high (0.93)
+
+#### Q2.1.2 Figure out the best estimate, error and units for how much volume increases with girth
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+5.1 ± 0.25 (SE) (cubic feet/inch)
+:::
+
+### 2.2 Visualise the fit
+
+Want to see what's going on -- by default the `predict` function gives
+the value predicted by the model at the same points as you have data, so
+you can create a new column of precitions:
+
+```{r, echo = T}
+trees |> 
+  mutate(pred = predict(model_vg)) |> 
+  ggplot(aes(x = Girth, y = Volume)) +
+  geom_point() +
+  geom_line(aes(y = pred))+
+  theme_classic()
+```
+
+#### Q2.2.1 Try re-plotting the data and fit with two logarithmic axes -- how does this make you feel about doing a log-log (power law) fit instead?
+
+If in doubt how to do it, ask your favourite large language model! 
+
+::: {.callout collapse="true"}
+
+## ✅ Answer
+
+```{r, echo = T}
+trees |> 
+  mutate(pred = predict(model_vg)) |> 
+  ggplot(aes(x = Girth, y = Volume)) +
+  geom_point() +
+  geom_line(aes(y = pred))+
+  scale_x_log10()+
+  scale_y_log10()+
+  theme_classic()
+```
+
+Pretty good for most of the data, but very bad for the smallest trees -- apart from them, there's not going to be much to choose between the models in terms of fit -- need to make the choice based on biology or reasoning. Press ahead with this one for now.
+
+:::
+
+## Part 3: Comparing models
+
+### 3.1 Adding another *main effect* and an *interaction effect*
+
+This regression model explains lots of the variance, but wouldn't we
+expect tree height to tell us something useful about the volume too?
+
+Let's fit a model containing both Girth, Height and their interaction:
+
+```{r, echo = T}
+model_vghi <- lm(Volume ~ Girth * Height, data = trees)
+```
+
+Decide if we need that interaction effect -- can check using anova:
+
+```{r, echo=T}
+anova(model_vghi)
+```
+
+That says that the interaction between girth and height is highly
+significant ($p = 7.5 \times 10 ^{-6})$)
+
+#### Q3.1.1 Can you test the significance of the girth:height interaction term in a different way?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+Could just look at the Wald test in the summary:
+```{R,echo=T}
+summary(model_vghi)
+```
+Or could create a reduced model and compare it with a full model:
+
+```{R,echo=T}
+model_vgh <- lm(Volume ~ Girth + Height, data = trees)
+
+anova(model_vgh, model_vghi)
+```
+:::
+
+#### Q3.1.2 What proportion of the variance in volume is explained by this model?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+Check with a summary of the model:
+
+```{R,echo=T}
+summary(model_vghi)
+```
+98% Notice that there are two R-squared values - the 'Multiple R-squared' is the straightforward proportion of variance explained, the 'Adjusted R-squared' takes into account the number of parameters, so may be better for comparing models with different numbers of parameters.
+:::
+
+#### Q3.1.3 Check the diagnostic plots for the model and plot the predicted values with the data - what do you conclude?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+The residuals versus fitted plot looks better than the single-explanatory variable model, the normality looks slightly less good
+```{R,echo=T}
+plot(model_vghi)
+```
+And plot:
+
+```{r, echo = T}
+trees |> 
+  mutate(pred2 = predict(model_vghi)) |> 
+  ggplot(aes(x = Girth, y = Volume, colour = Height)) +
+  geom_point() +
+  geom_line(aes(y = pred2))+
+  theme_classic()
+```
+Because of the two explanatory variables, there isn't a nice clear line, but it is clear that accounting for height substantially improves the fit for volume, including capturing the upward curve seen on this plot and fitting those three smallest trees much better.
+
+Might be better to plot different lines for expected values from different levels of height - slightly beyond what we want to do here, but is certainly possible by giving a new tibble with particular values in the height column to the `newdata` argument of the `predict()` function, and also possibly using functions in other packages.
+:::
+
+
+### 3.2 Thinking about model simplification
+
+If losing the interaction effect hadn't made the model significantly worse, we could have removed it and then, tried removing one of the main effects (height or girth) too, picking the one where the effect was least significantly different from zero. 
+
+This kind of sequential simplification can help make complex models much more interpretable, but needs to be done carefully -- effects shouldn't be removed if they are required by (higher order) interactions. And it's always the least significant effect that should be removed first, comparing models with and without the effect after every removal. Such stepwise simplification and comparison can be done by AIC - checking the AIC of each model with one effect that can be removed, removed. The better model -- the one with the lower AIC -- is chosen and the process is repeated.
+
+The `step()` function does this in an automated way:
+
+```{r, echo = T}
+step(model_vghi)
+```
+Here we see that the starting model (in the row \<none\> because none of the effects was removed) has a lower AIC (65) than a model with the Girth:Height interaction removed (AIC = 87), showing that the Girth:Height interaction should be kept. `step` doesn't try removing the main effects of either Girth or Height, because they're each involved in the Girth:Height interaction, so that interaction would need to be removed first. The output lines below this, starting with "Call" show the final, reduced model that is returned -- here it's the same model that we started with.
+
+
+## Part 4: Linear modelling with a categorical explanatory variable
+
+Using `iris` a classic dataset of measurements from three species of iris.
+
+### 4.1 take a first look at the data and wrangle it
+
+Take a first look at some of the data, which contains five variables. Also check the help file.
+
+```{r, echo = T}
+ggpairs(iris)
+?iris
+```
+
+Could think about this in different ways, but here we're going to think about how different species have different measurements - species is the explanatory variable, measurement is the response. This means that, to get long-format data, all the different measurements of different structures can be stacked up in a single column:
+
+```{r, echo = T}
+#As it happens all the measurement columns have a dot in the middle - lets use that to identify them and stack them up:
+iris_stacked <- iris |> 
+  pivot_longer(contains("."), names_to = "structure_measured", values_to = "measurement")
+iris_stacked
+```
+
+
+#### Q4.1.1 Look at the data types for the different columns -- what are they? Why are they all different? Do they need to be?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+While both categorical, the Species and structure_measured columns are different - Spcies is a factor, because that is what it was in the original `iris` dataframe, whereas structure measured was created in stacking up the data, so is just a character. They don't need to be different, but it (probably) doesn't matter for the modelling.
+
+:::
+
+#### Q4.1.2 Plot out the full dataset and comment on what it looks like
+
+Start by plotting however you can. Then try to do a version involving the measured structure on the x axis and separate facets for each species using facet_wrap(). Ask a large language model how to angle your axis text so that it doesn't overlap
+
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+```{r, echo = T}
+#first attempt
+iris_stacked |> 
+  ggplot(aes(x = Species, y = measurement, colour = structure_measured))+
+  geom_point(alpha = 0.5)+
+   theme_classic()
+
+#slightly better attempt using facet_wrap
+iris_stacked |> 
+  ggplot(aes(x = structure_measured, y = measurement, fill = structure_measured))+
+  geom_jitter(alpha = 0.1)+
+  geom_boxplot(outliers = FALSE)+
+  facet_wrap(~Species)+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = "none") 
+
+
+```
+The species clearly line up from small (*setosa*) to big (*virginica*), but sepal width and petal length swap over - sepals are wider than petals in *setosa* but vice versa in versicolor and more distinctly so in *virginica*. 
+:::
+
+### 4.2 fit a linear model with both explanatory effects and their interaction
+
+```{r, echo = T}
+model_ssi <- lm(measurement ~ Species * structure_measured, data = iris_stacked)
+```
+#### Q4.2.1 Check the diagnostic plots and summary -- is this model ok?
+
+What might you consider changing?
+
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+```{r, echo = T}
+plot(model_ssi)
+summary(model_ssi)
+```
+The model is explaining lots of the variance (96%), but there's something very striking going on with the residuals -- at small values they're small at large values they're large. This is visible in all four of the diagnostic plots.
+:::
+## Part 5: Fit a revised linear model that doesn't assume homoscedasticity
+
+For this will need to use the `gls()` function in the `nlme` package. gls stands for 'generalized least squares' it lets us relax some of the stict assumptions in a normal linear model.
+
+### 5.1 Fit exactly the same model as we fitted with `lm()`, but with `gls()`
+
+```{r, echo = T}
+model_ssi_g <- gls(measurement ~ Species * structure_measured, data = iris_stacked)
+```
+
+#### Q5.1.1 Compare the models fitted by `lm` and `gls` -- convince yourself that the underlying model is the same and use tools you know about (e.g. `plot()`, `summary()`, `anova()`) to compare how they are presented.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+gls gives a simpler output from plot:
+```{r, echo = T}
+plot(model_ssi_g)
+```
+but more output in its summary
+```{r, echo = T}
+summary(model_ssi_g)
+```
+
+anova presents the output slightly differently
+```{r, echo = T}
+anova(model_ssi_g)
+```
+:::
+
+The models can be directly compared via `anova`, showing that the fit of the two models is equivalent
+```{r, echo = T}
+anova(model_ssi_g, model_ssi)
+```
+### 5.2 Fit a model where the variance can change with the fitted value
+
+There are different ways we could imagine the variance changing, so there are several different variance structures available that we could try (see `?varClasses`), but `varPower` is one that, by default, allows variance to change as a power function of the fitted value. It often does a good job. Slightly oddly, it is given as the `weights` argument:
+
+```{r, echo = T}
+model_ssi_gv <- gls(measurement ~ Species * structure_measured, weights = varPower(), data = iris_stacked)
+
+```
+
+If we now examine the fit (just printing the model here, though could use `summary()` to get more output), can see that it's fitted an extra parameter `power`:
+
+```{r, echo = T}
+model_ssi_gv
+```
+
+The fitted value of power is 0.54. That's positive, meaning that the variance is increasing with the fitted value as we saw in the `lm` fit. Since this is a power function, that means that variance is increasing roughly with the square root of the fitted value.
+
+#### Q5.2.1 Compare the two `gls` models using `anova()` -- the one with the changing variance and the one without -- does this extra parameter make the model better, any more than would be expected just by having a more complex model?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+```{r, echo = T}
+anova(model_ssi_g, model_ssi_gv)
+```
+Both the likelihood ratio test and AIC make it very clear that there's a significant improvement in the model by allowing for the heteroscedasticity.
+:::
+
+#### Q5.2.2 Look at the summaries of the models with and without the variance effect - what has and what hasn't changed among the parameters?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+The coefficients are exactly the same, but the errors on the estimates are all smaller, meaning we can be more sure about differences. For example, look at the confidence intervals on the parameters -- the differences aren't massive, but they're consistent:
+```{r, echo = T}
+confint(model_ssi_g)
+confint(model_ssi_gv)
+```
+:::
+
+Because the estimates of the coefficients haven't changed, we might expect the residuals plots to look the same too, but they don't. This is because the residuals plots show 'Standardised residuals'. That means that the residuals have been scaled by the expected variance, which is different in the two models, so we can inspect them to see if the model is now ok.
+
+#### Q5.2.3 Look at the residuals plots for this heteroscedastic model -- are they better? Are there other aspects that could still be improved?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+```{r, echo = T}
+plot(model_ssi_gv)
+qqnorm(model_ssi_gv)
+```
+Maybe a bit too spread out at the lowest values, but MUCH better than before. Could maybe try one of the other variance functions to see if that works any better.
+:::
+
+#### Q5.2.4 Redo your plot of the data from Q4.1.2, but add on blobs for the predicted values from `model_ssi_gv` and give it a squareroot y-axis using `scale_y_sqrt()`, which we now expect to make the variance look similar across all the data.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+```{r, echo = T}
+iris_stacked |> 
+  mutate(pred = predict(model_ssi_gv)) |> 
+  ggplot(aes(x = structure_measured, y = measurement, fill = structure_measured))+
+  geom_jitter(alpha = 0.1)+
+  geom_boxplot(outliers = FALSE)+
+  geom_point(aes(y = pred))+
+  scale_y_sqrt()+
+  facet_wrap(~Species)+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  guides(fill = "none") 
+```
+:::
+
+#### Q5.2.5 Look at the coefficients of the model. The Wald tests on ALL of them are significant, meaning that the coefficients themselves are significantly different from zero, but try figuring out exactly what biological hypothesis is being tested by the first of the interaction terms.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+The first interaction term is Speciesversicolor:structure_measuredPetal.Width, i.e. saying what we need to add on to our predicted value if the species is versicolor and our measured structure is petal width. The reference levels are setosa for species and Petal.Length for for structure measured. Therefore the value given (-1.7) is saying that, since petal.length is bigger in versicolor than setosa by 2.8 (the Speciesversicolor line), we might expect petal width to be 2.8 bigger too, but it's not, it's 1.7 less than that (i.e. only about 1.1 bigger). The Wald test is therefore asking if that amount that versicolor petal width is less than expected from just being versicolor (not setosa) and just being a measurement of petal width (not petal length) is significantly different from zero and the answer is 'yes'.
+:::
+------------------------------------------------------------------------
+
+## Part 6: Reflection
+
+- What we've done with this `iris` analysis would be called a **two-way ANOVA** because there are two categorical explanatory variables -- species and structure measured, whereas the trees analysis would be called a **multiple regression** because there are two continuous explanatory variables. However, what we've done in both cases is very similar and the mechanics of how R has done the analysis is very similar, so it's often best just to refer to both of them as **linear models**
+
+- All the effects in both of these models were highly significant, so while you probably would need to report the *p*-values for the effects (girth or height; structure_measured or species), the use of the analysis has much more to do with what the parameters are, what the predictions are, how much variance is explained and what that variance is like.
+
+- In the `iris` analysis you might still have questions about whether particular structures are significantly different from one another e.g. *versicolor* sepal width versus *virginica* sepal width. The best way to go about this is to have hypotheses you want to ask clear before you start the analysis and arrange the levels of the factors (e.g. using `relevel()` to make versicolor and sepal width the to be the reference levels of species and structure_measured) so that the Wald test tests your hypothesis. This is called using **planned contrasts**. There are ways of doing such comparisons once you've got your model too, these are called **posthoc tests**. 
+
+- Often posthoc tests make all possible comparisons -- this is usually a bad idea, because we usually have some sort of idea what we're looking for and if we do enough tests a small proportion of them will come out significant just by chance. If you really want to do posthoc tests, e.g. with the `emmeans` or `multcomp` packages, use what you know about the comparisons, e.g. if you have a control treatment, you might only want to compare each treatment to the control, not everything to everything, using **Dunnett's test**. If you really do want to compare everything to everything else, at least do it 'honestly' using **Tukey's HSD** (honest significant difference) test which accounts for doing lots of tests. Both are available in `emmeans` and `multcomp`.
+
+- The fact that the two categorical variables in the `iris_stacked` tibble had different classes didn't cause problems for either the plotting or the analysis. However, if we start to modify those variables, for example to change the reference level with relevel(), that will work on a factor column (Species), but not a character column (structure measured), which would need to be changed into a factor column e.g. with `mutate(structure_measured = as.factor(structure_measured) |> relevel(ref = "Sepal.Width"))`)

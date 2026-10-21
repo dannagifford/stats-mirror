@@ -1,0 +1,14 @@
+---
+title: "BIOL33031/BIOL65161 Home page"
+page-layout: full
+---
+
+This unit introduces you to reproducible approaches for data science in the life sciences. You will learn to use **R and RStudio**, develop skills in **data handling, visualisation, and statistical analysis**, and apply **tidyverse workflows** to biological data. The focus is on making analyses **transparent, repeatable, and well-communicated**, preparing you for advanced projects and research.
+
+# BIOL33031: Reproducible Data Science
+
+**Dr Danna Gifford** (Unit Coordinator) — [danna.gifford\@manchester.ac.uk](mailto:danna.gifford@manchester.ac.uk){.email}
+
+# BIOL65161: Statistics and Experimental Design
+
+**Dr Chris Knight** (Unit Coordinator) — [chris.knight\@manchester.ac.uk](mailto:chris.knight@manchester.ac.uk){.email}

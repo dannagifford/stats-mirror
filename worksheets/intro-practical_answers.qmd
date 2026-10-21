@@ -1,0 +1,152 @@
+---
+title: "📝 Practical: Introduction"
+subtitle: "Getting started with R and the tidyverse - Answers"
+author: "BIOL33031/BIOL65161"
+format: html
+---
+
+## ❓Challenge questions
+
+Use what you’ve learned this week to complete the following questions. Remember to use the script editor and to save your code as a `.R` script.
+
+
+#### Question 1:
+
+Create a numeric vector of at least 10 values representing measurements (e.g. weights of mice).\
+1. Calculate the mean, median, and standard deviation.\
+2. Use logical operators to identify which values are greater than the mean.\
+3. Plot a basic histogram of your values using `hist()`.
+
+```{r, echo = T}
+mouse_weight_g <- c(50, 42, 33, 55, 39, 31, 44, 22, 41, 32)
+
+#1. mean, median, standard deviation
+mean_mouse_weight <- mean(mouse_weight_g)
+median_mouse_weight <- median(mouse_weight_g)
+sd_mouse_weight <- sd(mouse_weight_g)
+
+mean_mouse_weight
+median_mouse_weight
+sd_mouse_weight
+
+#2. Use logical operators.
+# Recall the logical operators in R are:
+## greater than >, less than <,
+## greater than or equal to >=, less than or equal to >=
+## equal to ==, not equal to !=
+
+# Returns TRUE if the individual mouse weight is greater than the mean
+mouse_weight_g > mean_mouse_weight
+
+# If you want the values themselves
+mouse_weight_g[mouse_weight_g > mean_mouse_weight]
+
+
+#3. histogram
+hist(mouse_weight_g)
+```
+
+
+------------------------------------------------------------------------
+
+#### Question 2:
+
+1.  Create a new tibble with at least 6 rows of your own made-up data (e.g. plant growth under different watering treatments).
+2.  Add a new calculated column of your choosing. Remember you need to assign the new output to an object name!
+3.  View the new tibble by clicking on it in the environment viewer.
+
+
+``` r
+# 1. New tibble
+plant_growth <- tibble(
+  treatment = c("drought", "drought", "flood", "flood", "normal", "normal"),
+  height_cm = c(16, 14, 18, 19, 25, 28),
+  flowers_n = c(33, 36, 21, 23, 35, 34)
+)
+
+# 2. Add a new calculated colum
+# (here I calculated a flower-number-to-height ratio)
+plant_growth <- plant_growth |>
+  mutate(ratio = flowers_n / height_cm)
+
+# 3. View the tibble
+View(tibble)
+
+```
+
+------------------------------------------------------------------------
+
+
+#### Question 3:
+
+Make a tibble recording the heights and sexes of 8 imaginary plants.\
+1. Add a new column that converts height from cm to m using `mutate()`.\
+2. Use `group_by()` and `summarise()` to calculate the mean height for each sex.\
+
+```r
+# 1. New tibble (I copied and modified the one from Q2)
+plant_sexes <- tibble(
+  sex = c("male", "male", "male", "male", "female", "female", "female", "female"),
+  height_cm = c(16, 14, 18, 19, 25, 28, 33, 22),
+)
+
+# 2. Calculate mean height for each sex
+plant_sexes |>
+  group_by(sex) |>
+  summarise(mean_height_cm = mean(height_cm))
+```
+------------------------------------------------------------------------
+
+#### Question 4:
+
+1.  Create a tibble of 12 students with columns for `name` and `favourite_colour`.\
+2.  Use `count()` to tally how many students chose each colour.\
+3.  Which colour was most popular?
+
+
+```r
+# 1. A tibble of 12 students with name and favourite_colour
+# Note: you can continue on new lines when inputting data
+
+favourite_colours <- tibble(
+  name = c("Charlotte", "Louise", "Al Khansa", "Jessica",
+           "Rana", "Deniz", "Magdalena", "Rebecca",
+           "Ernesto", "Sophie", "Riannah", "Rosie",
+           "Christine", "Zahraa", "Taoran", "Jake"),
+  favourite_colour = c("Red", "Blue", "Green", "Yellow",
+             "Red", "Blue", "Blue", "Yellow",
+             "Red", "Blue", "Green", "Blue",
+             "Red", "Blue", "Green", "Yellow")
+             )
+# 2. Use `count()` to tally how many students chose each colour
+favourite_colours |> count(favourite_colour)
+
+# 3. In this case, it was Blue (n = 6)
+```
+
+------------------------------------------------------------------------
+
+#### Question 5:
+
+Work with a built-in example dataset, Edgar Anderson's Iris Data, `iris`, which gives the measurements in centimeters of the variables sepal length and width and petal length and width, respectively, for 50 flowers from each of 3 species of iris. The species are Iris setosa, versicolor, and virginica.
+
+1. Load the dataset `iris` with `as_tibble(iris)`. Don't forget to assign it a name using the assignment operator `<-`.\
+2. Inspect the new dataset object you created.\
+3. Use `select()` to retain only the columns `Sepal.Length`, `Petal.Length`, and `Species`.\
+
+```r
+# 1. Load the dataset `iris` with `as_tibble(iris)`
+iris_df <- as_tibble(iris)
+
+# 2. Inspect the new dataset (any one of several options)
+View(iris_df)
+iris_df
+head(iris_df)
+
+# 3. Use select to retain only `Sepal.Length`, `Petal.Length`, and `Species`
+
+iris_df <- iris_df |>
+    select(`Species`, `Sepal.Length`, `Petal.Length`)
+
+head(iris_df) # Inspect iris_df to check it worked
+```

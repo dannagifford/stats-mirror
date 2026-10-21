@@ -1,0 +1,882 @@
+---
+title: "Data representation"
+subtitle: "Communicating with data"
+author: "BIOL33031/BIOL65161"
+description: "Why being thoughtful about how to present data is important in understanding and communicating information."
+format:
+  html:
+    css: ../html.css
+    include-after-body: ../_after-body.html
+  revealjs:
+    css: ../slides.css
+    fontsize: 26px
+    auto-stretch: true
+    code-overflow: wrap
+    scrollable: false
+    fig-responsive: true
+    slide-number: true
+    self-contained: false
+    output-file: slides.html
+execute: 
+  warning: false
+  message: false
+---
+
+
+
+```{r, echo = FALSE, message = F, warning = F}
+set.seed(19)
+library(tidyverse)
+library(palmerpenguins) # example data
+library(patchwork) # graphics together
+library(ggthemes)  # colourblind palette
+
+theme_set(theme_gray(base_size = 16))
+
+# So text is easier to read
+clean_theme <- theme_bw(base_size = 16) +
+  theme(panel.grid = element_blank())
+
+clean_theme_sm <- theme_bw(base_size = 11) +
+  theme(panel.grid = element_blank())
+
+```
+::: {.content-visible when-format="html" unless-format="revealjs"}
+<iframe src="https://video.manchester.ac.uk/embedded/00000000-2f1b-6d3d-0000-0199c5b111a0" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+:::
+
+# Communicating with data
+
+## What this session is about
+
+-   **Importance of story telling:** Why being thoughtful about how to present data is important in understanding and communicating information.
+
+-   **Principles of data communication:** Key ideas for making clear, accurate, and engaging plots and figures.
+
+-   **ggplot2 in action:** Using R’s **ggplot2** with the `palmerpenguins` dataset to create example plots (bar charts, histograms, boxplots, scatter plots).
+
+
+::: {.notes}
+This session is about communicating with data through data visualisation. We'll talk about the importance of story telling through data, the principles of communicating data, and see some examples of making publication-ready plots using ggplot2 from the tidyverse.
+:::
+
+------------------------------------------------------------------------
+
+## Why visualize data?
+
+-   **Intuition and insight:** Charts can reveal patterns, trends, and outliers at a glance that might be hidden in raw tables of numbers. A well-chosen plot can make relationships obvious and intuitive.
+
+-   **Tell a story:** Visualizations help you **communicate** your findings. Rather than quoting statistics, a chart can convey the essence of your data (e.g. a trend or comparison) in an engaging way.
+
+-   **Explore and verify:** Creating plots is also part of data exploration. It allows you to spot errors or anomalies and to check assumptions (e.g. whether data is skewed, or if groups differ significantly).
+
+-   **Engage your audience:** Humans are highly visual. A clear graphic will often be remembered longer than a spreadsheet of figures, especially for audiences like stakeholders or peers less familiar with the raw data.
+
+::: notes
+We visualise data because pictures help us see meaning quickly.  
+A plot can reveal relationships or outliers that you’d never notice in a spreadsheet.  
+Good visuals also tell a story — they make it easier to share findings and draw others in.  
+Plotting your data helps you check for mistakes or patterns you didn’t expect.  
+And, most importantly, people remember visuals much more easily than raw numbers.
+
+:::
+
+------------------------------------------------------------------------
+
+## Our example dataset: The Palmer Penguins 🐧
+
+We’ll use the **Palmer Penguins** dataset as a running example. This dataset contains measurements for 344 penguins from three species (Adélie, Chinstrap, Gentoo) collected by  Dr. Kristen Gorman with the [Palmer Station Long Term Ecological Research Program](https://pal.lternet.edu/).
+
+-   **What’s in the data?** For each penguin, we have variables like species, island (location), bill length & depth (mm), flipper length (mm), body mass (g), sex, and year. The data is in a tidy format (each row is one penguin, each column a variable).
+
+-   **Getting the data:** The data is available in the `palmerpenguins` R package. Make sure you have it installed (`install.packages("palmerpenguins")`) and loaded (`library(palmerpenguins)`) so that the `penguins` data frame is available for use.
+
+::: notes
+We'll return to our now familiar Palmer Penguins dataset to look at visualisations. For each penguin, we have several morphological variables recorded, as well as sex and year of capture.
+We can access the data using the palmerpenguins R package.
+:::
+
+------------------------------------------------------------------------
+
+# Guidelines for effective plotting
+
+::: notes
+There are several guidelines to keep in mind when producing effective plots. Let's take a look
+:::
+
+## Clarity and simplicity
+When you design a plot, start with **clarity**. Make it easy to read and interpret: label axes (with units where relevant), include a concise legend when needed, and avoid jargon or busy wording.  Choose an appropriate font size.  
+
+Strive for **simplicity** Avoid unnecessary 'chart junk' like background colours, gridlines, and false '3D' effects.
+
+Here are two different plots showing the raw penguin body mass data:
+
+:::: {.columns}
+::: {.column width="50%" .fragment}
+**Unclear:** points overlapping, background, distracting gridlines, small font, unformatted axis labels
+
+```{r}
+ggplot(penguins, aes(x = species, y = body_mass_g, colour = species)) +
+  geom_point() +
+  theme_gray()
+```
+:::
+
+::: {.column width="50%" .fragment}
+**Improved:** points distinct, distractions removed, font size appropriate, human-readable axis labels
+
+```{r}
+library(ggbeeswarm)
+ggplot(penguins, aes(x = species, y = body_mass_g, colour = species)) +
+  geom_beeswarm() +
+  labs(
+    x = "Species",
+    y = "Body mass (g)",
+    colour = "Penguin species"
+  ) + clean_theme
+```
+:::
+
+::::
+
+::: notes
+When you design a plot, start with **clarity**. Make it easy to read and interpret: label axes (with units where relevant), include a concise legend when needed, and avoid jargon or busy wording.  Choose an appropriate font size.  
+
+Strive for **simplicity** Avoid unnecessary 'chart junk' like background colours, gridlines, and false '3D' effects.
+
+Here are two different plots showing the raw penguin body mass data:
+:::
+
+
+## Accuracy
+
+Aim for **accuracy**. Represent values honestly with appropriate scales—start bar charts at zero, keep axis intervals consistent, and avoid distortions like squashed or stretched aspect ratios.
+
+Excluding zero from the `y`-axis can produce misleading insights:
+
+
+:::: {.columns}
+
+::: {.column width="60%" .fragment}
+
+```{r}
+# Truncated axis exaggerates differences
+a <- ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  coord_cartesian(ylim = c(3500, 5075)) +
+  labs(x = "Species", y = "Mean body mass (g)", fill = "Species") + clean_theme
+
+# **More accurate** including zero gives more representation of body mass differences.
+b <- ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  labs(x = "Species", y = "Mean body mass (g)", 
+       fill = "Species",
+       title = "y-axis includes zero") + clean_theme
+
+a/b
+
+```
+:::
+
+::: {.column width="40%" .fragment}
+![Gentoo and chinstrap are much closer in size than the first plot suggests. Hans Oleander [CC-BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Gentoo-chinstrap.JPG)](images/gentoo-chinstrap-photo.jpg){fig-height=3in}
+:::
+
+::::
+
+```{r, output=F}
+# Species counts
+a <- ggplot(penguins, aes(x = species, fill = species)) +
+  geom_bar() +
+  labs(x = "Species", y = "Number of penguins", fill = "Species",
+       title = "bar plot: counts")  + clean_theme_sm
+
+# Yearly species counts
+b <- penguins |>
+  count(species, year) |>
+  ggplot(aes(x = year, y = n, colour = species)) +
+  geom_line() +
+  scale_x_continuous(breaks = c(2007, 2008, 2009)) +
+  lims(y = c(0,60)) +
+  labs(x = "Species", y = "Number of penguins", colour = "Species",
+       title = "line plot: trends")  + clean_theme_sm
+
+# Scatter plots: relationships between variables
+c <- ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, colour = species)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Flipper length (mm)", y = "Body mass (g)",
+       title = "scatter plot: relationships")  + clean_theme_sm
+
+# Species counts
+d <-  penguins |>
+  count(species) |>
+  ggplot(aes(x = "", y = n, fill = species)) +
+  geom_bar(stat="identity", width = 1) +
+  labs(x = "Species", y = "Number of penguins", fill = "Species",
+       title = "pie chart: proportions")  +
+   theme_void(base_size = 11) +
+  coord_polar("y", start=0)
+
+d <- cowplot::ggdraw(d) 
+
+dx <- cowplot::ggdraw(d) +
+  cowplot::draw_line(x = c(0, 1), y = c(0, 1), colour = "red", size = 3) +
+  cowplot::draw_line(x = c(0, 1), y = c(1, 0), colour = "red", size = 3)
+```
+
+::: notes
+Aim for **accuracy**. Represent values honestly with appropriate scales—start bar charts at zero, keep axis intervals consistent, and avoid distortions like squashed or stretched aspect ratios.
+
+Excluding zero from the `y`-axis can produce misleading insights. At first glance, the plot on the left, which covers the range of the data, suggests that the difference in size between Gentoos and other penguins is bigger than it actually is in reality--as the photo shows.
+
+:::
+
+::: {.content-visible when-format="revealjs"}
+## Choosing an appropriate plot type {.smaller}
+
+::: notes
+It's important to choose an appropriate type of plot for the type of data you have, and message you are trying to convey. In general, se bar charts for categorical comparisons, line plots for trends, scatter plots for relationships, boxplots, violin plots or histograms for distributions. You should avoid the use of pie charts, which are difficult for people to interpret accurately--if you're curious, you can read more on that at the link at the bottom of the slide.
+
+:::
+
+Use bar charts for categorical comparisons, line plots for trends, scatter plots for relationships, boxplots, violin plots or histograms for distributions. Don't use pie charts^[Link: <https://www.data-to-viz.com/caveat/pie.html>].
+```{r}
+(a|b) / (c|d)
+```
+:::
+
+## Choosing an appropriate plot type {.smaller}
+
+Use bar charts for categorical comparisons, line plots for trends, scatter plots for relationships, boxplots, violin plots or histograms for distributions. Don't use pie charts^[Link: <https://www.data-to-viz.com/caveat/pie.html>].
+```{r}
+(a|b) / (c|dx)
+```
+
+
+::: {.content-visible when-format="revealjs"}
+## Choosing an appropriate plot type {.smaller}
+:::
+::: notes
+There are also a range of plot types for visualising the spread of data. These include plotting the raw data, box plots, which we've seen briefly in the last session, violin plots and histograms, which more accurately show the shape of the distribution of data.
+
+:::
+
+Visualising the spread of data
+```{r}
+library(ggbeeswarm)
+d <- ggplot(penguins, aes(x = species, y = body_mass_g, colour = species)) +
+  geom_beeswarm() +
+  labs(
+    x = "Species",
+    y = "Body mass (g)",
+    colour = "Penguin species",
+    title = "Raw data (non-overlapping)"
+  ) + clean_theme_sm
+
+e <- ggplot(penguins, aes(x = body_mass_g, fill = species)) +
+  geom_histogram() +
+  labs(y = "Count", x = "Body mass (g)", fill = "Species",
+       title = "Histogram")  + clean_theme_sm
+
+f <- ggplot(penguins, aes(y = body_mass_g, x = species, fill = species)) +
+  geom_boxplot() +
+  labs(x = "Species", y = "Body mass (g)", fill = "Species",
+       title = "Box plot")  + clean_theme_sm
+
+g <- ggplot(penguins, aes(y = body_mass_g, x = species, fill = species)) +
+  geom_violin() +
+  labs(x = "Species", y = "Body mass (g)", fill = "Species",
+       title = "Violin plot")  + clean_theme_sm
+
+(d|e) / (f|g)
+```
+
+
+<!--
+::: {.content-visible when-format="revealjs"}
+## Appropriate plot type {.smaller}
+:::
+
+Some plot types can mislead when data are sparse. Let’s compare the 15 largest and smallest penguins in each species
+
+::: {.columns}
+
+:::: {.column width="50%" .fragment}
+#### Raw data: two groups for each species
+```{r}
+penguins_bimodal = bind_rows(
+  penguins |> group_by(species) |> slice_max(body_mass_g, n = 15), 
+  penguins |> group_by(species) |> slice_min(body_mass_g, n = 15)
+)
+
+library(ggbeeswarm)
+ggplot(penguins_bimodal, aes(x = species, y = body_mass_g, colour = species)) +
+  geom_beeswarm() +
+  labs(
+    x = "Species",
+    y = "Body mass (g)",
+    colour = "Penguin species"
+  ) + clean_theme
+```
+::::
+
+
+:::: {.column width="50%" .fragment}
+#### Histograms: hard to identify the shape
+
+```{r}
+ggplot(penguins_bimodal, aes(x = body_mass_g, fill = species)) +
+  geom_histogram() +
+  labs(y = "Count", x = "Body mass (g)", fill = "Species")  + clean_theme
+```
+::::
+
+:::
+
+::: {.columns}
+
+:::: {.column width="50%" .fragment}
+#### Boxplots: hide the 'bimodal' nature of data
+
+```{r}
+ggplot(penguins_bimodal, aes(y = body_mass_g, x = species, fill = species)) +
+  geom_boxplot() +
+  labs(x = "Species", y = "Body mass (g)", fill = "Species")  + clean_theme
+```
+::::
+
+:::: {.column width="50%" .fragment}
+#### Violin plots: imply data in the 'waist' where none exist
+
+```{r}
+ggplot(penguins_bimodal, aes(y = body_mass_g, x = species, fill = species)) +
+  geom_violin() +
+  labs(x = "Species", y = "Body mass (g)", fill = "Species")  + clean_theme
+```
+::::
+
+:::
+-->
+
+
+## Colour, shapes, line-type
+
+::: notes
+Colour palette, point shapes, and line type can all convey meaningful information, like what groups points belong to. It's important to choose wisely. Colours should have good contrast and ideally show up even if printed in black and white. You should aim to use colourblind friendly palettes where possible, and use shapes or line types as well. But it's important not to go overboard and make the plot too busy.
+
+:::
+
+Use **colour and aesthetics** thoughtfully.  
+Colour can separate groups or highlight key points, but too many colours overwhelm.  
+Prefer colour-blind-friendly palettes (e.g. `ggthemes`, `colorblindr`, `ggokabeito`), and consider shapes or line types so the message survives without colour.  
+
+::: {.columns}
+
+:::: {.column width="50%"}
+**Default `ggplot` colours** are not colour blind friendly
+
+```{r}
+
+ggplot(penguins, aes(flipper_length_mm, body_mass_g, colour = species)) +
+  geom_point(size = 3) +
+  labs(x = "Flipper length (mm)", y = "Body mass (g)", colour = "Species", shape = "Species") + clean_theme
+# Red–green contrast is hard to interpret, colours clash
+```
+::::
+
+:::: {.column width="50%"}
+**Colour-blind-friendly palette**, shapes add redundancy
+
+```{r}
+ggplot(penguins, aes(flipper_length_mm, body_mass_g, colour = species, shape = species)) +
+  geom_point(size = 3) +
+  scale_color_colorblind() +
+  labs(x = "Flipper length (mm)", y = "Body mass (g)", colour = "Species", shape = "Species") + clean_theme
+# Uses colour-blind-friendly palette, shapes add redundancy
+```
+::::
+
+:::
+
+
+## Consistency {.smaller}
+
+Maintain **consistency** across figures: keeping the same colours and axis scales assists with clear and honest comparisons.
+
+```{r}
+
+a <- ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, colour = species, shape = species)) +
+  geom_point(size = 2) +
+  scale_color_colorblind() +
+  labs(x = "Flipper length (mm)", y = "Body mass (g)",
+       colour = "Species", shape = "Species",
+       title = "")  + clean_theme_sm
+
+b <- ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_boxplot() +
+  scale_fill_colorblind() +
+  labs(x = "Species", y = "Body mass (g)", 
+       fill = "Species",
+       title = "Consistent colour scheme")  + clean_theme_sm
+
+
+c <- b + scale_fill_viridis_d() +
+  labs(title = "Don't change colours for species")
+
+d <- ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, colour = island)) +
+  geom_point(size = 2) +
+  scale_color_colorblind() +
+  labs(x = "Flipper length (mm)", y = "Body mass (g)",
+       colour = "Island",
+       title = "Don't reuse same colours for island") + clean_theme_sm
+a+b+c+d
+```
+
+::: notes
+When using colour, shapes and linetypes to convey group information, it's important to use these consistently across different plots. You shouldn't change the colours used to represent a variable, nor use the same colours to represent different variables.
+
+:::
+
+## Identify the message
+
+The most important consideration is the **message**—what information are you trying to convey? A figure is meant to **express an idea or present results** that would be too long or complex to explain only with words.  
+The key is to **identify the message first**: what do you want the audience to understand? That message should guide the design of the figure, just as it guides how you write text.  
+
+When a figure (or any representation) communicates its message clearly, it strengthens your article or presentation and helps your audience grasp the core idea quickly.  
+
+::: notes
+Above all else, when producing a plot, the most important consideration is the message. What information or inference are you trying to convey to the reader? A figure is meant to express an idea, and so you should have an inkling of what that idea is when you start producing the plot.
+
+:::
+
+## Inclusive data representation
+
+Visualisations can be powerful, but they can exclude individuals with blindness or partial sight Some guidelines for accessibility[^seo]: 
+
+- **Accessible colours**  
+  Use colour-blind friendly palettes (e.g. Okabe–Ito) and/or high-contrast palettes, and never rely on colour alone — add shapes, line styles, or facets. 
+
+- **Alt text and data verbalisation**  
+  Write clear descriptions of plots so screen readers can convey the message. The `BrailleR` package aims to make R easier for users of screen readers.
+  
+- **Data sonification**  
+  Turn data into sound (e.g. `sonify`, pitch for `y`-values, stereo for `x`-values). Helps reveal trends through listening.
+
+- **Data tactualisation**  
+  Convert plots into tactile graphics (e.g. embossers, `tactileR` package) so figures can be felt by touch.  
+
+
+[^seo]: Seo & Dogucu (2023) Teaching Visual Accessibility in Introductory data science classes with multi-modal data representations, *J Data Sci* 21(2)428-441,  <https://doi.org/10.6339/23-JDS1095>
+
+::: notes
+Data visualisation is a powerful communication tool in science, but it's important to recognise that the use of visualisations alone can be exclusionary to individuals with blindness or partial sight. As previously mentioned, thoughtful choice of colour is one way of improving accessibility, particularly focusing on high-contrast palettes. Alt-text and data verbalisation involve writing clear descriptions of trends. The BrailleR package aims to make ggplot output more friendly for users of screen readers.
+
+Some less frequently used approaches that R enables are data sonification and data tactualisation. Sonification turns data into sound, representing trends through pitch. Tactualisation involves printing plots in such a way that the data can be felt by touch--increasingly possible with the advent of 3d printers.
+
+
+:::
+
+---
+
+# How to plot using R and tidyverse
+
+::: notes
+We'll next have a look at how to produce these types of plots in R using the tidyverse package ggplot2.
+
+:::
+
+---
+
+## Base R graphics
+
+::: notes
+First, let's take a quick look at the default plotting function used in base R. If you've used R before, you might have encountered the plot() function. R has graphics capabilities built in, but customising these for use in the biological sciences can be quite cumbersome.
+
+:::
+
+
+
+R has graphics capabilities built in, but can be hard to customise. You may have used these if you've used R in the past:
+
+```{r, echo = T}
+plot(penguins$flipper_length_mm, penguins$body_mass_g,
+     col = penguins$species,
+     xlab = "Flipper length (mm)",
+     ylab = "Body mass (g)")
+
+legend("topleft", legend = levels(penguins$species),
+       col = 1:3, pch = 1)
+```
+
+
+## Introducing `ggplot2`
+
+:::{notes}
+ggplot2 is a package written by Hadley Wickham that aims to simplify the production of plotting.One of the advantages of this approach is that you can build up plots in a step-wise, layer by layer approach using a set of consistent functions--a more flexible approach than the base plotting functions.
+
+It's also easy-ish to learn, and makes nice plot by default, handling things like legends and labels.
+
+Crucially, the approach to plotting integrates well with the tidy data concept, and feeds naturally into the analyses we will do later.
+:::
+
+::: {.fragment}
+`ggplot2`[^1] is part of the tidyverse.  
+It lets you build plots by adding **layers**.  
+This is more flexible and consistent than using lots of special-case functions.  
+:::
+
+::: {.fragment}
+It’s **easy to learn**: the same small set of rules works everywhere.  
+It also makes **nice plots by default**, handling things like legends and labels automatically.  
+:::
+
+::: {.fragment}
+Because plots are built in layers, the process mirrors how we analyse data.  
+This makes it easier to go from raw data to a clear message.  
+:::
+
+[^1]:This session borrows heavily from the ggplot2 book https://ggplot2-book.org/statistical-summaries.html
+
+
+---
+
+## Anatomy of a ggplot
+
+::: notes
+ggplot uses concepts from the 'grammar of graphics'. A ggplot has layers, each added step by step with the plus sign. This plot has:
+
+first, the data layer, our penguins dataset
+second, the aesthetics layer, where we tell R which variables to use in the plot
+third, the geometry of the plot we want to produce, here we're using the point geometry,
+fourth, optionally, other labels that control the plot's appearance. Here, we've included custom axis and legend labels.
+:::
+
+`ggplot` uses the grammar of graphics. A ggplot has **layers**, built step by step:
+
+```{r, echo=T, warning=F}
+#| output-location: column
+#| code-line-numbers: "1|2-4|5|6-10"
+
+flippers_vs_mass <- ggplot(data = penguins, 
+  aes(x = flipper_length_mm,
+      y = body_mass_g,
+      colour = species)) +
+  geom_point() +
+  labs(
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    colour = "Species"
+    )
+flippers_vs_mass
+```
+
+(@) the `data` layer: our familiar Palmer `penguins` dataset.
+(@) the aesthetics `aes()`:  
+  a function that maps variables to axes or visual properties (`x`, `y`, `colour`)
+(@) `geom_x`: how to display data (e.g. `_point`, `_bar`, `_boxplot`, `_line`, `_histogram`, etc.)
+(@) `labs`: control what appears on the axis labels, legends, etc.
+<!--(@) `theme_x()`: affects the overall 'look' of the plot (e.g. minimal, black-and-white classic, custom)-->
+
+
+
+## Producing different plots in `ggplot`
+
+Let's have a look at how we produce some of the different plot types in `ggplot`
+
+::: notes
+Let's have a look at how we produce some of the different plot types in `ggplot`
+
+A scatter plot is useful for showing the relationship between variables, here flipper length and body length are positively associated. We use geom_point() for scatterplots
+:::
+
+### Scatter plot: `geom_point()`
+
+A **scatter plot** is useful for showing the relationship between two variables. Here, flipper length and body length are positively associated. 
+```{r, echo=T, output=T}
+#| output-location: column
+ggplot(penguins,
+  aes(x = flipper_length_mm,
+      y = body_mass_g,
+      colour = species)) +
+  geom_point() +
+  labs(x = "Flipper length (mm)",
+       y = "Body mass (g)",
+       colour = "Species")
+```
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+::: notes
+Bar plots are useful for showing counts of categories. Each bar’s height represents the number of observations in a given category. We use geom_bar for barplots.
+:::
+
+### Bar plot: `geom_bar()`
+
+A **bar plot** is ideal for showing counts of categories. Each bar’s height represents the number of observations in that category.
+```{r, echo=T, output=T}
+#| output-location: column
+ggplot(data = penguins,
+  aes(x = species, fill = species)) +
+  geom_bar() +
+  labs(x = "Species",
+       y = "Number of penguins",
+       fill = "Species")
+```
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+::: notes
+Line plots are useful for showing trends over time, or otherwise connecting points that are associated with each other across the x-axis. The geom_line geometry is used to make line plots.
+:::
+
+
+### Line plot: `geom_line()`
+
+A **line plot** is useful for showing trends over time. Here, the plot shows that the number of penguins of each species is relatively constant over time.
+
+```{r, echo=T, output=T}
+#| output-location: column
+penguins |>
+  count(species, year) |>
+  ggplot(aes(x = as.factor(year),
+             y = n,
+             colour = species)) +
+  geom_line() +
+  lims(y = c(0,60)) + # Specify new y-axis limits
+  labs(x = "Year",
+       y = "Number of penguins",
+       colour = "Species") 
+```
+
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+
+::: notes
+Box plots are classic ways of showing the spread of data. We can produce a boxplot using geom_boxplot. This shows the interquartile range, the median, the range of the data and any outliers as points.
+
+:::
+
+### Boxplot: `geom_boxplot()`
+
+A box plot is a classic way of showing the spread of data, including the interquartile range (the upper and lower edges of each box), the median (thick line in the middle), the range of the data (whiskers; excluding outliers) and any outlier points.
+
+```{r, echo=T, output=T}
+#| output-location: column
+ggplot(data = penguins,
+  aes(x = species,
+      y = body_mass_g,
+      fill = species)) +
+  geom_boxplot() +
+  labs(x = "Species",
+       y = "Body mass (g)",
+       fill = "Species")
+```
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+### Histogram: `geom_histogram()`
+
+
+::: notes
+The next two plot types are also useful for showing the spread of data, histograms and violin plots. A histogram takes a continuous response variable and places observations into bins of a certain size. The number of observations falling in each bin is then plotted on the y-axis. This gives you insight into how many observations of different sizes occurred in the dataset. geom_histogram is used for histograms.
+
+:::
+
+**Histograms** are useful for representing the spread of data--its distribution. This plot shows that the Gentoos are the largest species on average, but there is overlap between the three species' sizes.
+
+```{r, echo=T, output=T}
+#| output-location: column
+ggplot(data = penguins,
+  aes(x = body_mass_g,
+      fill = species)) +
+  geom_histogram() +
+  labs(x = "Species",
+       y = "Body mass (g)",
+       fill = "Species")
+```
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+### Violin plot: `geom_violin()`
+
+::: notes
+Violin plots sit somewhere between box plots and histograms for showing the spread of data. Instead of a rectangular box, as in a box plot, the violin plot shows the distribution of data, almost like a histogram turned on its side, and reflected. geom_violin() is used to make violin plots.
+
+:::
+
+A **violin plot** is sort of like a combination of a box plot and a histogram turned on its side.
+
+```{r, echo=T, output=T}
+#| output-location: column
+ggplot(data = penguins,
+  aes(x = species, 
+      y = body_mass_g, 
+      fill = species)) +
+  geom_violin() +
+  labs(x = "Species", 
+       y = "Body mass (g)", 
+       fill = "Species")
+```
+
+
+::: {.content-visible when-format="revealjs"}
+## Producing different plots in `ggplot`
+:::
+
+::: notes
+A **beeswarm plot** is a relatively new way of representing raw data while minimising points that sit on top of each other. This type of plot is useful when you want to convey both the spread of the data, but also the individual points themselves. To produce a beeswarm plot, we need to first install an extra R library called ggbeeswarm()--once we've done that, it works in the same way as other plot geometries.
+:::
+
+### Raw data beeswarm plot: `geom_beeswarm()`:
+
+A **beeswarm plot** is a relatively new way of representing raw data while minimising points that sit on top of each other.
+
+```{r, echo = T}
+#| output-location: column
+library(ggbeeswarm)   # need to use a new library
+ggplot(data = penguins, 
+  aes(x = species,
+      y = body_mass_g,
+      colour = species)) +
+  geom_beeswarm() +
+  labs(
+    x = "Species",
+    y = "Body mass (g)",
+    colour = "Penguin species")
+
+```
+
+
+## Customising plot appearance
+
+::: notes
+`ggplot` defaults don't meet some of our effective plotting guidelines, mostly through "chart junk" and colour schemes. But we can easily change these. Let's have a look at how
+
+first we have our original plot
+
+next we modify that original plot by changing the colour scale to a colourblind friendly palette
+we remove the distracting grey background using theme_bw, while also increasing the base font size for easier reading
+and finally, we add an extra customisation to remove the distracting gridlines.
+:::
+
+
+`ggplot` defaults don't meet some of our effective plotting guidelines, mostly through "chart junk" and colour schemes. But we can easily change these
+
+```{r, echo=T, warning=F}
+#| layout-ncol: 2
+#| output-location: fragment
+#| code-line-numbers: "1|3|4|5|6"
+#| fig-subcap: 
+#|   - "Original plot"
+#|   - "Modified version, publication-ready"
+
+flippers_vs_mass              # Original plot
+
+library(ggthemes)             # For colourblind palette
+
+flippers_vs_mass <-flippers_vs_mass +
+  scale_color_colorblind() +  # Add colour-blind friendly colour scale
+  theme_bw(base_size = 16) +  # Change plot theme and font size
+  theme(panel.grid = element_blank()) # Turn off the grid
+flippers_vs_mass
+```
+
+---
+
+## Comparing groups with facets
+
+::: notes
+A final note on another handy ggplot feature. Sometimes we want to show the same relationship across different subsets of the data, for instance, the link between flipper length and body mass across different islands.
+
+We can use plot facets, via facet_grid or facet_wrap, to produce small multiples of the same plot:
+:::
+
+
+Sometimes we want to show **the same relationship** across different subsets of the data —  
+for example, how the link between flipper length and body mass varies by island.  
+
+We can use **facets** to create small multiples of the same plot.
+
+```{r, echo = T}
+flippers_vs_mass +
+  facet_grid(cols = vars(island))
+```
+
+
+## Recap & next steps
+::: notes
+In this session, we learned that thoughtful data representation helps us understand and communicate biological patterns.
+Clear, accurate and consistent figures make your message easier to grasp.
+ggplot2 from the tidyverse lets us build up plots in layers to produce publication-worthy plots.
+Accessible design--good colour choices, alt text and clear labelling, improves communication for everyone.
+
+You are now ready to tackle this week's hands-on workshop content, which will cover data handling, summarisation, and visualisation.
+:::
+
+-   Thoughtful data representation helps us **understand and communicate** biological patterns.\
+-   Clear, accurate, and consistent figures make your message easier to grasp.\
+-   `ggplot2` lets us **build plots in layers** for flexibility and reproducibility.\
+-   Accessible design — good colour choices, alt text, and clear labelling — improves communication for everyone.  
+
+You are now ready to tackle the hands-on workshop content, which will cover data handling, summarisation, and visualisation.
+
+::: {.content-visible when-format="html" unless-format="revealjs"}
+
+## ❓Check your understanding
+
+1.  What function would you use to make a **scatter plot** showing the relationship between two numerical variables?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+`geom_point()`
+:::
+
+------------------------------------------------------------------------
+
+2.  What function would you use to make a **bar plot** showing counts of penguins by species?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+`geom_bar()`
+:::
+
+------------------------------------------------------------------------
+
+3.  What function would you use to show how penguin numbers change **over time**?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+`geom_line()`
+:::
+
+------------------------------------------------------------------------
+
+4.  What function(s) would you use to show the **distribution** of body mass values?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+`geom_histogram()`, `geom_boxplot()` or `geom_violin()`
+:::
+
+------------------------------------------------------------------------
+
+5.  What argument or function helps make your plot more **accessible** to colour-blind readers?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+Use a colour-blind-friendly palette such as `scale_colour_colorblind()` or `scale_colour_viridis_d()`
+:::
+
+:::
+

@@ -1,0 +1,157 @@
+---
+title: "📝 Practical: Classical statistics in R"
+subtitle: "Hypothesis testing to correlation"
+author: "BIOL33031/BIOL65161"
+format:
+  html: default
+  revealjs:
+    css: ../slides.css
+    fontsize: 26px
+    auto-stretch: true
+    code-overflow: wrap
+    scrollable: true
+    fig-responsive: true
+    slide-number: true
+    self-contained: false
+    output-file: practical2_slides.html
+    smaller: true
+---
+## Practical info
+
+This worksheet will help you practice the key ideas behind **hypothesis
+testing** — including the null hypothesis, *p*-values, test selection, and
+interpretation — using **real data and R code**.
+
+You’ll apply tests to different types of data (continuous and categorical),
+interpret *p*-values, and connect statistical decisions with biological
+questions.
+
+::: callout-note
+## BIOL65161 students
+Please upload your saved `.R` script to Canvas **before 5PM on the day of the practical**.
+:::
+
+
+---
+
+## Part 1: Understanding hypotheses
+
+1.  In your own words, what does the **null hypothesis (H₀)** represent?
+
+2.  Suppose you’re testing whether a new antibiotic reduces bacterial growth
+compared with a control.  
+Write out suitable **null (H₀)** and **alternative (H₁)** hypotheses.
+
+---
+
+## Part 2: *t*-tests
+
+We’ll use simulated data to explore how *p*-values behave.
+
+```{r, echo = T}
+library(tidyverse)
+
+# Simulate bacterial growth under control vs antibiotic
+set.seed(42)
+growth <- tibble(
+  treatment = rep(c("Control", "Antibiotic"), each = 15),
+  OD600 = c(rnorm(15, mean = 0.8, sd = 0.05),
+            rnorm(15, mean = 0.7, sd = 0.05))
+)
+
+growth |> head()
+```
+
+### 2.1 Visualise the data
+
+Make a boxplot showing mean growth (`OD600`) by treatment group.
+
+### 2.2 Run a two-sample *t*-test
+
+Use a *t*-test to test whether the mean growth differs between treatments.
+
+### 2.3 Check your interpretation
+
+If the *p*-value is 0.012, what does that mean in context?
+
+### 2.4 Run a one-tailed *t*-test
+
+We might instead ask whether the antibiotic specifically **reduces** growth.
+
+Re-run the *t*-test using a **one-tailed test** (hint: use
+`alternative = "less"`).
+
+---
+
+## Part 3: Working with categorical data
+
+Now suppose we have counts of resistant and sensitive isolates from two species.
+
+```{r, echo = T,warning=F}
+microbiology <- tibble(
+  Species = c(rep("E. coli", 100), rep("P. aeruginosa", 100)),
+  Resistance = c(rep(c("Resistant", "Sensitive"), times = c(45, 55)),
+                 rep(c("Resistant", "Sensitive"), times = c(70, 30)))
+)
+
+table(microbiology)
+```
+
+### 3.1 Create a contingency table
+
+Use `table()` to summarise the counts by Species and Resistance.
+
+### 3.2 Perform a chi-squared test
+
+Run a χ² test to check if resistance is associated with species.
+
+### 3.3 Fisher's exact test
+Run a Fisher's exact test on the same data. Does the outcome differ? When should you use Fisher’s exact test?
+
+---
+
+## Part 4: Correlation and relationships
+
+We’ll now explore relationships between two continuous variables using the
+Palmer Penguins dataset.
+
+```{r, echo = T}
+install.packages("palmerpenguins") # If not already installed
+library(palmerpenguins)
+penguins |> glimpse()
+```
+
+### 4.1 Visualise a relationship
+
+Make a scatter plot of `bill_length_mm` vs `flipper_length_mm` coloured by
+species using `ggplot()` and `geom_point()`
+
+### 4.2 Calculate the correlation coefficient
+
+Use `cor()` to find the correlation between bill length and flipper length for
+Adélie penguins only.
+
+### 4.3 Test correlation significance
+
+Use `cor.test()` to determine if the correlation is statistically significant.
+
+---
+
+## Part 5: Reflection
+
+1.  What does it mean if a result is statistically significant but not
+biologically meaningful?
+
+2.  Why do we say we “fail to reject” H₀ instead of “accepting” it?
+
+3.  Why is correlation not the same thing as causation?
+
+4.  When might a one-tailed test be more appropriate than a two-tailed test?
+
+5.  What kind of data are suitable for a t-test compared with a chi-squared test?
+
+6.  What does a p-value actually represent in hypothesis testing?
+
+7.  Why should we check assumptions (like normality or independence) before running a test?
+
+8.  What kind of biological question would be best addressed using a correlation analysis?

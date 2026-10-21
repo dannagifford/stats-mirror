@@ -1,0 +1,685 @@
+---
+title: "📝 Practical: R Data Wrangling and Visualisation"
+subtitle: "Getting started with R and the tidyverse"
+author: "BIOL33031/BIOL65161"
+format:
+  html: default
+  revealjs:
+    css: ../slides.css
+    fontsize: 26px
+    auto-stretch: true
+    code-overflow: wrap
+    scrollable: true
+    fig-responsive: true
+    slide-number: true
+    self-contained: false
+    output-file: practical1_slides.html
+    smaller: true
+---
+
+## Practical info
+
+This worksheet will guide you through hands-on exercises to practice
+data wrangling, summary statistics, and data visualization in **R**
+using the **tidyverse**. You'll use a real dataset (Palmer penguins) and
+the `tidyverse` toolkit to import data, tidy and transform it, calculate
+summary statistics, and create effective plots. All tasks are
+code-focused -- write or modify R code to accomplish each step. You should write your code in the code window, and save at regular intervals. Follow the instructions closely, and use the provided code chunks to complete each objective.
+
+::: callout-tip
+## Tip
+
+If you hover your mouse in code boxes that appear on the worksheet, a 'Copy to clipboard' button will appear in the top right corner. You can also select code and copy/paste it into your RStudio script window in the normal way. However, you might find that you retain a better understanding of what you are doing if you type out the commands instead.
+
+:::
+
+::: callout-note
+## BIOL65161 students
+Please upload your saved `.R` script to Canvas **before 5PM on the day of the practical**.
+:::
+
+
+# Part 1: Importing and Exploring Data
+
+## Objective 1: Import the dataset with `read_csv()`
+
+First, we'll load the penguins dataset from a CSV file. You can download
+the file from here: [`penguins.csv`](../data/penguins.csv). Ensure R can
+find the file by setting the working directory, then use `read_csv()` to
+import the data.
+
+-   Use `setwd("path/to/your/data")` to set your working directory to
+    the folder containing the data file.
+
+-   Use `read_csv("penguins.csv")` to read the data into a tibble called
+    `penguins`. (If the CSV file isn't available locally, you can use
+    the URL provided below in `read_csv()` to download directly.)
+
+``` r
+
+# Install the tidyverse package (if not already done)
+# install.packages(pkgs = "tidyverse")
+
+# Load the tidyverse package (contains readr, dplyr, ggplot2, etc.)
+library(tidyverse)
+
+# Set the working directory to the folder with your data file
+# setwd("path/to/your/data/folder")
+
+# Read the penguins CSV file into a tibble called penguins
+penguins <- read_csv("penguins.csv")
+
+# (Optional) If not using a local file, read directly from URL:
+# penguins <- read_csv("https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins.csv")
+```
+
+*Hint:* Make sure to use `read_csv()` (from the **readr** package)
+rather than base R's `read.csv()`, so that you get a tibble with proper
+data types.
+
+## Objective 2: Inspect the data frame structure
+
+Now that the data is loaded, let's explore it. We will inspect the
+tibble to understand its contents:
+
+-   Use `head(penguins)` to view the first few rows of the dataset.
+
+-   Use `glimpse(penguins)` (or `str(penguins)`) to display the
+    structure of the tibble, including each column's name and data type
+    (e.g. chr, dbl, int).
+
+-   *(Optional:* In RStudio, you can also call `View(penguins)` to open
+    the data in a spreadsheet-like viewer.)
+
+``` r
+
+# View the first 6 rows of the penguins data
+head(penguins)
+
+# Get a summary of the tibble structure and data types
+glimpse(penguins)
+
+# Optional: Open the data in the RStudio viewer (uncomment the line below if running interactively)
+# View(penguins)
+```
+
+*Question to consider:* How many rows and columns are in the dataset?
+Which columns are character vs numeric? (You can find this information
+from the `glimpse` output.)
+
+# Part 2: Tidying and Transforming Data
+
+## Objective 3: Reshape data with `pivot_longer()`
+
+Sometimes data come in a **wide format** and need to be converted to a
+**long/tidy format**. In this task, you'll practice using
+`pivot_longer()` to tidy a dataset. We'll create a small example tibble
+of Weddell seal measurements across years, then reshape it.
+
+-   Run the given code to create a wide tibble `weddell` with
+    measurements in 2022 and 2023.
+
+-   Use `pivot_longer()` to convert `weddell` from wide to long format.
+    The columns `length_2022`, `weight_2022`, `length_2023`,
+    `weight_2023` should be gathered into key-value pairs:
+
+-   Hint: Use the `cols` argument to select the measurement columns
+    (e.g. those starting with "length" or "weight").
+
+-   Use `names_to = c(".value", "year")` and `names_sep = "_"` so that
+    `pivot_longer` splits column names at the underscore into two parts:
+    one part will become the new **year** column, and the other part
+    will become the measurement names (creating separate `length` and
+    `weight` value columns).
+
+-   Assign the result to a new tibble `weddell_tidy` and print it to
+    verify that each row is now one observation (one seal in one year
+    with one length and weight).
+
+``` r
+
+# Example wide data: Weddell seal measurements in two years
+weddell <- tibble(
+seal_id      = c("W01", "W02", "W03", "W04", "W05"),
+length_2022  = c(260, 250, 270, 255, 265),
+weight_2022  = c(420, 390, 450, 410, 430),
+length_2023  = c(265, 253, 275, 260, 270),
+weight_2023  = c(430, 400, 460, 420, 440)
+)
+
+# Use pivot_longer to tidy the data:
+weddell_tidy <- weddell |> 
+pivot_longer(
+  cols = starts_with(c("length", "weight")),   # columns to reshape
+  names_to = c(".value", "year"),              # split names into .value and year
+  names_sep = "_"                              # names are separated by an underscore
+)
+
+# Print the tidied data
+weddell_tidy
+```
+
+After pivoting, the `weddell_tidy` tibble should have columns:
+`seal_id`, `year`, `length`, and `weight`, with each row representing
+one seal's measurement in one year.
+
+## Objective 4: Filter rows and arrange the data
+
+Next, we'll practice subsetting rows and sorting. Using the `penguins`
+dataset:
+
+-   **Filter** the data to include only a subset of observations. For
+    example, filter the tibble to include only penguins of species
+    `"Adelie"` *and* collected on the island `"Dream"` (i.e.
+    `species == "Adelie"` and `island == "Dream"`).
+
+-   **Arrange** (sort) the filtered results by a numeric column. For
+    instance, arrange the filtered penguins in descending order of their
+    body mass.
+
+Try to do both operations in a single pipeline using the pipe operator
+`|>`.
+
+``` r
+# Filter penguins for Adelie species on Dream island, then sort by body mass (descending)
+penguins_subset <- penguins |> 
+filter(species == "Adelie", island == "Dream") |>      # keep only Adelie penguins from Dream
+arrange(desc(body_mass_g))                             # sort the results by body mass, highest first
+
+# View the first few results of the subset
+head(penguins_subset)
+```
+
+*Hint:* When using `arrange()`, you can wrap a column name in `desc()`
+to sort in descending order.
+
+
+## Objective 5: Select and rename columns
+
+Often we don't need all columns in a dataset, or we might prefer more
+descriptive column names. This task is to practice **selecting**
+specific columns and **renaming** a column.
+
+-   Use `select()` to pull out a smaller subset of columns from
+    `penguins`. For example, create a tibble with only the columns
+    `species`, `island`, `bill_length_mm`, `bill_depth_mm`, and
+    `body_mass_g`. Assign this subset to a new tibble (e.g.
+    `penguins_small`).
+
+-   Use `rename()` to change one of the column names to something
+    clearer. For instance, rename the `island` column to `island_name`
+    (or another meaningful name of your choice).
+
+``` r
+
+# Select a subset of columns
+penguins_small <- penguins |> 
+select(species, island, bill_length_mm, bill_depth_mm, body_mass_g)
+
+# Rename the 'island' column to 'island_name' for clarity
+penguins_small <- penguins_small |> 
+rename(island_name = island)
+
+# View the column names to confirm the change
+colnames(penguins_small)
+```
+
+*Note:* You can combine selection and renaming in one pipeline (for
+example, `penguins |> select(...) |> rename(...)`), or even rename
+within a select call. Here we did them as separate steps for clarity.
+
+## Objective 6: Create new columns with `mutate()`
+
+Using `mutate()`, we can add new calculated columns or transform
+existing ones. Let's create some new variables for the penguins data:
+
+-   Add a new column for body mass in kilograms. The existing
+    `body_mass_g` is in grams, so divide it by 1000. Create a new column
+    `body_mass_kg`.
+
+-   Add another new column that categorizes each penguin's body mass as
+    `"large"` or `"small"`. For example, we could define "large" if body
+    mass is above 4000 g, and "small" otherwise. (Hint: use a
+    conditional expression, e.g.
+    `ifelse(body_mass_g > 4000, "large", "small")` inside `mutate`.)
+
+-   Assign the result to a new tibble (e.g. `penguins_mutated`) and
+    inspect the first few rows to see the new columns.
+
+``` r
+
+# Add new columns for body mass in kg and size category
+penguins_mutated <- penguins |> 
+mutate(
+  body_mass_kg = body_mass_g / 1000,                             # convert grams to kilograms
+  size_category = ifelse(body_mass_g > 4000, "large", "small")   # classify penguins by body mass
+)
+
+# View the first 6 rows to check the new columns
+head(penguins_mutated)
+```
+
+Check that `body_mass_kg` is correctly calculated (e.g., 4200 g becomes
+4.2 kg) and that the `size_category` is assigned as expected.
+
+## Objective 7: Handle missing values
+
+Real-world data often has **missing values** (NA). In the penguins
+dataset, some observations have NA for certain measurements. We'll
+practice dealing with these missing values:
+
+-   **Identify missing values:** Use a function like `is.na()` together
+    with summarise or filtering to find out how many NA values are in a
+    particular column (for example, `sex`) or in the whole dataset. For
+    instance, you could do `sum(is.na(penguins$sex))` to count NAs in
+    the sex column, or use
+    `summarise(across(everything(), ~ sum(is.na(.))))` to get NA counts
+    for all columns.
+
+-   **Remove missing values:** Create a new tibble `penguins_complete`
+    that has all rows with *any* missing value removed. You can use the
+    convenience function `remove_missing(penguins)` to drop incomplete
+    rows, or use `drop_na()` from **tidyr** for a similar purpose. This
+    will eliminate rows where one or more columns are NA.
+
+-   Print out the number of rows before and after removing missing data
+    (using `nrow()`) to see how many observations were dropped.
+
+``` r
+
+# Count missing values in each column (optional exploration)
+penguins |> summarise(across(everything(), ~ sum(is.na(.))))
+
+# Remove any rows with missing data
+penguins_complete <- penguins |> 
+remove_missing()    # drop rows that have NA in any column
+
+# Compare the number of rows before vs after removal
+nrow(penguins); nrow(penguins_complete)
+```
+
+After this, `penguins_complete` should contain only complete cases (no
+NAs). We will use this cleaned dataset for summary statistics and
+plotting to avoid issues with missing values.
+
+*(Note:* `remove_missing()` *is a helper that drops rows with any NAs.
+Alternatively,* `drop_na()` *from tidyr can be used in the same way.)*
+
+# Part 3: Summary Statistics with `summarise()`
+
+Now that our data is cleaned, we can calculate some summary statistics.
+We'll use `summarise()` (with or without `group_by()`) to compute
+aggregates like mean, median, standard deviation, etc.
+
+## Objective 8: Summarise by group (species)
+
+Calculate summary statistics for each penguin species:
+
+-   Use `group_by(species)` on the `penguins_complete` tibble from Objective 7.
+
+-   Then use `summarise()` to calculate the **median** and **IQR**
+    (interquartile range) of a numeric variable for each species. For
+    example, find the median and IQR of **body_mass_g** for each
+    species.
+
+-   Remember to include `na.rm = TRUE` in functions like `median()` or
+    `IQR()` to ignore missing values (if you didn't remove NAs in the
+    previous step).
+
+``` r
+
+# Group by species and compute median and IQR of body mass for each species
+penguins_complete |> 
+group_by(species) |> 
+summarise(
+  median_body_mass = median(body_mass_g, na.rm = TRUE),
+  IQR_body_mass    = IQR(body_mass_g, na.rm = TRUE)
+)
+```
+
+The result should be a small table with one row per species, showing the
+median body mass and IQR for that species. Compare the values --- which
+species tends to be heaviest or most variable in body mass?
+
+## Objective 9: Summarise by multiple groups (species and sex)
+
+We can also group by multiple variables. Let's break down the data by
+**species** *and* **sex** and calculate a few statistics for each group:
+
+-   Use `group_by(species, sex)` to group the data by the combination of
+    species and sex.
+
+-   Use `summarise()` to calculate:
+
+-   The number of individuals in each group (hint: use `n()` to count
+    rows).
+
+-   The **mean** of a measurement (e.g., flipper length) for each group.
+    Also calculate the **standard deviation** for that measurement. Use
+    `mean(..., na.rm=TRUE)` and `sd(..., na.rm=TRUE)` to ignore missing
+    values.
+
+-   You can name the summary columns appropriately, e.g.
+    `mean_flipper = mean(flipper_length_mm, na.rm=TRUE)`.
+
+``` r
+
+# Group by species and sex, then calculate count, mean, and SD of flipper length for each group
+penguins_complete |> 
+group_by(species, sex) |> 
+summarise(
+  count = n(),
+  mean_flipper_mm = mean(flipper_length_mm, na.rm = TRUE),
+  sd_flipper_mm   = sd(flipper_length_mm, na.rm = TRUE)
+)
+```
+
+This will output one row for each combination of species and sex (e.g.
+Adelie-female, Adelie-male, etc.), with the number of individuals and
+the average flipper length (plus its standard deviation) for each group.
+
+*Optional:* Which species and sex group has the highest mean flipper
+length? How big is the difference between males and females within the
+same species? (No need to write an answer, just observe the results.)
+
+# Part 4: Data Visualization with `ggplot2`
+
+In this section, you'll create various plots to visualise the data. We
+will use **ggplot2** (part of tidyverse) to make scatter plots, bar
+charts, histograms, box/violin plots, and more. Remember to add labels
+and use appropriate aesthetics for clarity.
+
+*Tip:* You can add
+`+ theme_minimal()` (or another `theme`, use `?theme_minimal` to see all themes) to any plot for a cleaner look.
+
+## Objective 10: Scatter plot of two variables
+
+Create a scatter plot to explore the relationship between two numerical
+variables:
+
+-   Use `ggplot()` with the penguins data. Map **flipper length** to the
+    x-axis and **body mass** to the y-axis (e.g.
+    `aes(x = flipper_length_mm, y = body_mass_g)`).
+
+-   Add `geom_point()` to plot points.
+
+-   Map a categorical variable to an aesthetic to add more information:
+    for example, set `colour = species` inside `aes()` to colour the
+    points by penguin species. (You could also try `shape = sex` to use
+    different point shapes for male/female.)
+
+-   Label the axes and add a plot title using `labs()`. For instance,
+    label x as "Flipper length (mm)" and y as "Body mass (g)", and
+    include a descriptive title.
+
+-   (Optional) Use `theme_minimal()` or another theme to improve the
+    visual style.
+
+``` r
+
+# Scatter plot: flipper length vs body mass, coloured by species
+ggplot(penguins_complete, aes(x = flipper_length_mm, y = body_mass_g, colour = species)) +
+geom_point() +
+labs(
+  x = "Flipper length (mm)",
+  y = "Body mass (g)",
+  colour = "Species"
+) +
+theme_minimal()
+```
+
+After creating the plot, observe if there is an association between
+flipper length and body mass. Do species cluster differently in this
+space?
+
+## Objective 11: Bar chart of counts by category
+
+Bar charts are useful for visualizing counts or categorical comparisons.
+Let's make a bar plot to show the number of penguins in each species:
+
+-   Use `ggplot()` with the penguins dataset, mapping the **species**
+    column to the x-axis.
+
+-   Add `geom_bar()`. By default, `geom_bar` without a y-aesthetic will
+    count the occurrences of each category on the x-axis.
+
+-   Set appropriate axis labels (e.g. "Species" for x, "Count" for y)
+    and add a title.
+
+-   For clarity, ensure the y-axis starts at 0 (ggplot does this by
+    default for bar charts).
+
+-   (Optional) You can map `fill = species` to fill the bars with
+    different colours for each species, and use `scale_fill_brewer()` or
+    `scale_fill_viridis_d()` to apply a colour-blind-friendly palette.
+
+``` r
+
+# Bar chart: number of penguins of each species
+ggplot(penguins_complete, aes(x = species)) +
+geom_bar(fill = "steelblue") +  # using a single colour; alternatively, use fill=species for multicolour
+labs(
+  x = "Species",
+  y = "Count"
+) +
+theme_minimal()
+```
+
+If you used `fill = species`, consider adding `+ scale_fill_viridis_d()`
+or a Brewer palette for distinguishable colours. This chart shows which
+species is most common in the dataset.
+
+## Objective 12: Histogram of a numerical distribution
+
+Histograms display the distribution of a single numeric variable by
+grouping values into bins. Plot a histogram for one of the measurements:
+
+-   Choose a numeric variable, e.g. `bill\_length\_mm` or
+    `flipper\_length\_mm`.
+
+-   Use
+    `ggplot(penguins_complete, aes(x = bill_length_mm)) + geom_histogram(...)`
+    to plot a histogram. You can specify `bins = 30` (or another number)
+    inside `geom_histogram` to control the number of bins, or use
+    `binwidth`.
+
+-   Label the x-axis with the variable name and units, and give the plot
+    a title.
+
+-   Use a fill colour or outline that makes the plot readable. You might
+    set a fill colour and an outline colour (e.g.
+    `fill="darkorange", colour="black"`) for the bars.
+
+``` r
+
+# Histogram of penguin bill lengths
+ggplot(penguins_complete, aes(x = bill_length_mm)) +
+geom_histogram(bins = 30, fill = "darkorange", colour = "black") +
+labs(
+  x = "Bill length (mm)",
+  y = "Frequency"
+) +
+theme_minimal()
+```
+
+Look at the shape of the distribution. Is it symmetric, skewed, or
+multimodal? You might also try facetting by species (using
+`facet_wrap(~ species)`) to see the distribution for each species
+separately (optional).
+
+## Objective 13: Box plot of a numeric variable by category
+
+A **box plot** is a great way to compare distributions of a numeric
+variable across categories. We'll plot penguin body mass for each
+species:
+
+-   Use `ggplot()` with `aes(x = species, y = body_mass_g)` to map
+    species to the x-axis (categorical) and body mass to the y-axis
+    (numeric).
+
+-   Add `geom_boxplot()` to create the box plots.
+
+-   Map `fill = species` inside `aes` if you want each box filled with a
+    different colour (and add a fill legend label in `labs`).
+
+-   Add labels for axes (e.g. "Species", "Body mass (g)") and a title.
+
+-   Apply a theme like `theme_minimal()` for clarity.
+
+``` r
+
+# Box plot: body mass distribution for each species
+ggplot(penguins_complete, aes(x = species, y = body_mass_g, fill = species)) +
+geom_boxplot() +
+labs(
+  x = "Species",
+  y = "Body mass (g)",
+  fill = "Species"
+) +
+theme_minimal()
+```
+
+Each box plot shows the median (middle line), interquartile range (box),
+and potential outliers (dots). Compare the medians and spreads: which
+species tends to be heaviest? Are there any outliers or a wide spread in
+any species?
+
+## Objective 14: Line plot over time
+
+Line plots are typically used for time series or trends. The penguin
+data includes a **year** column (the year each penguin was recorded).
+Let's visualise a trend over the years:
+
+One example is to plot the **average body mass** of penguins each year:
+
+-   First, create a summary data frame that has one row per year with
+    the mean body mass for that year. You can use
+    `penguins_complete |> group_by(year) |> summarise(mean_mass = mean(body_mass_g, na.rm=TRUE))`.
+
+-   Then use
+    `ggplot(summary_df, aes(x = year, y = mean_mass)) + geom_line() + geom_point()`
+    to plot a line connecting the yearly averages (including points for
+    each year).
+
+-   Label the axes (e.g. "Year" and "Mean body mass (g)") and add a
+    title.
+
+-   If you want to visualise trends for each species separately, you
+    could group by both year and species and plot multiple lines (this
+    is more advanced: you'd map `colour = species` and add
+    `group = species` in the aes).
+
+``` r
+
+# Calculate mean body mass for each year
+yearly_mass <- penguins_complete |> 
+group_by(year) |> 
+summarise(mean_body_mass = mean(body_mass_g, na.rm = TRUE))
+
+# Line plot of average body mass across years
+ggplot(yearly_mass, aes(x = year, y = mean_body_mass)) +
+geom_line(colour = "purple") +
+geom_point(colour = "purple") +
+labs(
+  x = "Year",
+  y = "Mean body mass (g)"
+) +
+theme_minimal()
+```
+
+With only a few years in the dataset, the "trend" might not be very
+meaningful, but this practice shows how to prepare summary data for
+plotting. If you plotted separate lines for each species (grouped by
+species), you could compare how each species' average changed over time.
+
+## Objective 15: **Advanced Plot** -- Violin plot with overlayed points (combining layers, colours, and theme)
+
+For a final challenge, we will create a more complex visualization that
+combines multiple layers and emphasizes good visual practices:
+
+**Goal:** Plot the distribution of penguin body mass for each species
+using a **violin plot** (to show the distribution shape) with individual
+data points overlayed (using a beeswarm or jitter to avoid overlap). We
+will also customize colours and add a clear theme.
+
+Steps to do:
+
+-   Start with
+    `ggplot(penguins_complete, aes(x = species, y = body_mass_g))`.
+
+-   Add a violin plot layer: `geom_violin(...)`. Map `fill = species`
+    inside aes to give each violin a different fill colour. You might
+    set an alpha transparency (e.g. `alpha = 0.5`) so that points will
+    be visible through the violin shape.
+
+-   Add a layer of points. Use `geom_beeswarm()` from the **ggbeeswarm**
+    package (if available) to spread points out within each category, or
+    use `geom_jitter(width=0.15)` as an alternative if you prefer not to
+    load a new package. Map `colour = species` for the points so they
+    match the violin fill colours (or alternatively, set colour to a
+    neutral value like black for contrast).
+
+-   Use `labs()` to give a descriptive title (e.g. "Distribution of body
+    mass by species"), and label the axes and legend. For example,
+    `x = "Species"`, `y = "Body mass (g)"`, `fill = "Species"` (for the
+    violin fill legend), and `colour = "Species"` (for the point colour
+    legend) so that one combined legend appears.
+
+-   Apply a consistent theme, e.g. `theme_minimal()`. You can also use
+    `scale_fill_viridis_d()` and `scale_colour_viridis_d()` to apply a
+    colour-blind-friendly palette for fills and points, ensuring the
+    colours are distinct and accessible.
+
+
+::: {.content-visible when-format="html" unless-format="revealjs"}
+``` r
+# (If not installed, install ggbeeswarm package for geom_beeswarm)
+# install.packages("ggbeeswarm")
+library(ggbeeswarm)
+
+# Violin plot with beeswarm overlay
+ggplot(penguins_complete, aes(x = species, y = body_mass_g)) +
+geom_violin(aes(fill = species), alpha = 0.5, trim = FALSE) +   # violin plots with semi-transparent fill
+geom_beeswarm(aes(colour = species), dodge.width = 0.7) +        # beeswarm points, spread out to avoid overlap
+labs(
+  x = "Species",
+  y = "Body mass (g)",
+  fill = "Species",
+  colour = "Species"
+) +
+scale_fill_viridis_d() +    # colour-blind-friendly fill palette
+scale_colour_viridis_d() +   # matching colour palette for points
+  theme_minimal()
+```
+
+In this plot, the violin shows the overall distribution for each species
+(width indicates density of points at that value), and the overlaid
+points show each individual measurement. The colours are chosen from the
+Viridis palette for clarity and accessibility. The `alpha` transparency
+allows seeing points inside the violin. We also set `trim = FALSE` in
+`geom_violin` to show the full distribution tails instead of trimming at
+the range of the data.
+
+Take a moment to interpret this advanced plot. You can observe how the
+distributions of body mass differ among species (e.g., Gentoo penguins
+tend to be heavier than Adelie and Chinstrap), and see the spread of
+individual data points. This plot demonstrates effective visualization
+with multiple layers and careful aesthetic choices.
+:::
+
+# Recap: this week you've practiced
+
+By completing these exercises, you've practiced a wide range of data
+wrangling and visualization techniques in R:
+
+-   Importing data and setting the working directory\
+-   Inspecting and understanding data frames (tibbles) and their types\
+-   Tidying data from wide to long format\
+-   Filtering, selecting, renaming, and mutating data\
+-   Handling missing values to clean your dataset\
+-   Using pipes to chain together multiple operations for clarity\
+-   Computing summary statistics (mean, median, SD, IQR, counts) overall
+    and by group\
+-   Creating and customising plots (scatter, bar, histogram, boxplot,
+    violin, line) with colours, themes, and labels for clarity and
+    accessibility

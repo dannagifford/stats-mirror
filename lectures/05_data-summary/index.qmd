@@ -1,0 +1,512 @@
+---
+title: "Summary statistics"
+subtitle: "Making sense of biological variation"
+author: "BIOL33031/BIOL65161"
+format:
+  html:
+    css: ../html.css
+    include-after-body: ../_after-body.html
+  revealjs:
+    css: ../slides.css
+    fontsize: 26px
+    auto-stretch: true
+    code-overflow: wrap
+    scrollable: true
+    fig-responsive: true
+    slide-number: true
+    self-contained: false
+    output-file: slides.html
+---
+
+::: {.content-visible when-format="html" unless-format="revealjs"}
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-9c8b-5f46-0000-0199c4b28d60" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+:::
+
+::: {.notes}
+Biological data are full of variation — no two cells, animals, or populations are exactly alike.  
+Summarising helps us describe this variation in a meaningful way.  
+Instead of listing every value, we use numbers that capture the *essence* of the data: where the centre lies, how spread out values are, and what shape the distribution takes.  
+These summaries help us communicate results clearly and spot patterns worth investigating further.
+:::
+
+## Why summarise data?
+
+```{r, echo = FALSE, message = F, warning = F}
+set.seed(19)
+library(tidyverse)
+library(palmerpenguins)
+library(patchwork)
+
+base_theme <- theme_minimal(base_size = 20)
+
+penguins_clean <- remove_missing(penguins)
+raw <- penguins_clean  |> ggplot(aes(x = as.factor(year), y = body_mass_g, colour = sex, shape = species)) +
+  geom_jitter(size = 3) +
+  labs(x = "Year", y = "Body mass (g)") + base_theme + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+box <- penguins_clean  |> ggplot(aes(x = as.factor(year), y = body_mass_g, fill = sex)) +
+  geom_boxplot() + facet_grid(~species) +
+  labs(x = "Year", y = "Body mass (g)") + base_theme + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Biological data are often large and messy.
+
+**Summary statistics** reduce many data points down to a few values that capture the overall picture. Consider our `penguins` from last time.
+
+::::: {columns}
+::: {.column .fragment}
+This first plot contains the raw data of all recorded body masses for all 344 penguins.
+
+```{r}
+raw
+```
+:::
+
+::: {.column .fragment}
+The second contains a summary commonly known as a box plot.
+
+```{r}
+box
+```
+:::
+:::::
+
+:::: fragment
+::: {.content-visible when-format="revealjs"}
+Which one do you find easier for picking out meaningful differences?
+:::
+::::
+
+::: {.content-visible when-format="html" unless-format="revealjs"}
+What can you now infer? Male penguins tend to be larger than females within each species, and Gentoos tend to be larger than Adélies or Chinstraps. Body mass seems to be constant through time, although only three years were sampled.
+:::
+
+
+::: {.notes}
+Let's return to our penguins to see the value of summarisation.
+
+The plot on the left you can see the raw data: every penguin’s body mass. It’s rich, but hard to make meaningful comparisons between different species.
+
+On the right is a box plot—a compact summary of the same data. The line in the box is the median, the box shows the middle 50%—the interquartile range—and the whiskers cover typical values. Points beyond that are potential outliers: interesting cases to check.
+
+Which one do you find easier for picking out meaningful differences? What can you infer from the plot on the right?
+Male penguins tend to be larger than females within each species, and Gentoos tend to be larger than Adélies or Chinstraps. Body mass seems to be constant through time, although only three years were sampled.
+:::
+
+------------------------------------------------------------------------
+
+## The key tools
+
+In the tidyverse, we use two main functions for summarisation:
+
+-   `summarise()` – creates new summary values, like a mean or standard deviation.\
+-   `group_by()` – tells R to calculate summaries separately for each group (e.g. for each species).
+
+There are also helper functions that make our life easier:
+
+-   `mean()`, `median()`, `sd()` – common ways to summarise numbers used in biology\
+-   `n()` – the number of rows in each group\
+-   `count()` – a shortcut for counting rows in each group
+
+
+::: {.notes}
+The tidyverse provides some handy functions for summarising data.
+
+The first one is summarise(). This creates new summary values—things like the mean or the standard deviation. It’s how we collapse lots of individual measurements into one or two numbers that describe the group as a whole.
+
+The second is group_by(). This tells R to calculate those summaries separately for each category—say, for each penguin species or each island. Without group_by(), you just get one overall mean; with it, you get a mean for every group.
+
+Then there are a few handy helpers.
+mean(), median(), and sd() are the classic ways we summarise biological data.
+n() tells us how many rows—or individuals—are in each group.
+And count() is a shortcut when you just want to tally up how many cases you have per category.
+
+The code shows how these functions work together to calculate mean bill length of each species.
+:::
+
+
+------------------------------------------------------------------------
+
+## Calculating means
+
+Let’s start simple. Suppose we want the overall mean bill length across all penguins.
+
+```{r, echo = T, message = F}
+library(tidyverse)
+library(palmerpenguins)
+
+penguins |>
+  summarise(mean_bill_length = mean(bill_length_mm, na.rm = TRUE))
+```
+
+The average bill length of all penguins that were sampled is 43.9 mm.
+
+Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length **per species**?
+
+```{r, echo = T, message = F}
+penguins |>
+  group_by(species) |>
+  summarise(mean_bill_length = mean(bill_length_mm, na.rm = TRUE))
+```
+
+Here `group_by()` separates the data into groups by species, and `summarise()` calculates the mean within each of those groups.
+
+::: {.notes}
+Here's a simple example showing how to calculate the mean bill length across all penguins. The average bill length of all penguins that were sampled is 43.9 mm.
+
+Often we don’t just want one overall number, but a number for each group in the data. For example, what if we want the average bill length **per species**?
+
+Here `group_by()` separates the data into groups by species, and `summarise()` calculates the mean within each of those groups.
+:::
+
+------------------------------------------------------------------------
+
+## Tallying group sizes
+
+:::::: columns
+:::: {.column width="50%"}
+Another simple question is, how many penguins do we have of each species?
+
+``` r
+penguins |>
+  count(species)
+```
+
+The function `count()` is shorthand for:
+
+``` r
+penguins |>
+  group_by(species) |>
+  summarise(n = n())
+```
+
+::: fragment
+How many of each were on each island?
+
+```{r, echo = T, message = F}
+penguins |>
+  count(species, island)
+```
+:::
+::::
+
+::: {.column .fragment width="50%"}
+Only Adélie penguins were found on all three islands; Chinstrap and Gentoo were only recorded on Dream and Biscoe, respectively.
+
+Notice `count()` hasn't given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using `complete()`:
+
+```{r, echo = T, message = F}
+penguins |>
+  count(species, island) |>
+  complete(species, island, fill = list(n = 0))
+```
+:::
+::::::
+
+::: {.notes}
+Here's an example of how we can use the special function count to tally the number of each species. By giving 'species' as the argument to count, we tell R to provide a count of the number of occurrences of each species.
+
+Count is simply shorthand for a combination of group_by, summarise, and n.
+
+We can also give count two variables, species and island, to get a count of how many of each species were on each island.
+
+Notice however that `count()` hasn't given us a zero-count for Chinstraps and Gentoos on those other islands. We can add the zeros in using another function called complete()
+:::
+
+------------------------------------------------------------------------
+
+## Multiple summaries at once
+
+We are not limited to one summary per group. For example, we might want the mean, the **standard deviation**, and the sample size all together.
+
+```{r, echo = T, message = F}
+penguins |>
+  group_by(species, sex) |>
+  summarise(
+    mean_length = mean(bill_length_mm, na.rm = TRUE),
+    sd_length = sd(bill_length_mm, na.rm = TRUE),
+    n = n()
+  )
+```
+
+The **standard deviation**, `sd()`, tells us something about the spread of the data around the mean, or how variable bill length is between different individual birds of the same species and sex. This provides a richer description of the variation in bill length than simply looking at the mean.
+
+::: {.notes}
+Often in biology, we want to summarise data in multiple ways at the same time. With summarise, we can compute multiple summaries at once. Here's an example calculating the mean bill length, standard deviation, and number of penguins, separated by sex and species of bird.
+:::
+
+````{=html}
+<!--
+
+## Dropping groups
+
+By default, once you run `summarise()`, R forgets the grouping. This is usually what we want: the result is a smaller tibble with one row per group.  
+
+But sometimes you might want to keep the grouping for later steps. In that case, you can use:  
+
+```r
+summarise(..., .groups = "keep")
+```
+-->
+````
+
+## Measures of central tendency
+
+Different summaries describe the *centre* of the data in different ways.
+
+-   **Mean**: arithmetic average; sensitive to extreme values.
+-   **Median**: middle value; robust to outliers.
+-   **Mode**: most common value; rarely used for continuous measures.
+
+Example (mean and median flipper length by species):
+
+```{r}
+penguins |>
+  group_by(species) |>
+  summarise(
+    mean_flipper   = mean(flipper_length_mm, na.rm = TRUE),
+    median_flipper = median(flipper_length_mm, na.rm = TRUE)
+  )
+```
+
+::: {.notes}
+The mean we looked at on the last slide is probably the one you’re most familiar with. It’s the arithmetic average — we add everything up and divide by how many measurements we have. The mean works well when our data follow a roughly bell-shaped, or normal, distribution, where values are fairly evenly spread around the centre--more on that later.
+
+But not all biological data behave that nicely. Sometimes we have outliers — unusually large or small values — that can pull the mean away from where most of the data really sit. In those cases, the median can give a better sense of the centre. The median is simply the middle value when all measurements are ordered from smallest to largest. It’s robust to outliers, meaning it doesn’t get dragged around by extreme points.
+
+There’s also the mode, which is the most common value. It’s useful when you’re working with categories—like the most common species or colour—but it’s rarely helpful for continuous measurements like length or mass.
+
+So, different summaries tell slightly different stories about where the ‘centre’ lies.
+:::
+
+------------------------------------------------------------------------
+
+## Measures of spread
+
+Two groups can have the same average but very different variability.\
+Measures of spread help us compare how consistent or scattered values are.
+
+-   **Range**: `max - min` (influenced by outliers).\
+-   **Interquartile range (IQR)**: the middle 50% of the data.\
+-   **Standard deviation (SD)**: average distance from the mean.
+
+Example (variation in flipper length by species):
+
+```{r}
+penguins |>
+  group_by(species) |>
+  summarise(
+    min_flipper = min(flipper_length_mm, na.rm = TRUE),
+    max_flipper = max(flipper_length_mm, na.rm = TRUE),
+    iqr_flipper = IQR(flipper_length_mm, na.rm = TRUE),
+    sd_flipper  = sd(flipper_length_mm, na.rm = TRUE)
+  )
+```
+::: {.notes}
+
+Two groups can have exactly the same average but look completely different once we consider how spread out the data are. Measures of spread tell us how consistent or variable our data are—whether all individuals are similar, or if some differ a lot from the rest.
+
+The simplest measure is the range, which is just the maximum minus the minimum value. It gives a quick sense of spread but can be distorted by a single outlier.
+
+The interquartile range, or IQR, focuses on the middle 50% of the data. It’s much more robust—less sensitive to extreme values—and is what the width of a box in a box plot represents.
+
+And then there’s the standard deviation, or SD. This tells us, on average, how far each value sits from the mean. A small SD means most individuals are close to the mean; a large SD means there’s a lot of variability.
+
+In this next example, we’re comparing variation in flipper length between penguin species. Even if their averages are similar, the spread gives us a sense of how consistent each species is.
+:::
+
+:::: {.content-visible when-format="html" unless-format="revealjs"}
+::: {.callout collapse="true"}
+## How is standard deviation (SD) calculated?
+
+The standard deviation tells us how spread out the data are around the mean. While R can calculate this for us using `sd()`, you may want to know where it comes from.
+
+We calculate it in four steps:
+
+1.  Find the mean $\bar{x}$ of the data.\
+2.  Subtract the mean from each individual value $(x_i - \bar{x})$
+3.  Square these differences and add them up.\
+4.  Divide by $(n-1)$ (to correct for sampling) and take the square root.
+
+The basic formula for SD from a single population sample looks like this:
+
+$$
+SD = \sqrt{\frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2 }
+$$
+
+-   $x_i$: each observation\
+-   $\bar{x}$: sample mean\
+-   $n$: number of observations
+:::
+::::
+
+## When to use which?
+
+Different measures of spread are useful for describing the data in different situations:
+
+-   **Mean + SD**: Best when data are roughly symmetric (bell-shaped) and not affected by extreme values.\
+-   **Median + IQR**: Best when data are skewed or contain outliers, because they are more robust.\
+-   **Range**: Good for reporting extremes (minimum and maximum), but can be misleading if one unusual value dominates.
+
+Always think about the biological question: are you interested in the “typical” value, the variability, or the extremes?
+
+```{r echo = F, warning = F, message = F}
+library(tidyverse)
+library(palmerpenguins)
+
+# calculate means and sds
+
+penguins |>
+filter(species == "Adelie", sex == "male") |>
+ggplot(aes(x = island, y = bill_length_mm / bill_depth_mm)) +
+  geom_boxplot(position = position_nudge(x = 0), width = 0.15) + 
+  geom_point(position = position_nudge(x = -0.15), size = 0.5) + 
+  stat_summary(fun = mean, 
+               fun.min = function(x) mean(x) - sd(x),
+               fun.max = function(x) mean(x) + sd(x),
+               colour = "red",
+               position = position_nudge(x = 0.15)   # shifts points and error bars to the right
+               ) + 
+  labs(
+    x = "Island",
+    y = "Bill ratio (length / width))",
+    title = "Bill ratio of male Gentoo penguins: \nraw data (points), median (line) and IQR (box), mean ± SD (red bars)"
+  ) + theme_minimal(base_size = 16)
+```
+::: {.notes}
+Different measures of spread are useful in different situations, and it’s worth matching the summary to the kind of data you have.
+
+When your data are roughly symmetric—think of that nice bell-shaped curve—and there aren’t any extreme values, you can report the mean and standard deviation. Together, they describe the typical value and the average variation around it.
+
+If the data are skewed or contain outliers, the median and interquartile range are better. They focus on the middle of the data and aren’t thrown off by a few extreme individuals.
+
+The range—the minimum and maximum—is useful when you want to emphasise the extremes, like the smallest and largest animals measured. But remember, a single unusual value can make the range look huge.
+
+So always come back to your biological question: are you trying to describe what’s typical, how variable individuals are, or what the limits of your data look like? That choice should guide which summary you report.
+:::
+
+------------------------------------------------------------------------
+
+## Standard deviation (SD) vs standard error (SE)
+
+**SD** and **SE** are often confused, but they mean different things.
+
+-   **Standard deviation (SD)**: Describes how **spread out the data** are around the mean.\
+    Example: how variable are flipper lengths among individual Gentoo penguins?
+
+-   **Standard error (SE)**: Describes how precisely the **mean** has been estimated. It depends on both the spread of the data and the sample size.\
+    Example: how close is our sample mean flipper length to the true population mean?
+
+SE is related to SD through the following formula: $$ SE = \frac{SD}{\sqrt{n}} $$ You may see means reported with either SD or SE (e.g. mean ± SD, mean ± SE). They are not interchangeable: use **SD** to show biological variation, and **SE** to show precision of the mean. We will revisit SE when we look at the *t*-test.
+
+::: {.notes}
+I want to end by briefly talking about two measures of spread that are often confused in biology, the standard deviation and the standard error.
+
+People often mix up standard deviation and standard error, but they answer very different questions.
+
+The standard deviation, or SD, describes how spread out the data themselves are. It tells us about biological variation—how much individuals differ from each other. For example, how variable are the flipper lengths among individual Gentoo penguins?
+
+The standard error, or SE, is about precision. It tells us how precisely we’ve estimated the mean. SE depends on both the variation in the data and the sample size—larger samples give smaller SEs because our estimate of the mean becomes more reliable.
+
+They’re connected mathematically: SE equals SD divided by the square root of n, the sample size. So as you collect more data, SE gets smaller, but SD stays the same because the biological variation hasn’t changed.
+
+You’ll often see results reported as mean ± SD or mean ± SE. They are not interchangeable. Use SD when you want to show biological variation, and SE when you want to show how precise your estimate of the mean is. We’ll return to SE later when we discuss the t-test and confidence intervals.
+:::
+------------------------------------------------------------------------
+
+## Recap & next steps
+
+-   Summarisation helps us see patterns in messy biological data.\
+-   `summarise()` and `group_by()` are the core tidyverse tools.\
+-   Helper functions like `n()`, `mean()`, and `count()` make common tasks quick.\
+-   Always watch out for missing values!
+
+We'll build on the `tidyverse` skills you've learned now to tackle one of the most important aspects of data analysis and scientific communication, data visualisation, in the next session.
+
+![See you next time... [Image](https://commons.wikimedia.org/wiki/File:Penguin_in_Antarctica_jumping_out_of_the_water.jpg) by Christopher Michel CC [BY-NC-SA 2.0](https://creativecommons.org/licenses/by-nc-sa/2.0/)](images/Penguin_in_Antarctica_jumping_out_of_the_water.jpg){fig-alt="Penguin jumping out of hole in icy water, its wing waived as if to say good-bye." fig-align="left"}
+
+::: {.notes}
+
+To wrap up—summarising data is how we turn messy biological variation into something we can actually interpret.
+
+We’ve seen how summarise() and group_by() work together to create tidy summaries, and how helper functions like n(), mean(), and count() make quick work of common calculations. And remember, missing values can quietly cause errors or distort your results, so always check for them.
+
+In the next session, we’ll take these summaries and bring them to life through data visualisation—one of the most powerful ways to explore patterns and communicate science clearly.
+:::
+
+
+:::::::: {.content-visible when-format="html" unless-format="revealjs"}
+
+------------------------------------------------------------------------
+
+## ❓Check your understanding
+
+1.  Use `summarise()` to find the average flipper length across all penguins.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+``` r
+penguins |>
+  summarise(mean_flipper = mean(flipper_length_mm, na.rm = TRUE))
+```
+:::
+
+------------------------------------------------------------------------
+
+2.  Use `group_by()` and `summarise()` to calculate the mean and median body mass for each island.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+``` r
+penguins |>
+  group_by(island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    median_mass = median(body_mass_g, na.rm = TRUE)
+  )
+```
+:::
+
+------------------------------------------------------------------------
+
+3.  How many penguins of each species are in the dataset? (use `count()`).
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+``` r
+penguins |>
+  count(species)
+```
+:::
+
+------------------------------------------------------------------------
+
+4.  For each species, calculate both the average and standard deviation of bill depth.
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+``` r
+penguins |>
+  group_by(species) |>
+  summarise(
+    mean_depth = mean(bill_depth_mm, na.rm = TRUE),
+    sd_depth   = sd(bill_depth_mm, na.rm = TRUE)
+  )
+```
+:::
+
+------------------------------------------------------------------------
+
+5.  Why might `na.rm = TRUE` be important when summarising?
+
+::: {.callout collapse="true"}
+## ✅ Answer
+
+If you don’t use `na.rm = TRUE`, any missing values (`NA`) will make the whole summary result `NA`. Setting `na.rm = TRUE` tells R to ignore missing data and calculate the summary from the values that are present.
+:::
+::::::::

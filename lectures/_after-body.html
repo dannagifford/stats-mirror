@@ -1,0 +1,22 @@
+<style id="force-hide-notes">
+  /* Obliterate all .notes blocks everywhere */
+  .notes, div.notes, section .notes {
+    all: unset !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    z-index: -9999 !important;
+  }
+</style>
+  <script>
+  // As a backup, remove them entirely after load
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.notes').forEach(el => el.remove());
+});
+</script>

@@ -1,0 +1,68 @@
+---
+title: "Random forest models"
+subtitle: ""
+author: "BIOL33031 / BIOL65161"
+format:
+  html:
+    css: ../html.css
+include-after-body: ../_after-body.html
+---
+
+## What are random forest models?
+
+Random forests are a type of **machine learning model** that can handle complex data with many explanatory variables, including mixtures of categorical and continuous data, and even missing values. They are especially useful when we’re more interested in accurate prediction than in understanding the exact relationships between variables.
+
+
+Link to slides: [PowerPoint](slides/RandomForests.pptx) and [PDF](slides/RandomForests.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/00000000-6335-be6b-0000-019a0b142160" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+## From linear models to machine learning
+
+Linear models are powerful but make assumptions about the data — such as linearity and a defined response distribution.  
+They also become difficult to interpret when there are many variables and interactions.
+
+Random forests relax some of these constraints:
+
+- They can model **nonlinear relationships**
+- They can handle **many predictors and interactions**
+- They are **robust to outliers** and data imbalance
+
+However, they don’t provide interpretable coefficients or traditional hypothesis testing, so they’re often called *black box models*.
+
+| **Linear models** | **Random forests** |
+|:------------------|:-------------------|
+| Usually single response | Usually single response |
+| Usually limited number of independent explanatory variables | Many explanatory variables |
+| Limited numbers of pre-defined interactions possible | Very flexible interactions among large numbers of variables |
+| Strong assumptions (linearity, independence, homoscedasticity, error distribution) | Limited assumptions about data; can be continuous, categorical, outliers ok |
+| Very explicit interpretation of parameters | Hard to interpret workings of model |
+| Hypothesis testing strong | Hypothesis testing weak |
+
+
+## How tree-based models work
+
+A random forest is built from many decision trees, each of which repeatedly splits the data into groups that minimise variability in the response variable. For example, the kyphosis dataset in R (children after spinal surgery) can be split by the vertebra number operated on and the child’s age to predict whether kyphosis was present or absent. Each split is chosen to make the resulting groups as homogeneous as possible.
+
+Instead of using all the data and variables for every tree, random forests:
+
+1. Randomly select subsets of the **data** (called *out-of-bag* samples)
+2. Randomly select subsets of **variables** for each tree
+3. Combine predictions from all trees by:
+   - **Majority vote** (for categorical responses)
+   - **Averaging** (for continuous responses)
+
+This ensemble approach improves prediction accuracy and reduces overfitting.
+
+
+## When to use random forest models
+
+Random forests are a good choice when your biological data are complex, high-dimensional, or noisy, and you care most about accurate prediction rather than interpreting exact parameter estimates. They work well when relationships between predictors and the response are nonlinear or involve many interactions, and when variables are a mix of categorical and continuous types. They're particularly useful for classification (e.g. identifying species or disease states) and regression problems (e.g. predicting trait values or abundances) where standard linear models struggle. However, if your main goal is to test specific hypotheses or explain the effect of individual predictors, a linear model or generalised linear model is usually more appropriate.
+
+
+```r
+# Fit a random forest model using the penguins dataset
+install.packages("randomForest")
+library(randomForest)
+rf <- randomForest(species ~ ., data = penguins |> na.omit())
+```

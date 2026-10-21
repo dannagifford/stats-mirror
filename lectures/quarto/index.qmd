@@ -1,0 +1,343 @@
+---
+title: "Crash-course in Quarto"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+# What is Quarto?
+
+Quarto is a plain-text system for writing documents that can include code (R, Python, etc.). You write a `.qmd` file and **render** it into HTML (this unit will use HTML). Quarto handles the formatting, runs your code, and inserts the results.
+
+A Quarto document usually has:
+
+1.  A header (between `---` lines) using [YAML](https://en.wikipedia.org/wiki/YAML "A link to YAML on Wikipedia") notation
+2.  The body: your text + headings + code blocks
+
+Example YAML header that produces `html` format output (`pdf` and `docx` are also possible):
+
+``` yaml
+---
+title: "My analysis"
+author: "My Name"
+format: html
+---
+```
+
+The body text comes after the YAML header.
+
+Here's a minimal Quarto document that produces an html file.
+
+```{verbatim}
+---
+title: "My analysis"
+author: "My Name"
+format: html
+---
+
+Hello, world!
+
+```
+
+------------------------------------------------------------------------
+
+## Headings and text formatting
+
+### Headings
+
+Use `#` symbols; different numbers of `#` for different headling levels. You need an empty line after each heading.
+
+``` markdown
+# Main heading
+
+Here's some main text. Note the line directly above is empty.
+
+## Subheading
+
+Here's some more text in a subsection. Note again the line directly above is empty.
+
+### Sub-subheading
+
+Here's some more text in a sub-subsection. Line directly above is empty still!
+```
+
+### Italics and bold
+
+-   `*italic*` produces *italic* text, e.g. *Escherichia coli*
+-   `**bold**` produces **bold** text, e.g. **important**
+-   `***bold and italic***` produces ***bold and italic*** text, e.g. ***very important***
+
+### Inline code
+
+Use backticks \` to indicate code within a sentence.
+
+```{verbatim}
+The `mean(x)` function calculates the mean of the input vector `x`.
+```
+
+------------------------------------------------------------------------
+
+## Code blocks (R)
+
+Quarto can both show and execute R code blocks within the document. You can include a code block like this:
+
+````{verbatim}
+```{r}
+library(tidyverse)
+data <- read_csv("my_data.csv")
+```
+````
+
+-   Code runs during rendering.
+-   Output (tables, plots, messages) appears in the HTML.
+
+You can set options to control what is shown:
+
+````{verbatim}
+```{r}
+#| echo: false
+#| message: false
+# This code would run but not show the code or messages from loading tidyverse
+library(tidyverse)
+data <- read_csv("my_data.csv")
+```
+````
+
+------------------------------------------------------------------------
+
+## Figures made by R
+
+Plots appear automatically when code produces them:
+
+````{verbatim}
+```{r}
+#| message: false
+#| eval: false
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  facet_grid(~Species) +
+  theme_classic()
+```
+````
+
+```{r}
+#| message: false
+#| echo: false
+library(tidyverse)
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  facet_grid(~Species) +
+  theme_classic()
+```
+
+
+
+You can control figure size (NB: sizes are in inches):
+
+````{verbatim}
+```{r}
+#| eval: false
+#| fig-width: 6
+#| fig-height: 4
+ggplot(data, aes(x, y)) +
+  geom_point()
+```
+````
+
+------------------------------------------------------------------------
+
+## Comments and organisation
+
+Add comments inside R code blocks:
+
+````{verbatim}
+```{r}
+# This is a comment
+df <- read_csv("example.csv")
+```
+````
+
+------------------------------------------------------------------------
+
+## Tables
+
+R will print tibbles as they would appear in the console.
+
+````{verbatim}
+```{r}
+# Example using the iris dataset
+
+# First convert iris to a tibble
+iris_tibble <- as_tibble(iris)
+
+# Print iris_tibble
+iris_tibble
+```
+````
+
+```{r}
+#| echo: false
+#| message: false
+library(tidyverse)
+# Example using the iris dataset
+
+# First convert iris to a tibble
+iris_tibble <- as_tibble(iris)
+
+# Print iris_tibble
+iris_tibble
+```
+
+
+For prettier formatted tables (advanced, not required for assessment):
+
+````{verbatim}
+```{r}
+library(knitr)
+kable(head(iris_tibble))
+```
+````
+
+
+```{r}
+#| echo: false
+library(knitr)
+kable(head(iris_tibble))
+```
+
+------------------------------------------------------------------------
+
+## Lists
+
+You can make ordered/numbered lists and unordered/bullet point lists like this. Note that you need an empty line before and after a list. Ordered list:
+
+``` markdown
+<-- empty line!
+1. First
+2. Second
+3. Third
+<-- empty line!
+```
+
+Unordered list:
+
+``` markdown
+<-- empty line!
+- item
+- item
+- item
+<-- empty line!
+```
+
+------------------------------------------------------------------------
+
+## Links
+
+You can insert links into your document.
+
+Raw link, e.g. <http://example.com>:
+
+``` markdown
+<http://example.com>
+```
+
+Formatted link, e.g. [visit Example.com](http://example.com):
+
+``` markdown
+[visit Example.com](http://example.com)
+```
+
+------------------------------------------------------------------------
+
+## Images
+
+Images not created in R can also be included:
+
+```{verbatim}
+![](figures/diagram.png)
+![](http://example.com/image.png)
+```
+
+With alt text:
+
+```{verbatim}
+![A useful diagram](figures/diagram.png)
+```
+
+------------------------------------------------------------------------
+
+## Citations using footnotes
+
+You can make simple citations using footnotes.
+
+In the text:
+
+``` markdown
+Here is some text with a citation[^paper1].
+```
+
+At the end of the document:
+
+``` markdown
+[^paper1]: John Doe, "Frogs," *Journal of Amphibians* 44 (1999)
+[^paper2]: Susan Smith, "Flies," *Journal of Insects* (2000)
+[^paper3]: Susan Smith, "Bees," *Journal of Insects* (2004)
+```
+
+------------------------------------------------------------------------
+
+## (Advanced) Citations with a bibliography
+
+For complex documents, you can include a references list. (This is not required for the assessment.)
+
+If you use a `.bib` file or Zotero, add it in the YAML:
+
+``` yaml
+---
+title: "My report"
+format: html
+bibliography: references.bib
+---
+```
+
+Then, in the text:
+
+``` markdown
+[@smith2000]   # in brackets
+@smith2000     # no brackets
+```
+
+In the visual editor, you can also insert references into your bibliography file using their DOI ``@10.1099/mic.0.001534``.
+
+More information:\
+<https://quarto.org/docs/authoring/citations.html>\
+<https://quarto.org/docs/visual-editor/technical.html#citations>
+
+------------------------------------------------------------------------
+
+## Rendering your document
+
+In RStudio:
+
+-   Create a new Quarto file (File>New File>Quarto Document) or open your existing `file.qmd` file.
+-   Click the **Render** button (or Shift-Command/Command-K).
+
+This produces `file.html` in the same folder where your `file.qmd` is saved. You can open this file in any web browser (e.g. Chrome, Firefox, Edge).
+
+------------------------------------------------------------------------
+
+## Common pitfalls
+
+-   Missing fences: R code must be in 'fenced' code blocks (three backticks, \`\`\`) for Quarto to run it.\
+-   File paths: Quarto runs from the project directory, so `"data/myfile.csv"` must exist there.\
+-   Missing empty lines: headers and lists need empty lines before and after.
+-   Header formatting: The YAML header is sensitive to spacing and indentation. Keep colons followed by a space, and do not use tabs.
+
+------------------------------------------------------------------------
+
+## Useful references
+
+-   Quarto getting started: <https://quarto.org/docs/get-started/>\
+-   R-focused overview: <https://r4ds.hadley.nz/quarto.html>

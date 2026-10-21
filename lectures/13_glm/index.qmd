@@ -1,0 +1,78 @@
+---
+title: "Generalised linear modelling"
+subtitle: ""
+author: "BIOL33031 / BIOL65161"
+format:
+  html:
+    css: ../html.css
+include-after-body: ../_after-body.html
+---
+
+## Understanding response distributions
+
+Link to slides: [PowerPoint](slides/GeneralisedModelling1.pptx) and [PDF](slides/GeneralisedModelling1.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/00000000-65aa-6c38-0000-019a0b124ca0" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+So far, we’ve assumed that our **response variable** is continuous and roughly **normally distributed** — for example, when using `lm()` or `lmer()`.\
+But many biological datasets don’t fit that assumption: we often measure **counts**, **proportions**, or **binary outcomes**.\
+To deal with these cases, we use **generalised linear models (GLMs)**, which let us specify a *different* distribution for the response.
+
+### When normality doesn’t make sense
+
+Let’s imagine two examples:
+
+1.  **Counting pigeons in a garden**\
+    The data are counts (0, 1, 2, …) that can’t be negative.\
+    These follow a **Poisson distribution**, defined by a single parameter, *λ* (lambda), which represents both the mean and variance.
+
+2.  **Counting growth on plates**\
+    You might have four plates and record "growth" or "no growth" for each, a binary outcome.\
+    These data are **binomially distributed**, with two parameters:
+
+    -   `size`: number of trials (e.g. number of plates)
+    -   `prob`: probability of success (e.g. probability of growth)
+
+Both datasets are numeric, but neither is likely to have normally distributed residuals — so a normal‐error model is inappropriate.
+
+Rather than transforming data to fit a normal model, GLMs let us directly specify an appropriate response family using the family argument in R functions such as `glm()` or `glmer()`. Examples include `family = poisson` for counts or `family = binomial` for binary outcomes. The video also briefly mentions other types of models — multinomial, negative binomial, and survival models — which follow similar logic but suit different data types. Later videos will show how to fit and interpret these models in practice.
+
+## Fitting and checking models
+
+Link to slides: [PowerPoint](slides/GeneralisedModelling2.pptx) and [PDF](slides/GeneralisedModelling2.pdf).
+
+<iframe src="https://video.manchester.ac.uk/embedded/ffffffff-f1df-4cc5-0000-019a0b133700" width="660" height="380" style="border:none; overflow: hidden;" scrolling="no"  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+Now that we understand that GLMs allow us to choose different distributions for the response, this video shows how to **fit** these models and **check** whether they make sense.
+
+### Example: insect counts and spray treatments
+
+We’ll use a classic dataset where insects were counted on agricultural plots treated with different sprays. These are **count data**, so we use a **Poisson model**.
+
+```{r}
+# Load the dataset (available in base R)
+data("InsectSprays")
+
+# Fit a Poisson GLM
+glm_pois <- glm(count ~ spray, data = InsectSprays, family = poisson)
+
+summary(glm_pois)
+
+```
+
+This model asks whether **insect counts** depend on the **type of spray** — conceptually similar to an ANOVA, but using a Poisson error distribution.
+
+### Understanding the output
+
+The model summary looks familiar, but there are a few new elements:
+
+-   **Residual deviance** and **null deviance** replace residual variance.
+-   For Poisson models, the mean and variance are expected to be equal.
+-   We can check this by dividing the residual deviance by its degrees of freedom.
+-   If that ratio is around 1, great. If it’s much higher, we may have **overdispersion** — more variability than the model expects.
+
+```r
+dispersion <- glm_pois$deviance / glm_pois$df.residual
+dispersion
+```
+If this ratio is > 1, the data are more variable than a perfect Poisson model would expect.

@@ -1,0 +1,26 @@
+# Ignore everything at the project root
+/*
+
+# Keep Git and Quarto configuration
+!/.gitignore
+!/_quarto.yml
+!/_publish.yml
+
+# Keep the home page
+!/index.qmd
+
+# Keep teaching materials and their contents
+!/lectures/
+!/worksheets/
+!/data/
+
+# Keep Quarto extensions
+!/_extensions/
+
+# Ignore temporary and backup files within retained folders
+**/.quarto/
+**/.Rproj.user/
+**/.Rhistory
+**/.RData
+*.bak
+*~
