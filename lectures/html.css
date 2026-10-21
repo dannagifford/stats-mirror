@@ -1,0 +1,36 @@
+/* Override column layout for HTML output */
+.content-visible-when-format-html .columns,
+.columns {
+  display: block !important;
+}
+
+.content-visible-when-format-html .column,
+.column {
+  width: 100% !important;
+}
+.quarto-figure img {
+  display: inline-block;
+  /*max-width: 600px;
+}
+
+/* Custom style for selected images */
+small.image-left {
+  display: block;
+  margin-left: 0;       /* stick to left */
+  margin-right: auto;   /* push rest of space to right */
+  max-width: 20%;     /* cap width if you like */
+  border: 2px solid #ccc;  /* example extra styling */
+  padding: 4px;
+}
+div.notes {
+  display: block !important;        /* keeps it in DOM, but invisible */
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+  font-size: 0 !important;
+}

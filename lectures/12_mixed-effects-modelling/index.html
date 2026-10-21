@@ -321,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../worksheets/practical4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">📝 Practical 4: Mixed effects modelling</span></a>
+ <span class="menu-text">📝 Practical: Mixed effects modelling</span></a>
   </div>
 </li>
       </ul>
@@ -493,7 +493,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The model summary includes two key sections: one for <strong>fixed effects</strong>, which describe the average curve across all trees, and one for <strong>random effects</strong>, which describe how much trees vary around that curve. The random-effect output includes both variance and standard deviation — the latter is often easier to interpret because it’s on the same scale as the response, though variances are useful for combining sources of variation. In this example, 70% of the total variation in growth is explained by differences among trees, indicating that most of the variability comes from between-tree differences rather than within-tree noise. Understanding this helps not only with interpreting results but also with designing better experiments — for example, deciding whether to sample more trees or more time points to best capture variability.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitting a mixed-effects model with Tree as a random effect</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"lme4"</span>) <span class="co"># Needed first-time only</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("lme4") # Needed first-time only</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)            <span class="co"># Load lme4 for lmer() function   </span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">log</span>(circumference) <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Tree), <span class="at">data =</span> Orange)</span>

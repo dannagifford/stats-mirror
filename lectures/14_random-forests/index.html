@@ -321,7 +321,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../worksheets/practical4.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">📝 Practical 4: Mixed effects modelling</span></a>
+ <span class="menu-text">📝 Practical: Mixed effects modelling</span></a>
   </div>
 </li>
       </ul>
@@ -493,7 +493,7 @@ They also become difficult to interpret when there are many variables and intera
 <h2 class="anchored" data-anchor-id="when-to-use-random-forest-models">When to use random forest models</h2>
 <p>Random forests are a good choice when your biological data are complex, high-dimensional, or noisy, and you care most about accurate prediction rather than interpreting exact parameter estimates. They work well when relationships between predictors and the response are nonlinear or involve many interactions, and when variables are a mix of categorical and continuous types. They’re particularly useful for classification (e.g.&nbsp;identifying species or disease states) and regression problems (e.g.&nbsp;predicting trait values or abundances) where standard linear models struggle. However, if your main goal is to test specific hypotheses or explain the effect of individual predictors, a linear model or generalised linear model is usually more appropriate.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a random forest model using the penguins dataset</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"randomForest"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("randomForest") # First time only</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(species <span class="sc">~</span> ., <span class="at">data =</span> penguins <span class="sc">|&gt;</span> <span class="fu">na.omit</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
